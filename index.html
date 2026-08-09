@@ -1593,10 +1593,13 @@ function saveEvent(){
    die Benachrichtigung auch bei geschlossener App.
    Auf dem Server liegen nur Zeitpunkt und Titel – sonst nichts.
 ========================================================= */
-const VAPID='BKlHBumgbrMeZkTw9Z10Oc6TD3AaHwnbwk_paMArMPvJf6ypjIHCV_v779V5jpcRWYD5yrBvLBodBWJ9wYD8zSc';
-// Zeigt bewusst auf die Netlify-Funktion, auch wenn die App selbst auf GitHub Pages läuft
-// (statisches Hosting + Erinnerungs-Cron laufen getrennt) — CORS ist dort bereits offen.
-const PUSH_URL='https://maximusprime-notes.netlify.app/.netlify/functions/save';
+// Neues Schlüsselpaar, weil sich mit dem Umzug auch der Erinnerungs-Server geändert hat
+// (Cloudflare Worker statt Netlify) — bestehende Anmeldungen waren ohnehin ungültig,
+// weil sie an die alte Netlify-Origin gebunden waren.
+const VAPID='BN8HwNXcg4PRKY-fQUq6eC10609BJ4jP3JgXBizdO0OdTvdaZk9d6P4QFUDr5OPOu1k0huG_Zv0fBU38mr4suhs';
+// App läuft auf GitHub Pages, der Erinnerungs-Server getrennt auf Cloudflare Workers
+// (statisches Hosting + Cron-Funktion laufen bewusst getrennt) — CORS ist dort offen.
+const PUSH_URL='https://notizen-erinnerungen.3dacceleration.workers.dev/';
 function deviceId(){
   let d=localStorage.getItem('notizen:device');
   if(!d){ d=uid()+uid(); localStorage.setItem('notizen:device',d); }
