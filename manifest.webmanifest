@@ -1,0 +1,25 @@
+{
+  "name": "Notizen",
+  "short_name": "Notizen",
+  "description": "Notizen, Checklisten, Ziele und Wünsche",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#131519",
+  "theme_color": "#131519",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
