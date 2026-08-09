@@ -11,29 +11,34 @@ Dinge braucht:
 | Was | Wo | Warum |
 |---|---|---|
 | App selbst (`index.html`, `sw.js`, Icons) | **GitHub Pages** | Rein statische Dateien, kostenlos & zeitlich unbegrenzt hostbar |
-| Erinnerungs-Funktionen (`check.mjs`, `save.mjs`) | **Netlify** (`maximusprime-notes.netlify.app`) | Brauchen einen echten Server: `check.mjs` läuft jede Minute im Hintergrund und verschickt fällige Push-Benachrichtigungen — das kann GitHub Pages als reines Static Hosting nicht |
+| Erinnerungs-Funktionen | **Cloudflare Workers** (`notizen-erinnerungen.3dacceleration.workers.dev`) | Braucht einen echten Server: läuft jede Minute im Hintergrund und verschickt fällige Push-Benachrichtigungen — das kann GitHub Pages als reines Static Hosting nicht |
 
-Der Code für die Funktionen liegt **nicht** in diesem Repository, sondern im
-separaten, privaten Repo `notizen` (Netlify-verbunden, deployt automatisch bei
-jedem Push dorthin).
+Der Code für das Erinnerungs-Backend liegt **nicht** in diesem Repository,
+sondern im separaten Repo `notizen-erinnerungen` (Cloudflare-Worker-Projekt,
+`wrangler deploy`).
 
-Die einzige Verbindung zwischen beiden Seiten ist eine einzelne Konstante in
+Die einzige Verbindung zwischen beiden Seiten sind zwei Konstanten in
 `index.html`:
 
 ```js
-const PUSH_URL='https://maximusprime-notes.netlify.app/.netlify/functions/save';
+const VAPID='BN8H...';       // muss zum Schlüsselpaar des Workers passen
+const PUSH_URL='https://notizen-erinnerungen.3dacceleration.workers.dev/';
 ```
 
-Die Funktion `save.mjs` erlaubt Anfragen von jeder Herkunft
+Der Worker erlaubt Anfragen von jeder Herkunft
 (`access-control-allow-origin: "*"`), deshalb funktioniert der Aufruf von
 GitHub Pages aus ohne weitere Einrichtung.
 
-**Warum diese Aufteilung?** Vorher lief die komplette App (Seite *und*
-Funktionen) auf Netlify. Weil `sw.js` die Seite bei jeder Nutzung frisch vom
-Netz lädt (network-first, damit Updates sofort ankommen), zählte jeder
-App-Start als Netlify-Traffic — das lief irgendwann gegen das kostenlose
-Kontingent. Nur die Erinnerungs-Funktionen brauchen wirklich einen Server;
-die App selbst nicht.
+### Vorgeschichte
+
+Ursprünglich liefen App *und* Erinnerungs-Funktionen zusammen auf Netlify.
+Weil `sw.js` die Seite bei jeder Nutzung frisch vom Netz lädt (network-first,
+damit Updates sofort ankommen), zählte jeder App-Start als Netlify-Traffic —
+das lief irgendwann gegen das kostenlose Kontingent, bis Netlify die
+**komplette Domain** mit einer Login-Sperre (HTTP 401, auch auf den
+Funktionen) blockierte. Da GitHub Pages für reines Hosting kein Kontingent
+kennt und Cloudflare Workers einen großzügigen kostenlosen Cron-Trigger ohne
+diese Sperr-Problematik bietet, wurden beide Teile dorthin umgezogen.
 
 ## Lokal starten
 
@@ -42,9 +47,9 @@ python -m http.server 8322
 ```
 
 Dann `http://localhost:8322` öffnen. Die Erinnerungs-Funktionen laufen dabei
-weiterhin gegen die echte, produktive Netlify-Adresse — es gibt keine lokale
-Version davon. Zum Testen der reinen Notizfunktionen (ohne Erinnerungen)
-reicht das trotzdem aus.
+weiterhin gegen den echten, produktiven Cloudflare Worker — es gibt keine
+lokale Version davon. Zum Testen der reinen Notizfunktionen (ohne
+Erinnerungen) reicht das trotzdem aus.
 
 ## Deployen
 
@@ -60,9 +65,9 @@ App-Start, weil die Seite selbst immer frisch vom Netz geladen wird.
 
 ## Wenn sich an den Erinnerungs-Funktionen etwas ändern muss
 
-Das betrifft **nicht** dieses Repository, sondern das separate `notizen`-Repo
-mit dem `netlify/functions/`-Ordner. Änderungen dort werden automatisch von
-Netlify deployt, sobald sie gepusht werden.
+Das betrifft **nicht** dieses Repository, sondern das separate
+`notizen-erinnerungen`-Repo. Änderungen dort werden per
+`npx wrangler deploy` veröffentlicht (siehe README dort).
 
 ## Daten
 
@@ -70,4 +75,4 @@ Alle Notizen liegen ausschließlich lokal auf dem Gerät (`localStorage` +
 `IndexedDB` für Bilder/Audio/Zeichnungen) — nicht auf einem Server. Nur wenn
 Erinnerungen aktiviert werden, verlässt eine kleine Datenmenge (Gerätekennung,
 Push-Adresse, Titel/Zeitpunkt der Termine mit Erinnerung) das Gerät und wird
-bei Netlify gespeichert, damit `check.mjs` sie jede Minute prüfen kann.
+in Cloudflare KV gespeichert, damit der Worker sie jede Minute prüfen kann.
