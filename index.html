@@ -67,6 +67,7 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 .mini th{font-size:8.5px;color:var(--dimmer);font-weight:400;padding-bottom:2px}
 .mini td{font-size:10px;color:var(--dim);text-align:center;padding:1.5px 0;line-height:1.35}
 .mini td.has{color:var(--mint);font-weight:700}
+.mini td.holiday{color:var(--red);font-weight:700}
 .mini td.today{background:var(--blue);color:#08101f;font-weight:700;border-radius:50%}
 .wdrow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:7px}
 .wdrow span{text-align:center;font-size:11px;color:var(--dimmer)}
@@ -76,6 +77,9 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
   font-size:15px;color:var(--text)}
 .cell.out{opacity:.22}
 .cell.today{border-color:var(--blue);color:var(--blue);font-weight:700}
+.cell.ferien{background:rgba(103,232,240,.10)}
+.cell.holiday{color:var(--red)}
+.cell.holiday.today{border-color:var(--red)}
 .cell .dots{display:flex;gap:3px;height:5px}
 .cell .dots i{width:5px;height:5px;border-radius:50%;background:var(--mint)}
 .viewSwitch{display:flex;gap:7px;margin:0 0 14px}
@@ -96,6 +100,8 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 .dh b{display:block;font-size:14px;font-weight:700;color:var(--text);line-height:1.2}
 .dh.today b{color:var(--blue)}
 .dh.today{background:rgba(62,123,250,.09)}
+.dh.ferien{background:rgba(103,232,240,.08)}
+.dh.holiday b{color:var(--red)}
 .allRow{display:flex;border-bottom:1px solid var(--line);background:var(--panel)}
 .allRow .gut{font-size:9px;color:var(--dimmer);display:flex;align-items:center;justify-content:center}
 .allCell{flex:1;min-width:0;border-left:1px solid var(--line);padding:3px;display:flex;
@@ -108,6 +114,7 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
   transform:translateY(-50%);font-variant-numeric:tabular-nums}
 .dayCol{flex:1;min-width:0;position:relative;border-left:1px solid var(--line)}
 .dayCol.today{background:rgba(62,123,250,.05)}
+.dayCol.ferien{background:rgba(103,232,240,.05)}
 .slot{position:absolute;border-radius:5px;background:var(--blue);color:#08101f;
   font-size:9.5px;font-weight:700;line-height:1.15;padding:2px 3px;overflow:hidden;
   text-align:left;border:0}
@@ -466,6 +473,15 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
     <h3>Einstellungen</h3>
     <p class="sub">Notizen · liegt auf diesem Gerät</p>
 
+    <h4>Feiertage &amp; Ferien</h4>
+    <div class="form" style="margin-bottom:16px">
+      <label>Land</label>
+      <select id="selLand"></select>
+      <label>Bundesland</label>
+      <select id="selBundesland"></select>
+      <p class="stat" id="regionStat" style="margin-top:10px"></p>
+    </div>
+
     <h4>Sortierung</h4>
     <div class="opt" id="optSort">
       <button data-sort="updated">Zuletzt bearbeitet</button>
@@ -564,7 +580,7 @@ const KEY='notizen:v3', OLD='notizen:v2';
 const $=s=>document.querySelector(s);
 let notes=[], events=[], folders=[], trash=[], curFolder=null, openId=null, showDone=false, editing=null;
 let undoStack=[];
-let cfg={sort:'updated',size:17,done:'hide'};
+let cfg={sort:'updated',size:17,done:'hide',land:'DE',bundesland:''};
 const urls={};
 
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -791,7 +807,7 @@ function renderNote(){
     <button data-add="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg>Zeitplan</button>
     <button data-add="text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M9 6v13M4 12h7"/></svg>Text</button>
   </div>`;
-  html+=`<p class="tipline">Enter macht einen Zeilenumbruch. Reihenfolge änderst du über den Greifpunkt rechts.</p>`;
+  html+=`<p class="tipline">Enter beginnt einen neuen Eintrag, Umschalt+Enter macht einen Zeilenumbruch. Reihenfolge änderst du über den Greifpunkt rechts.</p>`;
   if(n.blocks.some(b=>b.type==='plan'))
     html+=`<div class="chipRow">
       <button class="chip" id="addPlan">+ Zeitpunkt</button>
@@ -1043,6 +1059,21 @@ $('#lines').addEventListener('input',e=>{
 $('#lines').addEventListener('keydown',e=>{
   const id=e.target.dataset.txt; if(!id) return;
   const n=note();
+  const b=blockById(id);
+  // Enter -> neuer Eintrag (wie bei Apple Notes/Google Keep), kein Zeilenumbruch mehr.
+  // Shift+Enter bleibt fuer einen echten Umbruch innerhalb desselben Eintrags.
+  // Zeitplan-Eintraege (mit Uhrzeit) sind ausgenommen -- dort bleibt Enter ein Umbruch.
+  if(e.key==='Enter'&&!e.shiftKey&&b&&b.type==='line'){
+    e.preventDefault(); snap();
+    const ta=e.target, pos=ta.selectionStart, vorher=ta.value.slice(0,pos), nachher=ta.value.slice(pos);
+    b.text=vorher;
+    const neu={id:uid(),type:'line',text:nachher,check:b.check===null?null:false};
+    const i=n.blocks.findIndex(x=>x.id===id);
+    n.blocks.splice(i+1,0,neu);
+    touch(); renderNote();
+    const nt=$(`[data-txt="${neu.id}"]`); if(nt){ nt.focus(); nt.setSelectionRange(0,0); }
+    return;
+  }
   if(e.key==='Backspace'&&e.target.value===''&&n.blocks.length>1){
     e.preventDefault(); snap();
     const i=n.blocks.findIndex(x=>x.id===id);
@@ -1192,6 +1223,34 @@ function markOpts(){
   $('#optSize').querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.size===cfg.size));
   $('#optDone').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.done===cfg.done));
 }
+function regionStat(){
+  const el=$('#regionStat'); if(!el) return;
+  if(!cfg.bundesland){ el.textContent='Noch nicht ausgewählt.'; return; }
+  el.textContent='Feiertage & Ferien werden automatisch geladen (auch offline nutzbar, sobald einmal geladen).';
+}
+async function fuelleLandAuswahl(){
+  const sel=$('#selLand'); if(!sel) return;
+  const liste=await ladeLaenderliste();
+  sel.innerHTML=liste.map(l=>`<option value="${l.code}"${l.code===cfg.land?' selected':''}>${esc(l.name)}</option>`).join('');
+  await fuelleBundeslandAuswahl();
+}
+async function fuelleBundeslandAuswahl(){
+  const sel=$('#selBundesland'); if(!sel) return;
+  sel.innerHTML='<option>lädt …</option>';
+  const liste=await ladeBundeslaender(cfg.land);
+  if(!liste.length){ sel.innerHTML='<option value="">(keine Bundesländer für dieses Land)</option>'; return; }
+  sel.innerHTML='<option value="">Bitte wählen …</option>'+
+    liste.map(b=>`<option value="${b.code}"${b.code===cfg.bundesland?' selected':''}>${esc(b.name)}</option>`).join('');
+  regionStat();
+}
+$('#selLand').addEventListener('change',async e=>{
+  cfg.land=e.target.value; cfg.bundesland=''; saveNow();
+  await fuelleBundeslandAuswahl();
+});
+$('#selBundesland').addEventListener('change',e=>{
+  cfg.bundesland=e.target.value; saveNow(); regionStat();
+  if($('#scrCal').classList.contains('on')) renderCal();   // sofort sichtbar, falls Kalender offen ist
+});
 function renderTrash(){
   const box=$('#trashBox'); if(!box) return;
   if(!trash.length){ box.innerHTML='<p class="stat">Leer – gelöschte Notizen landen hier.</p>'; return; }
@@ -1237,7 +1296,12 @@ $('#pushTest').onclick=async()=>{
   reg.showNotification('Notizen',{body:'So sieht eine Erinnerung aus.',icon:'./icon.png',badge:'./icon.png',vibrate:[80,40,80]});
   toast('Testbenachrichtigung gesendet');
 };
-$('#menu').onclick=()=>{ markOpts(); stats(); pushStat(); renderTrash(); $('#drawer').classList.add('on'); pushLayer('drawer'); };
+let regionGeladen=false;
+$('#menu').onclick=()=>{
+  markOpts(); stats(); pushStat(); renderTrash();
+  if(!regionGeladen){ regionGeladen=true; fuelleLandAuswahl(); } else { regionStat(); }
+  $('#drawer').classList.add('on'); pushLayer('drawer');
+};
 $('#drawer').addEventListener('click',e=>{ if(e.target.dataset.close!==undefined) goBack(); });
 $('#optSort').addEventListener('click',e=>{const b=e.target.closest('[data-sort]');if(!b)return;
   cfg.sort=b.dataset.sort;markOpts();saveNow();renderList();});
@@ -1305,6 +1369,96 @@ const daysIn=(y,m)=>new Date(y,m+1,0).getDate();
 const dayName=iso=>{const [y,m,d]=iso.split('-').map(Number);return WDL[(new Date(y,m-1,d).getDay()+6)%7];};
 const prettyDate=iso=>{const [y,m,d]=iso.split('-').map(Number);return `${dayName(iso)}, ${p2(d)}. ${MON[m-1]} ${y}`;};
 
+/* =========================================================
+   Feiertage & Ferien (OpenHolidaysAPI, kostenlos & ohne Schlüssel)
+   Wird pro Land+Bundesland+Jahr geladen und 30 Tage lang lokal
+   zwischengespeichert -- funktioniert danach auch offline weiter.
+========================================================= */
+const HOL_API='https://openholidaysapi.org';
+const HOL_TTL=30*24*3600*1000;
+let holCache={};        // "land|bundesland|jahr" -> {pub:{iso:name}, school:[{start,end,name}]}
+let laenderListe=null;  // [{code,name}]
+let bundeslaenderCache={}; // land -> [{code,name}]
+
+function deName(arr){ return (arr.find(x=>x.language==='DE')||arr[0]||{}).text||''; }
+
+async function ladeLaenderliste(){
+  if(laenderListe) return laenderListe;
+  try{
+    const cached=JSON.parse(localStorage.getItem('notizen:laender')||'null');
+    if(cached&&Date.now()-cached.stamp<90*24*3600*1000){ laenderListe=cached.data; return laenderListe; }
+  }catch(e){}
+  try{
+    const r=await fetch(`${HOL_API}/Countries?languageIsoCode=DE`);
+    const j=await r.json();
+    laenderListe=j.map(c=>({code:c.isoCode,name:deName(c.name)})).sort((a,b)=>a.name.localeCompare(b.name,'de'));
+    try{ localStorage.setItem('notizen:laender',JSON.stringify({stamp:Date.now(),data:laenderListe})); }catch(e){}
+  }catch(e){
+    laenderListe=[{code:'DE',name:'Deutschland'},{code:'AT',name:'Österreich'},{code:'CH',name:'Schweiz'}];
+  }
+  return laenderListe;
+}
+async function ladeBundeslaender(land){
+  if(bundeslaenderCache[land]) return bundeslaenderCache[land];
+  try{
+    const cached=JSON.parse(localStorage.getItem('notizen:sub:'+land)||'null');
+    if(cached&&Date.now()-cached.stamp<90*24*3600*1000){ bundeslaenderCache[land]=cached.data; return cached.data; }
+  }catch(e){}
+  try{
+    const r=await fetch(`${HOL_API}/Subdivisions?countryIsoCode=${land}&languageIsoCode=DE`);
+    const j=await r.json();
+    const data=j.map(s=>({code:s.code,name:deName(s.name)}));
+    bundeslaenderCache[land]=data;
+    try{ localStorage.setItem('notizen:sub:'+land,JSON.stringify({stamp:Date.now(),data})); }catch(e){}
+    return data;
+  }catch(e){ return bundeslaenderCache[land]||[]; }
+}
+function holidayKey(y){ return `${cfg.land}|${cfg.bundesland}|${y}`; }
+async function ladeFeiertage(y){
+  const key=holidayKey(y);
+  if(holCache[key]) return holCache[key];
+  // Auch den "nichts ausgewaehlt"-Fall zwischenspeichern -- sonst haelt mitFeiertagen()
+  // das ewig fuer "noch nicht geladen" und rendert im Kreis neu.
+  if(!cfg.land||!cfg.bundesland){ const leer={pub:{},school:[]}; holCache[key]=leer; return leer; }
+
+  let cached=null;
+  try{ cached=JSON.parse(localStorage.getItem('notizen:feiertage:'+key)||'null'); }catch(e){}
+  if(cached&&Date.now()-cached.stamp<HOL_TTL){ holCache[key]=cached.data; return cached.data; }
+
+  try{
+    const q=`countryIsoCode=${cfg.land}&languageIsoCode=DE&validFrom=${y}-01-01&validTo=${y}-12-31&subdivisionCode=${cfg.bundesland}`;
+    const [pr,sr]=await Promise.all([
+      fetch(`${HOL_API}/PublicHolidays?${q}`),
+      fetch(`${HOL_API}/SchoolHolidays?${q}`)
+    ]);
+    const pj=pr.ok?await pr.json():[], sj=sr.ok?await sr.json():[];
+    const pub={}; pj.forEach(h=>{ pub[h.startDate]=deName(h.name); });
+    const school=sj.map(h=>({start:h.startDate,end:h.endDate,name:deName(h.name)}));
+    const data={pub,school};
+    holCache[key]=data;
+    try{ localStorage.setItem('notizen:feiertage:'+key,JSON.stringify({stamp:Date.now(),data})); }catch(e){}
+    return data;
+  }catch(e){
+    if(cached){ holCache[key]=cached.data; return cached.data; }   // offline: alten Stand nehmen
+    return {pub:{},school:[]};
+  }
+}
+function feiertagAn(iso){ const d=holCache[holidayKey(iso.slice(0,4))]; return d?d.pub[iso]:undefined; }
+function ferienAn(iso){ const d=holCache[holidayKey(iso.slice(0,4))]; if(!d) return null;
+  return d.school.find(f=>iso>=f.start&&iso<=f.end)||null; }
+/* Laedt bei Bedarf nach und zeichnet die aktuell offene Kalenderansicht neu,
+   sobald die Daten da sind -- ohne eine evtl. inzwischen andere Ansicht zu ueberschreiben. */
+function mitFeiertagen(jahre,renderFn){
+  // Nur Jahre nachladen, die wirklich noch fehlen -- sonst wuerde jeder Render-Aufruf
+  // (der am Ende selbst wieder mitFeiertagen aufruft) sich unendlich oft neu ausloesen.
+  const fehlend=jahre.filter(y=>!holCache[holidayKey(y)]);
+  if(!fehlend.length) return;
+  const snap={mode:calMode,y:calY,m:calM,d:calD};
+  Promise.all(fehlend.map(ladeFeiertage)).then(()=>{
+    if(calMode===snap.mode&&calY===snap.y&&calM===snap.m&&calD===snap.d) renderFn();
+  });
+}
+
 let calMode='year', calY=new Date().getFullYear(), calM=new Date().getMonth(), calD=todayIso(), evForm=null;
 
 function evOf(iso){ return events.filter(e=>e.date===iso).sort((a,b)=>(a.allday?'':a.start||'').localeCompare(b.allday?'':b.start||'')); }
@@ -1319,7 +1473,8 @@ function miniMonth(y,m){
       const idx=r*7+c;
       if(idx<first||day>n){ row+='<td></td>'; continue; }
       const iso=isoOf(y,m,day);
-      row+=`<td class="${iso===t?'today':(hasEv(iso)?'has':'')}">${day}</td>`;
+      const cls=[iso===t?'today':'',feiertagAn(iso)?'holiday':'',hasEv(iso)&&!feiertagAn(iso)?'has':''].filter(Boolean).join(' ');
+      row+=`<td class="${cls}">${day}</td>`;
       day++;
     }
     cells+='<tr>'+row+'</tr>';
@@ -1343,6 +1498,7 @@ function renderYear(){
     </div>
     ${switcher()}
     <div class="yearGrid">${MON.map((_,m)=>miniMonth(calY,m)).join('')}</div>`;
+  mitFeiertagen([calY],renderYear);
 }
 function renderMonth(){
   const first=firstWd(calY,calM), n=daysIn(calY,calM), prev=daysIn(calY,calM-1<0?11:calM-1), t=todayIso();
@@ -1353,11 +1509,31 @@ function renderMonth(){
     const dnum=i-first+1;
     if(dnum<1){ cells+=`<div class="cell out">${prev+dnum}</div>`; continue; }
     if(dnum>n){ cells+=`<div class="cell out">${dnum-n}</div>`; continue; }
-    const iso=isoOf(calY,calM,dnum), evs=evOf(iso);
+    const iso=isoOf(calY,calM,dnum), evs=evOf(iso), feiertag=feiertagAn(iso), ferien=ferienAn(iso);
     const dots=evs.slice(0,3).map(()=>'<i></i>').join('');
-    cells+=`<button class="cell${iso===t?' today':''}" data-day="${iso}">${dnum}<span class="dots">${dots}</span></button>`;
+    const cls=[iso===t?'today':'',feiertag?'holiday':'',ferien?'ferien':''].filter(Boolean).join(' ');
+    const label=feiertag||(ferien?ferien.name:'');
+    cells+=`<button class="cell${cls?' '+cls:''}" data-day="${iso}"${label?` title="${esc(label)}"`:''}>${dnum}<span class="dots">${dots}</span></button>`;
   }
   const cnt=events.filter(e=>e.date.startsWith(`${calY}-${p2(calM+1)}`)).length;
+
+  // Feiertage & Ferien dieses Monats als kleine Legende darunter (Tooltip allein reicht am Handy nicht)
+  const monPrefix=`${calY}-${p2(calM+1)}`;
+  const feiertageImMonat=Object.entries((holCache[holidayKey(calY)]||{pub:{}}).pub||{})
+    .filter(([iso])=>iso.startsWith(monPrefix)).sort(([a],[b])=>a.localeCompare(b));
+  const ferienImMonat=((holCache[holidayKey(calY)]||{school:[]}).school||[])
+    .filter(f=>f.start.startsWith(monPrefix)||f.end.startsWith(monPrefix)||(f.start<monPrefix+'-32'&&f.end>=monPrefix+'-01'));
+  let legende='';
+  if(feiertageImMonat.length||ferienImMonat.length){
+    legende='<div class="wlegend" style="margin-top:12px">'+
+      feiertageImMonat.map(([iso,name])=>`🔴 ${p2(+iso.slice(8,10))}. ${esc(name)}`).join('<br>')+
+      (feiertageImMonat.length&&ferienImMonat.length?'<br>':'')+
+      ferienImMonat.map(f=>`🟢 ${esc(f.name)} (${f.start.slice(8,10)}.${f.start.slice(5,7)}.–${f.end.slice(8,10)}.${f.end.slice(5,7)}.)`).join('<br>')+
+      '</div>';
+  }else if(!cfg.bundesland){
+    legende='<p class="wlegend" style="margin-top:12px">Feiertage &amp; Ferien: Bundesland in den Einstellungen wählen.</p>';
+  }
+
   $('#calBody').innerHTML=`
     <div class="calTop">
       <button class="navBtn" data-mon="-1" aria-label="Monat zurück">‹</button>
@@ -1366,12 +1542,16 @@ function renderMonth(){
     </div>
     ${switcher()}
     <div class="wdrow">${WDL.map(w=>`<span>${w}</span>`).join('')}</div>
-    <div class="monthGrid">${cells}</div>`;
+    <div class="monthGrid">${cells}</div>
+    ${legende}`;
+  mitFeiertagen([calY],renderMonth);
 }
 function renderDay(){
   $('#calBackTxt').textContent=MON[calM].slice(0,3)+' '+calY;
-  const evs=evOf(calD);
+  const evs=evOf(calD), feiertag=feiertagAn(calD), ferien=ferienAn(calD);
   let html=`<div class="calTop"><h2>${prettyDate(calD)}<small>${evs.length?evs.length+(evs.length===1?' Termin':' Termine'):'Nichts eingetragen'}</small></h2></div>`+switcher();
+  if(feiertag) html+=`<div class="callout callout--warn" style="margin-bottom:12px"><span class="callout__label">Feiertag</span>${esc(feiertag)}</div>`;
+  if(ferien) html+=`<div class="callout callout--info" style="margin-bottom:12px"><span class="callout__label">Ferien</span>${esc(ferien.name)}</div>`;
   if(evForm) html+=formHtml();
   html+=evs.map(e=>`<button class="ev" data-ev="${e.id}">
       <span class="when">${e.allday?'ganztags':(e.start||'')+(e.end?'<br>'+e.end:'')}</span>
@@ -1380,6 +1560,7 @@ function renderDay(){
   if(!evs.length&&!evForm) html+='<div class="empty">Noch kein Termin an diesem Tag.</div>';
   if(!evForm) html+=`<div class="chipRow"><button class="chip" id="newEv">+ Termin</button></div>`;
   $('#calBody').innerHTML=html;
+  mitFeiertagen([+calD.slice(0,4)],renderDay);
 }
 function formHtml(){
   const e=evForm;
@@ -1454,9 +1635,10 @@ function renderWeek(){
 
   // Kopfzeile mit den sieben Tagen
   const head='<div class="wkHead"><div class="gut">KW '+kw(start)+'</div>'+
-    days.map(iso=>{const [,mm,dd]=iso.split('-').map(Number);
-      return `<button class="dh${iso===t?' today':''}" data-day="${iso}">
-        ${dayName(iso)}<b>${dd}</b>${dd===1||iso===start?`<span style="font-size:9px">${MONK[mm-1]}</span>`:''}</button>`;
+    days.map(iso=>{const [,mm,dd]=iso.split('-').map(Number), feiertag=feiertagAn(iso), ferien=ferienAn(iso);
+      return `<button class="dh${iso===t?' today':''}${feiertag?' holiday':''}${ferien?' ferien':''}" data-day="${iso}"${feiertag?` title="${esc(feiertag)}"`:''}>
+        ${dayName(iso)}<b>${dd}</b>${dd===1||iso===start?`<span style="font-size:9px">${MONK[mm-1]}</span>`:''}
+        ${feiertag?`<span style="display:block;font-size:8.5px;color:var(--red);white-space:normal;line-height:1.2">${esc(feiertag)}</span>`:''}</button>`;
     }).join('')+'</div>';
 
   // Ganztägige Termine in eigener Zeile
@@ -1488,7 +1670,7 @@ function renderWeek(){
       const d=new Date(), m=d.getHours()*60+d.getMinutes();
       if(m>=h0*60&&m<=h1*60) now=`<i class="nowLine" style="top:${(m-h0*60)/60*PPH}px"></i>`;
     }
-    return `<div class="dayCol${iso===t?' today':''}" data-track="${iso}"
+    return `<div class="dayCol${iso===t?' today':''}${ferienAn(iso)?' ferien':''}" data-track="${iso}"
       style="height:${H}px;background-image:${grid}">${blocks}${now}</div>`;
   }).join('');
 
@@ -1507,6 +1689,7 @@ function renderWeek(){
     <p class="wlegend">Tipp auf einen Tag öffnet die Tagesansicht · Tipp auf einen Termin bearbeitet ihn</p>`;
   const box=$('#calBody .wkV');
   if(box){ const d=new Date(); box.scrollTop=Math.max(0,(d.getHours()-h0-1)*PPH); }
+  mitFeiertagen([...new Set(days.map(d=>+d.slice(0,4)))],renderWeek);
 }
 function switcher(){
   const b=(m,l)=>`<button data-view="${m}" class="${calMode===m?'on':''}">${l}</button>`;
