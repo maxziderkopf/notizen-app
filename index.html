@@ -68,6 +68,7 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 .mini td{font-size:10px;color:var(--dim);text-align:center;padding:1.5px 0;line-height:1.35}
 .mini td.has{color:var(--mint);font-weight:700}
 .mini td.holiday{color:var(--red);font-weight:700}
+.mini td.ferien{background:rgba(103,232,240,.20);border-radius:4px}
 .mini td.today{background:var(--blue);color:#08101f;font-weight:700;border-radius:50%}
 .wdrow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:7px}
 .wdrow span{text-align:center;font-size:11px;color:var(--dimmer)}
@@ -1473,7 +1474,8 @@ function miniMonth(y,m){
       const idx=r*7+c;
       if(idx<first||day>n){ row+='<td></td>'; continue; }
       const iso=isoOf(y,m,day);
-      const cls=[iso===t?'today':'',feiertagAn(iso)?'holiday':'',hasEv(iso)&&!feiertagAn(iso)?'has':''].filter(Boolean).join(' ');
+      const cls=[iso===t?'today':'',feiertagAn(iso)?'holiday':'',ferienAn(iso)?'ferien':'',
+                  hasEv(iso)&&!feiertagAn(iso)?'has':''].filter(Boolean).join(' ');
       row+=`<td class="${cls}">${day}</td>`;
       day++;
     }
