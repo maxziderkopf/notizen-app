@@ -921,49 +921,6 @@ function sortPlans(){
   idx.forEach((pos,k)=>n.blocks[pos]=plans[k]);
   touch(); renderNote(); toast('Nach Uhrzeit sortiert');
 }
-/* Ziehen am Greifpunkt: tauscht Zeile für Zeile, ohne Neuaufbau */
-function rowOf(id){ return document.querySelector(`#lines [data-id="${id}"]`); }
-function swapData(id,dir){
-  const n=note(), b=blockById(id); if(!b) return false;
-  const isRow=x=>x.type==='line'||x.type==='plan';
-  const doneOf=x=>isRow(x)&&x.check===true;
-  const grp=n.blocks.filter(x=>doneOf(x)===doneOf(b));
-  const g=grp.indexOf(b), t=g+dir;
-  if(t<0||t>=grp.length) return false;
-  const other=grp[t], i=n.blocks.indexOf(b), j=n.blocks.indexOf(other);
-  n.blocks[i]=other; n.blocks[j]=b; return true;
-}
-function moveDom(id,dir){
-  const row=rowOf(id); if(!row) return false;
-  const sibs=[...row.parentElement.children].filter(x=>x.matches('.line,.media'));
-  const i=sibs.indexOf(row), t=i+dir;
-  if(i<0||t<0||t>=sibs.length) return false;
-  if(!swapData(id,dir)) return false;
-  if(dir<0) sibs[t].before(row); else sibs[t].after(row);
-  return true;
-}
-let drag=null;
-document.addEventListener('pointerdown',e=>{
-  const g=e.target.closest('[data-grip]'); if(!g) return;
-  e.preventDefault(); snap();
-  g.setPointerCapture?.(e.pointerId);
-  drag={id:g.dataset.grip,y:e.clientY,moved:false};
-  rowOf(drag.id)?.classList.add('moving');
-});
-document.addEventListener('pointermove',e=>{
-  if(!drag) return;
-  const STEP=40;
-  let dy=e.clientY-drag.y;
-  while(dy>=STEP){ if(!moveDom(drag.id,1)) break; drag.y+=STEP; dy-=STEP; drag.moved=true; }
-  while(dy<=-STEP){ if(!moveDom(drag.id,-1)) break; drag.y-=STEP; dy+=STEP; drag.moved=true; }
-});
-document.addEventListener('pointerup',()=>{
-  if(!drag) return;
-  rowOf(drag.id)?.classList.remove('moving');
-  if(drag.moved){ touch(); renderNote(); }
-  else toast('Greifpunkt halten und nach oben oder unten ziehen');
-  drag=null;
-});
 
 function addMedia(type,mid){
   snap();
