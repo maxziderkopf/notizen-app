@@ -1239,13 +1239,43 @@ async function stats(){
     (trash.length?` · ${trash.length} im Papierkorb`:'')+'<br>'+
     `Text: ${(txt/1024).toFixed(1)} KB`+(media?`<br>Gesamt inkl. Medien: ${(media/1048576).toFixed(1)} MB`:'');
 }
-function pushStat(){
+/* Fragt beim Server nach, was dort WIRKLICH angemeldet ist. Vorher zählte
+   diese Anzeige nur lokale Termine und meldete "aktiv", auch wenn beim Server
+   gar nichts lag – dadurch blieben ausgefallene Erinnerungen unbemerkt. */
+async function serverStatus(){
+  try{
+    const r=await fetch(PUSH_URL+'?device='+encodeURIComponent(deviceId()),{cache:'no-store'});
+    return r.ok?await r.json():null;
+  }catch(e){ return null; }
+}
+async function pushStat(){
   const el=$('#pushStat'); if(!el) return;
-  const n=reminderItems().length;
-  if(!('Notification' in window)) { el.textContent='Dieses Gerät unterstützt keine Benachrichtigungen.'; return; }
-  if(Notification.permission==='granted') el.innerHTML='Erlaubt · '+n+(n===1?' Erinnerung':' Erinnerungen')+' angemeldet<br>Kommt auch bei geschlossener App an.';
-  else if(Notification.permission==='denied') el.textContent='Vom Handy blockiert. In den Android-Einstellungen unter Apps → Notizen → Benachrichtigungen wieder erlauben.';
-  else el.textContent='Noch nicht erlaubt. Termine mit Erinnerung fragen beim Speichern nach.';
+  if(!('Notification' in window)){ el.textContent='Dieses Gerät unterstützt keine Benachrichtigungen.'; return; }
+  if(Notification.permission==='denied'){ el.textContent='Vom Handy blockiert. In den Android-Einstellungen unter Apps → Notizen → Benachrichtigungen wieder erlauben.'; return; }
+  if(Notification.permission!=='granted'){ el.textContent='Noch nicht erlaubt. Tippe unten auf „Erinnerungen erlauben".'; return; }
+
+  el.textContent='Wird geprüft …';
+  const lokal=reminderItems().length;
+  const st=await serverStatus();
+
+  if(!st){
+    el.innerHTML='<b style="color:var(--red)">Server nicht erreichbar.</b><br>'+
+      'Erinnerungen lassen sich gerade nicht abgleichen. Sobald du wieder online bist, hier erneut nachsehen.';
+    return;
+  }
+  let html='';
+  if(lokal!==st.items){
+    html='<b style="color:#FFCE5C">Nicht abgeglichen:</b> '+lokal+' geplant, aber '+st.items+' beim Server angemeldet.<br>'+
+      'Tippe unten auf „Erinnerungen erlauben", um das sofort zu beheben.';
+  }else if(st.items===0){
+    html='Erlaubt · aktuell keine anstehende Erinnerung.';
+  }else{
+    html='Erlaubt · '+st.items+(st.items===1?' Erinnerung':' Erinnerungen')+' beim Server angemeldet.<br>'+
+      'Kommt auch bei geschlossener App an.';
+    if(st.next) html+='<br>Nächste: '+kurzZeit(st.next);
+  }
+  if(st.saved) html+='<br><span style="opacity:.65">Zuletzt abgeglichen: '+kurzZeit(st.saved)+'</span>';
+  el.innerHTML=html;
 }
 $('#pushOn').onclick=async()=>{ const ok=await syncReminders(true); pushStat(); if(ok) toast('Erinnerungen aktiv'); };
 $('#pushTest').onclick=async()=>{
@@ -1519,6 +1549,7 @@ function renderDay(){
   if(!evs.length&&!evForm) html+='<div class="empty">Noch kein Termin an diesem Tag.</div>';
   if(!evForm) html+=`<div class="chipRow"><button class="chip" id="newEv">+ Termin</button></div>`;
   $('#calBody').innerHTML=html;
+  if(evForm) markRemindOptions();
   mitFeiertagen([+calD.slice(0,4)],renderDay);
 }
 function formHtml(){
@@ -1711,6 +1742,10 @@ $('#calBody').addEventListener('change',e=>{
     evForm={...readForm(),allday:e.target.checked}; renderDay();
   }
 });
+/* Datum oder Startzeit geändert -> Vorlaufzeiten neu bewerten */
+$('#calBody').addEventListener('input',e=>{
+  if(evForm&&(e.target.id==='fDate'||e.target.id==='fStart')) markRemindOptions();
+});
 function readForm(){
   return {...evForm,
     title:$('#fTitle').value.trim(), date:$('#fDate').value||calD,
@@ -1718,17 +1753,49 @@ function readForm(){
     note:$('#fNote').value.trim(), allday:$('#fAll').checked,
     remind:$('#fRemind').value===''?null:+$('#fRemind').value};
 }
+const kurzZeit=ms=>new Date(ms).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
 function saveEvent(){
   const e=readForm();
   if(!e.title) return toast('Bitte einen Titel eintragen');
   if(!e.date) return toast('Bitte ein Datum wählen');
+
+  // Liegt der gewählte Erinnerungszeitpunkt schon in der Vergangenheit, kann
+  // niemand mehr rechtzeitig benachrichtigt werden. Früher wurde das stumm
+  // verschluckt – der Termin sah eingerichtet aus, es kam aber nie etwas.
+  const hatWunsch=e.remind!==null&&e.remind!==undefined;
+  if(hatWunsch&&remindAt(e)<=Date.now()){
+    const ok=confirm(
+      'Der Erinnerungszeitpunkt wäre '+kurzZeit(remindAt(e))+' – der ist schon vorbei.\n\n'+
+      'Für diesen Termin würde also KEINE Erinnerung verschickt.\n\n'+
+      'OK = trotzdem ohne Erinnerung speichern\n'+
+      'Abbrechen = zurück, um einen kürzeren Vorlauf zu wählen');
+    if(!ok) return;
+  }
+
   if(e.id){ events=events.map(x=>x.id===e.id?e:x); }
   else { e.id=uid(); events.push(e); }
   calD=e.date;
   const [yy,mm]=e.date.split('-').map(Number); calY=yy; calM=mm-1;
   evForm=null; saveNow(); renderDay(); toast('Termin gespeichert');
-  if(e.remind!==null&&e.remind!==undefined) syncReminders(true).then(ok=>{ if(ok) toast('Erinnerung eingerichtet'); });
-  else syncReminders(false);
+
+  // Immer abgleichen – auch beim Entfernen einer Erinnerung, damit der Server
+  // keine Karteileichen behält.
+  const wirdErinnert=hatWunsch&&remindAt(e)>Date.now();
+  syncReminders(wirdErinnert).then(ok=>{ if(ok&&wirdErinnert) toast('Erinnerung eingerichtet'); });
+}
+/* Markiert im Auswahlfeld die Vorlaufzeiten, die für diesen Termin schon
+   vorbei sind – sichtbar, bevor man sie auswählt. Läuft live mit, wenn Datum
+   oder Uhrzeit im Formular geändert werden. */
+function markRemindOptions(){
+  const sel=$('#fRemind'); if(!sel) return;
+  const basis={date:$('#fDate')?.value||calD, start:$('#fStart')?.value, allday:$('#fAll')?.checked};
+  [...sel.options].forEach(o=>{
+    if(o.value==='') return;
+    if(!o.dataset.label) o.dataset.label=o.textContent;
+    const zuSpaet=remindAt({...basis,remind:+o.value})<=Date.now();
+    o.textContent=zuSpaet?o.dataset.label+' — zu spät':o.dataset.label;
+    o.disabled=zuSpaet;
+  });
 }
 /* =========================================================
    Erinnerungen: Termin an den Server melden, der schickt
@@ -1933,7 +2000,20 @@ $('#list').addEventListener('click',e=>{
 addEventListener('pagehide',saveNow);
 document.addEventListener('visibilitychange',()=>{ if(document.hidden) saveNow(); });
 load(); renderList(); markOpts();
-setTimeout(()=>{ if(Notification&&Notification.permission==='granted') syncReminders(false); },1500);
+/* Erinnerungen liegen nur dann beim Server, wenn sie dort auch ankommen.
+   Deshalb nicht nur beim Start abgleichen, sondern auch bei jeder Rückkehr in
+   die App und sobald die Verbindung wieder da ist – ein einmal fehlgeschlagener
+   Abgleich (z. B. kurz offline) heilt sich damit von selbst. */
+let letzterSync=0;
+function autoSync(){
+  if(!('Notification' in window)||Notification.permission!=='granted') return;
+  if(Date.now()-letzterSync<60000) return;      // nicht öfter als einmal pro Minute
+  letzterSync=Date.now();
+  syncReminders(false);
+}
+setTimeout(autoSync,1500);
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) autoSync(); });
+addEventListener('online',autoSync);
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
