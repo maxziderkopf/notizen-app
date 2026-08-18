@@ -1,4 +1,4 @@
-const CACHE = 'notizen-v3';
+const CACHE = 'notizen-v4';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon.png', './icon-maskable.png'];
 
 self.addEventListener('install', e => {
@@ -52,6 +52,9 @@ self.addEventListener('push', e => {
     tag: d.tag || 'termin',
     renotify: true,
     vibrate: [90, 40, 90],
+    // Bleibt stehen, bis man sie wegwischt -- verschwindet nicht von selbst
+    requireInteraction: true,
+    silent: false,
     data: { url: './index.html' }
   }));
 });
