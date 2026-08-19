@@ -1,5 +1,5 @@
-const CACHE = 'notizen-v4';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon.png', './icon-maskable.png'];
+const CACHE = 'notizen-v5';
+const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon.png', './icon-maskable.png', './badge.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
@@ -48,7 +48,7 @@ self.addEventListener('push', e => {
   e.waitUntil(self.registration.showNotification(d.title || 'Termin', {
     body: d.body || '',
     icon: './icon.png',
-    badge: './icon.png',
+    badge: './badge.png',
     tag: d.tag || 'termin',
     renotify: true,
     vibrate: [90, 40, 90],
