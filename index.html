@@ -21,7 +21,10 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--text);
   font:400 var(--fs)/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
-  -webkit-font-smoothing:antialiased}
+  -webkit-font-smoothing:antialiased;
+  /* Verhindert das "Zum Aktualisieren ziehen" von Android -- sonst laedt die
+     Seite beim Wischen nach unten neu und man landet wieder in der Uebersicht */
+  overscroll-behavior-y:contain}
 textarea{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;
   resize:none;overflow:hidden;width:100%;outline:none}
 button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
@@ -70,9 +73,32 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 .mini td.holiday{color:var(--red);font-weight:700}
 .mini td.ferien{background:rgba(103,232,240,.20);border-radius:4px}
 .mini td.today{background:var(--blue);color:#08101f;font-weight:700;border-radius:50%}
-.wdrow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:7px}
+.wdrow{display:grid;grid-template-columns:34px repeat(7,1fr);gap:5px;margin-bottom:7px}
 .wdrow span{text-align:center;font-size:11px;color:var(--dimmer)}
-.monthGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.monthGrid{display:grid;grid-template-columns:34px repeat(7,1fr);gap:5px}
+/* Schmale Spalte links neben den Tagen: Kalenderwoche + Wochenziel */
+.wkZiel{border:1px dashed var(--line);border-radius:9px;background:none;color:var(--dimmer);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0}
+.wkZiel b{font-size:11px;font-weight:600;line-height:1}
+.wkZiel i{width:5px;height:5px;border-radius:50%;background:var(--mint);opacity:0}
+.wkZiel.hat{border-style:solid;border-color:rgba(103,232,240,.45);color:var(--mint)}
+.wkZiel.hat i{opacity:1}
+/* Monatsziel als breite Karte ueber dem Raster */
+.mZiel{display:block;width:100%;text-align:left;background:var(--panel);border:1px dashed var(--line);
+  border-radius:13px;padding:11px 13px;margin:0 0 12px}
+.mZiel.hat{border-style:solid;border-color:rgba(103,232,240,.45)}
+.mZiel .lbl{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--dimmer)}
+.mZiel .txt{display:block;font-size:14.5px;color:var(--text);margin-top:3px;white-space:pre-wrap}
+.mZiel:not(.hat) .txt{color:var(--dimmer)}
+/* Ausgeschriebene Wochenziele unter dem Raster */
+.zielListe{margin-top:14px}
+.zielListe h4{margin:0 0 8px;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--dimmer)}
+.zielZeile{display:flex;gap:11px;align-items:flex-start;width:100%;text-align:left;background:var(--panel);
+  border:1px solid var(--line);border-radius:11px;padding:10px 12px;margin-bottom:7px}
+.zielZeile b{flex:0 0 auto;color:var(--mint);font-size:12px;font-weight:700;padding-top:2px}
+.zielZeile span{flex:1;min-width:0;font-size:14px;white-space:pre-wrap}
+#zielText{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+  color:var(--text);font:inherit;font-size:15px;padding:10px;min-height:120px;resize:vertical}
 .cell{aspect-ratio:1;border:1.5px solid transparent;border-radius:11px;background:var(--panel);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
   font-size:15px;color:var(--text)}
@@ -566,6 +592,19 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
   </div>
 </div>
 
+<div class="pick" id="zielPick">
+  <div class="veil" data-zielclose></div>
+  <div class="pickBox">
+    <h3 id="zielTitel">Ziel</h3>
+    <textarea id="zielText" placeholder="Was nimmst du dir vor?"></textarea>
+    <div style="margin-top:12px">
+      <button id="zielSave" style="justify-content:center;border-color:var(--blue);color:var(--blue)">Speichern</button>
+      <button id="zielDel" style="justify-content:center;border-color:rgba(229,100,106,.4);color:var(--red)">Löschen</button>
+      <button id="zielCancel" style="justify-content:center;margin-bottom:0">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
 <input type="file" id="pickImg" accept="image/*" hidden>
 <input type="file" id="pickJson" accept="application/json" hidden>
 <div class="toast" id="toast"></div>
@@ -580,6 +619,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 const KEY='notizen:v3', OLD='notizen:v2';
 const $=s=>document.querySelector(s);
 let notes=[], events=[], folders=[], trash=[], curFolder=null, openId=null, showDone=false, editing=null;
+/* Ziele: 'm:2026-09' fuer den Monat, 'w:2026-09-07' (Montag) fuer die Woche */
+let ziele={};
 let undoStack=[];
 let cfg={sort:'updated',size:17,done:'hide',land:'DE',bundesland:''};
 const urls={};
@@ -619,17 +660,17 @@ function save(){
   clearTimeout(saveT);
   saveT=setTimeout(()=>{
     try{
-      localStorage.setItem(KEY,JSON.stringify({cfg,notes,events,trash,folders}));
+      localStorage.setItem(KEY,JSON.stringify({cfg,notes,events,trash,folders,ziele}));
       flash('Gespeichert '+new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}));
     }catch(e){ flash('Nicht gespeichert – Speicher voll?',4000); }
   },250);
 }
-function saveNow(){clearTimeout(saveT);try{localStorage.setItem(KEY,JSON.stringify({cfg,notes,events,trash,folders}));}catch(e){}}
+function saveNow(){clearTimeout(saveT);try{localStorage.setItem(KEY,JSON.stringify({cfg,notes,events,trash,folders,ziele}));}catch(e){}}
 
 function load(){
   let raw=null;
   try{ raw=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
-  if(raw){ notes=raw.notes||[]; events=raw.events||[]; folders=raw.folders||[]; trash=raw.trash||[]; cfg={...cfg,...(raw.cfg||{})}; }
+  if(raw){ notes=raw.notes||[]; events=raw.events||[]; folders=raw.folders||[]; trash=raw.trash||[]; ziele=raw.ziele||{}; cfg={...cfg,...(raw.cfg||{})}; }
   else{
     try{ const old=JSON.parse(localStorage.getItem(OLD)||'null');
       if(old&&old.length) notes=old.map(n=>({id:n.id,title:n.title||'',created:+n.id||Date.now(),
@@ -808,7 +849,7 @@ function renderNote(){
     <button data-add="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg>Zeitplan</button>
     <button data-add="text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M9 6v13M4 12h7"/></svg>Text</button>
   </div>`;
-  html+=`<p class="tipline">Enter beginnt einen neuen Eintrag, Umschalt+Enter macht einen Zeilenumbruch. Reihenfolge änderst du über den Greifpunkt rechts.</p>`;
+  html+=`<p class="tipline">In Listen beginnt Enter einen neuen Eintrag. In Textblöcken (über „+ Text“) macht Enter einen normalen Zeilenumbruch, der Text läuft weiter. Reihenfolge änderst du über den Greifpunkt rechts.</p>`;
   if(n.blocks.some(b=>b.type==='plan'))
     html+=`<div class="chipRow">
       <button class="chip" id="addPlan">+ Zeitpunkt</button>
@@ -938,6 +979,7 @@ function closeTop(){
   if(name==='note'){ saveNow(); renderList(); show('scrList'); }
   else if(name==='folder'){ curFolder=null; renderList(); show('scrList'); }
   else if(name==='pick'){ $('#folderPick').classList.remove('on'); }
+  else if(name==='zielpick'){ $('#zielPick').classList.remove('on'); zielKey=null; }
   else if(name==='cal'){
     if(calMode==='day'){ calMode='week'; evForm=null; renderCal(); }
     else if(calMode==='week'){ calMode='month'; renderCal(); }
@@ -1018,10 +1060,12 @@ $('#lines').addEventListener('keydown',e=>{
   const id=e.target.dataset.txt; if(!id) return;
   const n=note();
   const b=blockById(id);
-  // Enter -> neuer Eintrag (wie bei Apple Notes/Google Keep), kein Zeilenumbruch mehr.
-  // Shift+Enter bleibt fuer einen echten Umbruch innerhalb desselben Eintrags.
-  // Zeitplan-Eintraege (mit Uhrzeit) sind ausgenommen -- dort bleibt Enter ein Umbruch.
-  if(e.key==='Enter'&&!e.shiftKey&&b&&b.type==='line'){
+  // Enter legt in Listen einen neuen Eintrag an (wie bei Apple Notes/Google Keep).
+  // In reinen Textbloecken (ohne Kaestchen, ueber "+ Text" angelegt) macht Enter
+  // dagegen einen ganz normalen Zeilenumbruch -- fuer fortlaufenden Text. Auf dem
+  // Handy gibt es kein Shift+Enter, deshalb entscheidet die Blockart, nicht die Taste.
+  // Zeitplan-Eintraege (mit Uhrzeit) bleiben ebenfalls beim Zeilenumbruch.
+  if(e.key==='Enter'&&!e.shiftKey&&b&&b.type==='line'&&b.check!==null){
     e.preventDefault(); snap();
     const ta=e.target, pos=ta.selectionStart, vorher=ta.value.slice(0,pos), nachher=ta.value.slice(pos);
     b.text=vorher;
@@ -1300,7 +1344,7 @@ $('#optDone').addEventListener('click',e=>{const b=e.target.closest('[data-done]
   cfg.done=b.dataset.done;markOpts();saveNow();if(note())renderNote();});
 
 $('#exp').onclick=async()=>{
-  const out={version:4,exported:new Date().toISOString(),cfg,notes:[],events,folders,media:{}};
+  const out={version:5,exported:new Date().toISOString(),cfg,notes:[],events,folders,ziele,media:{}};
   out.notes=JSON.parse(JSON.stringify(notes));
   for(const n of notes) for(const b of n.blocks) if(b.mid){
     const blob=await mGet(b.mid); if(!blob) continue;
@@ -1329,6 +1373,7 @@ $('#pickJson').onchange=e=>{
       if(d.folders){ const fs=new Set(folders.map(x=>x.id)); d.folders.forEach(x=>{ if(!fs.has(x.id)) folders.push(x); }); }
       if(d.events){ const ev=new Set(events.map(x=>x.id)); d.events.forEach(x=>{ if(!ev.has(x.id)) events.push(x); }); }
       if(d.cfg) cfg={...cfg,...d.cfg};
+      if(d.ziele) ziele={...ziele,...d.ziele};
       saveNow(); renderList(); markOpts(); stats();
       toast(incoming.length+' Notizen geladen');
     }catch(err){ toast('Datei nicht lesbar'); }
@@ -1494,7 +1539,16 @@ function renderMonth(){
   $('#calBackTxt').textContent=calY;
   let cells='';
   const rows=Math.ceil((first+n)/7), total=rows*7;   // nur volle Wochen zeichnen
+  const ersterDesMonats=isoOf(calY,calM,1);
   for(let i=0;i<total;i++){
+    // Vor jeder Wochenzeile die schmale Spalte mit Kalenderwoche + Wochenziel
+    if(i%7===0){
+      const montag=addDays(ersterDesMonats,-first+i), wk='w:'+montag;
+      const hat=!!(ziele[wk]&&ziele[wk].trim());
+      cells+=`<button class="wkZiel${hat?' hat':''}" data-ziel="${wk}"`+
+        ` data-zieltitel="Wochenziel ab ${montag.slice(8,10)}.${montag.slice(5,7)}."`+
+        ` aria-label="Ziel für diese Woche"><b>${kw(montag)}</b><i></i></button>`;
+    }
     const dnum=i-first+1;
     if(dnum<1){ cells+=`<div class="cell out">${prev+dnum}</div>`; continue; }
     if(dnum>n){ cells+=`<div class="cell out">${dnum-n}</div>`; continue; }
@@ -1523,6 +1577,25 @@ function renderMonth(){
     legende='<p class="wlegend" style="margin-top:12px">Feiertage &amp; Ferien: Bundesland in den Einstellungen wählen.</p>';
   }
 
+  // Monatsziel als Karte ueber dem Raster
+  const mKey='m:'+calY+'-'+p2(calM+1), mText=(ziele[mKey]||'').trim();
+  const monatsKarte=`<button class="mZiel${mText?' hat':''}" data-ziel="${mKey}" data-zieltitel="Ziel für ${MON[calM]} ${calY}">
+      <span class="lbl">Ziel für ${MON[calM]}</span>
+      <span class="txt">${mText?esc(mText):'Antippen, um dir etwas für diesen Monat vorzunehmen'}</span></button>`;
+
+  // Wochenziele ausgeschrieben unter dem Raster -- in der schmalen Spalte
+  // ist nur Platz fuer einen Punkt, lesen will man sie aber trotzdem
+  const wochenZiele=[];
+  for(let r=0;r<rows;r++){
+    const montag=addDays(ersterDesMonats,-first+r*7), wk='w:'+montag;
+    const txt=(ziele[wk]||'').trim();
+    if(txt) wochenZiele.push({wk,montag,txt});
+  }
+  const zielListe=wochenZiele.length?
+    '<div class="zielListe"><h4>Wochenziele</h4>'+wochenZiele.map(w=>
+      `<button class="zielZeile" data-ziel="${w.wk}" data-zieltitel="Wochenziel ab ${w.montag.slice(8,10)}.${w.montag.slice(5,7)}.">`+
+      `<b>KW ${kw(w.montag)}</b><span>${esc(w.txt)}</span></button>`).join('')+'</div>':'';
+
   $('#calBody').innerHTML=`
     <div class="calTop">
       <button class="navBtn" data-mon="-1" aria-label="Monat zurück">‹</button>
@@ -1530,8 +1603,10 @@ function renderMonth(){
       <button class="navBtn" data-mon="1" aria-label="Monat vor">›</button>
     </div>
     ${switcher()}
-    <div class="wdrow">${WDL.map(w=>`<span>${w}</span>`).join('')}</div>
+    ${monatsKarte}
+    <div class="wdrow"><span></span>${WDL.map(w=>`<span>${w}</span>`).join('')}</div>
     <div class="monthGrid">${cells}</div>
+    ${zielListe}
     ${legende}`;
   mitFeiertagen([calY],renderMonth);
 }
@@ -1686,6 +1761,27 @@ function switcher(){
   return `<div class="viewSwitch">${b('year','Jahr')}${b('month','Monat')}${b('week','Woche')}</div>`;
 }
 
+/* ---- Ziele fuer Woche und Monat ---- */
+let zielKey=null;
+function oeffneZiel(key,titel){
+  zielKey=key;
+  $('#zielTitel').textContent=titel;
+  $('#zielText').value=ziele[key]||'';
+  $('#zielPick').classList.add('on');
+  pushLayer('zielpick');
+  setTimeout(()=>{ const t=$('#zielText'); if(t){ t.focus(); t.setSelectionRange(t.value.length,t.value.length); } },60);
+}
+function zielSchreiben(text){
+  if(!zielKey) return;
+  const t=(text||'').trim();
+  if(t) ziele[zielKey]=t; else delete ziele[zielKey];
+  saveNow(); goBack(); renderCal(); toast(t?'Ziel gespeichert':'Ziel entfernt');
+}
+$('#zielSave').onclick=()=>zielSchreiben($('#zielText').value);
+$('#zielDel').onclick=()=>zielSchreiben('');
+$('#zielCancel').onclick=()=>goBack();
+$('#zielPick').addEventListener('click',e=>{ if(e.target.closest('[data-zielclose]')) goBack(); });
+
 function renderCal(){
   if(calMode==='year') renderYear();
   else if(calMode==='month') renderMonth();
@@ -1704,6 +1800,8 @@ $('#calToday').onclick=()=>{
   renderCal();
 };
 $('#calBody').addEventListener('click',e=>{
+  const zg=e.target.closest('[data-ziel]');
+  if(zg){ oeffneZiel(zg.dataset.ziel, zg.dataset.zieltitel||'Ziel'); return; }
   const v=e.target.closest('[data-view]');
   if(v){ const m=v.dataset.view;
     if(m===calMode) return;
