@@ -97,8 +97,9 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
   border:1px solid var(--line);border-radius:11px;padding:10px 12px;margin-bottom:7px}
 .zielZeile b{flex:0 0 auto;color:var(--mint);font-size:12px;font-weight:700;padding-top:2px}
 .zielZeile span{flex:1;min-width:0;font-size:14px;white-space:pre-wrap}
-#zielText{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+#zielText,#enterTest{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;
   color:var(--text);font:inherit;font-size:15px;padding:10px;min-height:120px;resize:vertical}
+#enterTest{min-height:70px;margin-top:8px}
 .cell{aspect-ratio:1;border:1.5px solid transparent;border-radius:11px;background:var(--panel);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
   font-size:15px;color:var(--text)}
@@ -537,6 +538,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
     <button class="wide" id="pushOn">Erinnerungen erlauben</button>
     <button class="wide" id="pushTest">Testbenachrichtigung</button>
 
+    <h4>Enter-Taste prüfen</h4>
+    <p class="stat" id="enterStat">Tippe unten Enter — einmal mit eingeschalteter Großschreibung (⇧), einmal ohne. Hier steht dann, was die App von deiner Tastatur mitbekommt.</p>
+    <textarea id="enterTest" placeholder="Hier Enter drücken …"></textarea>
+
     <h4>Sicherung</h4>
     <button class="wide" id="exp">Sicherung exportieren</button>
     <button class="wide" id="imp">Sicherung laden</button>
@@ -849,7 +854,7 @@ function renderNote(){
     <button data-add="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg>Zeitplan</button>
     <button data-add="text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M9 6v13M4 12h7"/></svg>Text</button>
   </div>`;
-  html+=`<p class="tipline">In Listen beginnt Enter einen neuen Eintrag. In Textblöcken (über „+ Text“) macht Enter einen normalen Zeilenumbruch, der Text läuft weiter. Reihenfolge änderst du über den Greifpunkt rechts.</p>`;
+  html+=`<p class="tipline">Enter beginnt einen neuen Eintrag. Für eine neue Zeile im selben Eintrag: Großschreibung (⇧) einschalten und dann Enter. Reihenfolge änderst du über den Greifpunkt rechts.</p>`;
   if(n.blocks.some(b=>b.type==='plan'))
     html+=`<div class="chipRow">
       <button class="chip" id="addPlan">+ Zeitpunkt</button>
@@ -1060,16 +1065,20 @@ $('#lines').addEventListener('keydown',e=>{
   const id=e.target.dataset.txt; if(!id) return;
   const n=note();
   const b=blockById(id);
-  // Enter legt in Listen einen neuen Eintrag an (wie bei Apple Notes/Google Keep).
-  // In reinen Textbloecken (ohne Kaestchen, ueber "+ Text" angelegt) macht Enter
-  // dagegen einen ganz normalen Zeilenumbruch -- fuer fortlaufenden Text. Auf dem
-  // Handy gibt es kein Shift+Enter, deshalb entscheidet die Blockart, nicht die Taste.
-  // Zeitplan-Eintraege (mit Uhrzeit) bleiben ebenfalls beim Zeilenumbruch.
-  if(e.key==='Enter'&&!e.shiftKey&&b&&b.type==='line'&&b.check!==null){
+  // Enter entscheidet ueber die Umschalttaste, in allen Eintragsarten gleich:
+  //   Umschalt/Grossschreibung an + Enter -> Zeilenumbruch im selben Eintrag
+  //   ohne Umschalt + Enter               -> neuer Eintrag darunter
+  // Gilt fuer Listen, reine Textbloecke und Zeitplan-Eintraege.
+  if(e.key==='Enter'&&!e.shiftKey&&b&&(b.type==='line'||b.type==='plan')){
     e.preventDefault(); snap();
     const ta=e.target, pos=ta.selectionStart, vorher=ta.value.slice(0,pos), nachher=ta.value.slice(pos);
     b.text=vorher;
-    const neu={id:uid(),type:'line',text:nachher,check:b.check===null?null:false};
+    const neu={id:uid(),type:b.type,text:nachher,check:b.check===null?null:false};
+    // Zeitplan: der neue Eintrag schliesst zeitlich an den vorherigen an
+    if(b.type==='plan'){
+      neu.time=b.end||plus(b.time||'08:00',30);
+      if(usesEnd()) neu.end=plus(neu.time,30);
+    }
     const i=n.blocks.findIndex(x=>x.id===id);
     n.blocks.splice(i+1,0,neu);
     touch(); renderNote();
@@ -1777,6 +1786,16 @@ function zielSchreiben(text){
   if(t) ziele[zielKey]=t; else delete ziele[zielKey];
   saveNow(); goBack(); renderCal(); toast(t?'Ziel gespeichert':'Ziel entfernt');
 }
+/* Zeigt an, ob die Tastatur die Umschalttaste ueberhaupt meldet --
+   sonst raet man nur, warum Enter sich anders verhaelt als erwartet. */
+$('#enterTest').addEventListener('keydown',e=>{
+  if(e.key!=='Enter') return;
+  const el=$('#enterStat'); if(!el) return;
+  el.innerHTML=e.shiftKey
+    ? '<b style="color:var(--mint)">Umschalt wird erkannt.</b> In einer Notiz macht Enter damit eine neue Zeile im selben Eintrag.'
+    : '<b>Ohne Umschalt.</b> In einer Notiz legt Enter damit einen neuen Eintrag an.';
+});
+
 $('#zielSave').onclick=()=>zielSchreiben($('#zielText').value);
 $('#zielDel').onclick=()=>zielSchreiben('');
 $('#zielCancel').onclick=()=>goBack();
