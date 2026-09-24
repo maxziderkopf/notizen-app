@@ -47,13 +47,58 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 .burger i:nth-child(2){width:12px}
 .hero{position:relative;display:flex;align-items:center;gap:6px;
   background:linear-gradient(150deg,#182238 0%,#111726 55%,#0E1420 100%);
-  border:1px solid #23304a;border-radius:20px;
-  padding:18px 8px 18px 18px;margin:12px 0 16px;overflow:hidden}
+  border:1px solid #23304a;border-radius:16px;
+  padding:11px 8px 11px 14px;margin:10px 0 10px;overflow:hidden}
 .heroTxt{flex:1;min-width:0;z-index:1}
-.heroTxt h1{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:0}
-.heroTxt p{margin:6px 0 0;color:var(--dim);font-size:13px}
-.art{width:134px;height:106px;flex:0 0 auto;margin:-8px -6px -8px 0}
-@media (max-width:360px){.art{width:112px}.heroTxt h1{font-size:26px}}
+.heroTxt h1{font-size:22px;font-weight:800;letter-spacing:-.02em;margin:0}
+.heroTxt p{margin:3px 0 0;color:var(--dim);font-size:12px}
+.art{width:92px;height:72px;flex:0 0 auto;margin:-4px -4px -4px 0}
+@media (max-width:360px){.art{width:78px}.heroTxt h1{font-size:20px}}
+
+/* Zwei Kacheln direkt unter dem Kopfbereich: Kalender | Habits */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 14px}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:5px;width:100%;text-align:left;
+  background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:11px 12px}
+.tile:active{background:var(--panel2)}
+.tile svg{width:21px;height:21px;color:var(--blue)}
+.tile b{font-size:14.5px;font-weight:700}
+.tile em{font-style:normal;font-size:11.5px;color:var(--dim);line-height:1.3}
+.tile .bar2{width:100%;height:5px;border-radius:99px;background:var(--panel2);overflow:hidden;margin-top:1px}
+.tile .bar2 i{display:block;height:100%;background:var(--blue);border-radius:99px;transition:width .25s}
+
+/* Habit-Tracker */
+.hbKopf{margin:4px 0 14px}
+.hbKopf h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0}
+.hbKopf small{display:block;font-size:12px;color:var(--dim);margin-top:3px}
+.hbBalken{height:7px;border-radius:99px;background:var(--panel2);overflow:hidden;margin-top:9px}
+.hbBalken i{display:block;height:100%;background:var(--blue);border-radius:99px;transition:width .25s}
+.hbNav{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+.hbNav h3{flex:1;margin:0;font-size:15px;font-weight:700;text-align:center}
+.hbNav h3 small{display:block;font-size:11.5px;font-weight:400;color:var(--dim);margin-top:2px}
+.hbZeile{display:grid;grid-template-columns:1fr repeat(7,26px);gap:4px;align-items:center}
+.hbTage{margin-bottom:6px}
+.hbTage span{text-align:center;font-size:10px;color:var(--dimmer);line-height:1.25}
+.hbTage span b{display:block;font-size:12px;font-weight:700;color:var(--dim)}
+.hbTage span.heute b{color:var(--blue)}
+.hbListe{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px 8px}
+.hbListe .hbZeile{padding:5px 0;border-bottom:1px solid var(--line)}
+.hbListe .hbZeile:last-child{border-bottom:0}
+.hbName{text-align:left;min-width:0;padding:2px 4px 2px 0}
+.hbName b{display:block;font-size:13px;font-weight:600;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hbName small{display:block;font-size:10.5px;color:var(--dimmer);margin-top:1px}
+.hbName small.voll{color:var(--mint)}
+.hbBox{width:26px;height:26px;border-radius:9px;border:1.5px solid var(--line);background:var(--panel2);
+  margin:0 auto;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;line-height:1}
+.hbBox.heute{border-color:rgba(62,123,250,.55)}
+.hbBox.on{background:var(--blue);border-color:var(--blue)}
+.hbBox.aus{opacity:.3}
+.hbWoche{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:14px 0 0}
+.hbWoche span{font-size:12px;color:var(--dim)}
+.hbWoche b{font-size:13px}
+#habName,#habZiel{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+  color:var(--text);font:inherit;font-size:15px;padding:10px;color-scheme:dark}
+.hbLabel{display:block;font-size:12px;color:var(--dimmer);margin:12px 0 5px}
+.hbLabel:first-of-type{margin-top:0}
 .burger.cal{color:var(--dim)}
 .burger.cal svg{width:21px;height:21px}
 .calTop{display:flex;align-items:center;gap:10px;margin:16px 0 14px}
@@ -437,6 +482,19 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
         </g>
       </svg>
     </div>
+    <div class="tiles">
+      <button class="tile" id="tileCal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+          <rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        <b>Kalender</b><em id="tileCalTxt">—</em>
+      </button>
+      <button class="tile" id="tileHab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="17" rx="3"/><path d="M7.5 12.5l2.5 2.5 5-5"/></svg>
+        <b>Habits</b><em id="tileHabTxt">—</em>
+        <span class="bar2"><i id="tileHabBar" style="width:0%"></i></span>
+      </button>
+    </div>
     <div class="search">🔍<input id="q" placeholder="Suchen" autocomplete="off"></div>
     <div id="list"></div>
   </div>
@@ -460,6 +518,18 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
     <p class="date" id="date"></p>
     <div id="lines"></div>
   </div>
+</section>
+
+<!-- Habit-Tracker -->
+<section class="screen" id="scrHabits">
+  <div class="bar">
+    <button class="back" id="habBack">‹ Notizen</button>
+    <span style="display:flex;gap:14px;align-items:center">
+      <button class="act" id="habToday">Heute</button>
+      <button class="act" id="habAdd">+ Habit</button>
+    </span>
+  </div>
+  <div class="body" id="habBody"></div>
 </section>
 
 <!-- Kalender -->
@@ -594,6 +664,22 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
   </div>
 </div>
 
+<div class="pick" id="habPick">
+  <div class="veil" data-habclose></div>
+  <div class="pickBox">
+    <h3 id="habTitel">Habit</h3>
+    <label class="hbLabel">Name</label>
+    <input id="habName" type="text" placeholder="z. B. Sport machen" autocomplete="off">
+    <label class="hbLabel">Ziel pro Monat (an wie vielen Tagen?)</label>
+    <input id="habZiel" type="number" min="1" max="31" step="1" value="25">
+    <div style="margin-top:14px">
+      <button id="habSave" style="justify-content:center;border-color:var(--blue);color:var(--blue)">Speichern</button>
+      <button id="habDel" style="justify-content:center;border-color:rgba(229,100,106,.4);color:var(--red)">Löschen</button>
+      <button id="habCancel" style="justify-content:center;margin-bottom:0">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
 <div class="pick" id="zielPick">
   <div class="veil" data-zielclose></div>
   <div class="pickBox">
@@ -624,6 +710,9 @@ const $=s=>document.querySelector(s);
 let notes=[], events=[], folders=[], trash=[], curFolder=null, openId=null, showDone=false, editing=null;
 /* Ziele: 'm:2026-09' fuer den Monat, 'w:2026-09-07' (Montag) fuer die Woche */
 let ziele={};
+/* Habit-Tracker: habits = [{id,name,ziel}] (ziel = Tage pro Monat),
+   habitLog = { 'YYYY-MM-DD': [habitId, ...] } -- nur erledigte Tage stehen drin */
+let habits=[], habitLog={};
 let undoStack=[];
 let cfg={sort:'updated',size:17,done:'hide',land:'DE',bundesland:''};
 const urls={};
@@ -663,17 +752,17 @@ function save(){
   clearTimeout(saveT);
   saveT=setTimeout(()=>{
     try{
-      localStorage.setItem(KEY,JSON.stringify({cfg,notes,events,trash,folders,ziele}));
+      localStorage.setItem(KEY,JSON.stringify({cfg,notes,events,trash,folders,ziele,habits,habitLog}));
       flash('Gespeichert '+new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}));
     }catch(e){ flash('Nicht gespeichert – Speicher voll?',4000); }
   },250);
 }
-function saveNow(){clearTimeout(saveT);try{localStorage.setItem(KEY,JSON.stringify({cfg,notes,events,trash,folders,ziele}));}catch(e){}}
+function saveNow(){clearTimeout(saveT);try{localStorage.setItem(KEY,JSON.stringify({cfg,notes,events,trash,folders,ziele,habits,habitLog}));}catch(e){}}
 
 function load(){
   let raw=null;
   try{ raw=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
-  if(raw){ notes=raw.notes||[]; events=raw.events||[]; folders=raw.folders||[]; trash=raw.trash||[]; ziele=raw.ziele||{}; normalisiereZiele(); cfg={...cfg,...(raw.cfg||{})}; }
+  if(raw){ notes=raw.notes||[]; events=raw.events||[]; folders=raw.folders||[]; trash=raw.trash||[]; ziele=raw.ziele||{}; normalisiereZiele(); habits=raw.habits||[]; habitLog=raw.habitLog||{}; cfg={...cfg,...(raw.cfg||{})}; }
   else{
     try{ const old=JSON.parse(localStorage.getItem(OLD)||'null');
       if(old&&old.length) notes=old.map(n=>({id:n.id,title:n.title||'',created:+n.id||Date.now(),
@@ -757,6 +846,7 @@ function renderList(){
     }).join('')+'</div>';
   }
   $('#list').innerHTML=html;
+  kachelnAktualisieren();
 }
 function openFolder(id){ curFolder=id; renderList(); window.scrollTo(0,0); pushLayer('folder'); }
 
@@ -986,6 +1076,8 @@ function closeTop(){
   else if(name==='folder'){ curFolder=null; renderList(); show('scrList'); }
   else if(name==='pick'){ $('#folderPick').classList.remove('on'); }
   else if(name==='zielpick'){ $('#zielPick').classList.remove('on'); zielKey=null; }
+  else if(name==='habits'){ renderList(); show('scrList'); }
+  else if(name==='habpick'){ $('#habPick').classList.remove('on'); habEdit=null; }
   else if(name==='cal'){
     if(calMode==='day'){ calMode='week'; evForm=null; renderCal(); }
     else if(calMode==='week'){ calMode='month'; renderCal(); }
@@ -1373,7 +1465,7 @@ $('#optDone').addEventListener('click',e=>{const b=e.target.closest('[data-done]
   cfg.done=b.dataset.done;markOpts();saveNow();if(note())renderNote();});
 
 $('#exp').onclick=async()=>{
-  const out={version:5,exported:new Date().toISOString(),cfg,notes:[],events,folders,ziele,media:{}};
+  const out={version:6,exported:new Date().toISOString(),cfg,notes:[],events,folders,ziele,habits,habitLog,media:{}};
   out.notes=JSON.parse(JSON.stringify(notes));
   for(const n of notes) for(const b of n.blocks) if(b.mid){
     const blob=await mGet(b.mid); if(!blob) continue;
@@ -1403,6 +1495,10 @@ $('#pickJson').onchange=e=>{
       if(d.events){ const ev=new Set(events.map(x=>x.id)); d.events.forEach(x=>{ if(!ev.has(x.id)) events.push(x); }); }
       if(d.cfg) cfg={...cfg,...d.cfg};
       if(d.ziele){ ziele={...ziele,...d.ziele}; normalisiereZiele(); }
+      if(Array.isArray(d.habits)){ const hs=new Set(habits.map(h=>h.id));
+        d.habits.forEach(h=>{ if(!hs.has(h.id)) habits.push(h); }); }
+      if(d.habitLog) for(const [tag,ids] of Object.entries(d.habitLog))
+        habitLog[tag]=[...new Set([...(habitLog[tag]||[]),...(ids||[])])];
       saveNow(); renderList(); markOpts(); stats();
       toast(incoming.length+' Notizen geladen');
     }catch(err){ toast('Datei nicht lesbar'); }
@@ -1797,6 +1893,140 @@ function switcher(){
   return `<div class="viewSwitch">${b('year','Jahr')}${b('month','Monat')}${b('week','Woche')}</div>`;
 }
 
+/* =========================================================
+   Habit-Tracker -- Tabelle aus der Vorlage, aber wochenweise,
+   weil 31 Spalten auf einem Handy nicht lesbar sind.
+========================================================= */
+let habMontag=null, habEdit=null;
+
+const habTage=iso=>habitLog[iso]||[];
+function habAn(iso,id){ return habTage(iso).includes(id); }
+function habToggle(iso,id){
+  const liste=habTage(iso).slice();
+  const i=liste.indexOf(id);
+  if(i>=0) liste.splice(i,1); else liste.push(id);
+  if(liste.length) habitLog[iso]=liste; else delete habitLog[iso];
+  saveNow(); renderHabits();
+}
+/* Wie oft wurde ein Habit in diesem Monat erledigt? */
+function habMonat(id,y,m){
+  const prefix=y+'-'+p2(m+1);
+  let n=0;
+  for(const [tag,ids] of Object.entries(habitLog))
+    if(tag.startsWith(prefix)&&ids.includes(id)) n++;
+  return n;
+}
+/* Erledigte Haken in einem Zeitraum (beide Grenzen einschliesslich) */
+function habSumme(vonIso,bisIso){
+  let n=0;
+  for(const [tag,ids] of Object.entries(habitLog))
+    if(tag>=vonIso&&tag<=bisIso) n+=ids.filter(id=>habits.some(h=>h.id===id)).length;
+  return n;
+}
+function renderHabits(){
+  if(!habMontag) habMontag=mondayOf(todayIso());
+  const tage=[...Array(7)].map((_,i)=>addDays(habMontag,i));
+  const heute=todayIso();
+  const [jy,jm]=habMontag.split('-').map(Number);
+  const y=jy, m=jm-1;
+  const tageImMonat=daysIn(y,m), monatsErster=isoOf(y,m,1), monatsLetzter=isoOf(y,m,tageImMonat);
+
+  if(!habits.length){
+    $('#habBody').innerHTML=`
+      <div class="hbKopf"><h2>Habits</h2>
+        <small>Trag deine täglichen Gewohnheiten ein und hak sie jeden Tag ab.</small></div>
+      <div class="empty">Noch keine Gewohnheit angelegt.<br>Tipp oben rechts auf „+ Habit".</div>`;
+    return;
+  }
+
+  // Monatsbilanz: alle Haken gegen alle moeglichen (Habits x Tage im Monat)
+  const mDone=habSumme(monatsErster,monatsLetzter), mZiel=habits.length*tageImMonat;
+  const mProz=mZiel?Math.round(mDone/mZiel*100):0;
+  // Wochenbilanz
+  const wDone=habSumme(tage[0],tage[6]), wZiel=habits.length*7;
+  const wProz=wZiel?Math.round(wDone/wZiel*100):0;
+
+  const kopfTage=tage.map(iso=>{
+    const [,,dd]=iso.split('-');
+    return `<span class="${iso===heute?'heute':''}">${dayName(iso)}<b>${+dd}</b></span>`;
+  }).join('');
+
+  const zeilen=habits.map(h=>{
+    const erledigt=habMonat(h.id,y,m), ziel=h.ziel||tageImMonat;
+    const kaestchen=tage.map(iso=>{
+      const an=habAn(iso,h.id), zukunft=iso>heute;
+      return `<button class="hbBox${an?' on':''}${iso===heute?' heute':''}${zukunft?' aus':''}"`+
+        ` data-hb="${h.id}|${iso}" aria-label="${esc(h.name)} am ${iso}${an?', erledigt':''}">${an?'✓':''}</button>`;
+    }).join('');
+    return `<div class="hbZeile">
+      <button class="hbName" data-habedit="${h.id}"><b>${esc(h.name)}</b>
+        <small class="${erledigt>=ziel?'voll':''}">${erledigt}/${ziel} im Monat</small></button>
+      ${kaestchen}</div>`;
+  }).join('');
+
+  $('#habBody').innerHTML=`
+    <div class="hbKopf">
+      <h2>${MON[m]} ${y}</h2>
+      <small>${mDone} von ${mZiel} Haken · ${mProz} %</small>
+      <div class="hbBalken"><i style="width:${mProz}%"></i></div>
+    </div>
+    <div class="hbNav">
+      <button class="navBtn" data-habweek="-1" aria-label="Woche zurück">‹</button>
+      <h3>KW ${kw(habMontag)}<small>${tage[0].slice(8,10)}.${tage[0].slice(5,7)}. – ${tage[6].slice(8,10)}.${tage[6].slice(5,7)}.</small></h3>
+      <button class="navBtn" data-habweek="1" aria-label="Woche vor">›</button>
+    </div>
+    <div class="hbZeile hbTage"><span></span>${kopfTage}</div>
+    <div class="hbListe">${zeilen}</div>
+    <div class="hbWoche"><span>Diese Woche</span><b>${wDone}/${wZiel} · ${wProz} %</b></div>
+    <div class="hbBalken"><i style="width:${wProz}%"></i></div>
+    <p class="wlegend" style="margin-top:12px">Tipp auf ein Kästchen hakt den Tag ab · Tipp auf den Namen bearbeitet die Gewohnheit</p>`;
+}
+function openHabits(){ habMontag=mondayOf(todayIso()); show('scrHabits'); renderHabits(); pushLayer('habits'); }
+
+function oeffneHabit(id){
+  habEdit=id||null;
+  const h=habits.find(x=>x.id===id);
+  $('#habTitel').textContent=h?'Gewohnheit bearbeiten':'Neue Gewohnheit';
+  $('#habName').value=h?h.name:'';
+  $('#habZiel').value=h?(h.ziel||25):25;
+  $('#habDel').style.display=h?'flex':'none';
+  $('#habPick').classList.add('on');
+  pushLayer('habpick');
+  setTimeout(()=>{ const f=$('#habName'); if(f) f.focus(); },60);
+}
+$('#habSave').onclick=()=>{
+  const name=$('#habName').value.trim();
+  if(!name) return toast('Bitte einen Namen eintragen');
+  const ziel=Math.min(31,Math.max(1,+$('#habZiel').value||25));
+  const h=habits.find(x=>x.id===habEdit);
+  if(h){ h.name=name; h.ziel=ziel; } else habits.push({id:uid(),name,ziel});
+  saveNow(); goBack(); renderHabits(); renderList();
+  toast(h?'Gewohnheit gespeichert':'Gewohnheit angelegt');
+};
+$('#habDel').onclick=()=>{
+  if(!habEdit) return;
+  if(!confirm('Diese Gewohnheit mit allen Haken löschen?')) return;
+  habits=habits.filter(x=>x.id!==habEdit);
+  for(const [tag,ids] of Object.entries(habitLog)){
+    const rest=ids.filter(id=>id!==habEdit);
+    if(rest.length) habitLog[tag]=rest; else delete habitLog[tag];
+  }
+  saveNow(); goBack(); renderHabits(); renderList(); toast('Gewohnheit gelöscht');
+};
+$('#habCancel').onclick=()=>goBack();
+$('#habPick').addEventListener('click',e=>{ if(e.target.closest('[data-habclose]')) goBack(); });
+$('#habBack').onclick=goBack;
+$('#habAdd').onclick=()=>oeffneHabit(null);
+$('#habToday').onclick=()=>{ habMontag=mondayOf(todayIso()); renderHabits(); };
+$('#habBody').addEventListener('click',e=>{
+  const box=e.target.closest('[data-hb]');
+  if(box){ const [id,iso]=box.dataset.hb.split('|'); habToggle(iso,id); return; }
+  const nam=e.target.closest('[data-habedit]');
+  if(nam){ oeffneHabit(nam.dataset.habedit); return; }
+  const nav=e.target.closest('[data-habweek]');
+  if(nav){ habMontag=addDays(habMontag,7*(+nav.dataset.habweek)); renderHabits(); return; }
+});
+
 /* ---- Ziele fuer Woche und Monat ---- */
 let zielKey=null;
 /* Ein Ziel-Eintrag ist eine Liste von Punkten {id,text,done}. Aeltere Daten
@@ -1858,6 +2088,20 @@ function openCal(){
   show('scrCal'); renderCal(); pushLayer('cal');
 }
 $('#openCal').onclick=openCal;
+$('#tileCal').onclick=openCal;
+$('#tileHab').onclick=openHabits;
+/* Kurzstatus auf den beiden Kacheln der Startseite */
+function kachelnAktualisieren(){
+  const heute=todayIso(), n=evOf(heute).length;
+  const cal=$('#tileCalTxt');
+  if(cal) cal.textContent=n?(n===1?'1 Termin heute':n+' Termine heute'):'Nichts heute';
+  const txt=$('#tileHabTxt'), bar=$('#tileHabBar');
+  if(!txt||!bar) return;
+  if(!habits.length){ txt.textContent='Noch keine angelegt'; bar.style.width='0%'; return; }
+  const erledigt=habTage(heute).filter(id=>habits.some(h=>h.id===id)).length;
+  txt.textContent=erledigt+' von '+habits.length+' heute';
+  bar.style.width=Math.round(erledigt/habits.length*100)+'%';
+}
 $('#calBack').onclick=goBack;
 $('#calToday').onclick=()=>{
   const n=new Date(); calY=n.getFullYear(); calM=n.getMonth(); calD=todayIso();
