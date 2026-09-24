@@ -56,15 +56,35 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 @media (max-width:360px){.art{width:78px}.heroTxt h1{font-size:20px}}
 
 /* Zwei Kacheln direkt unter dem Kopfbereich: Kalender | Habits */
-.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 14px}
-.tile{display:flex;flex-direction:column;align-items:flex-start;gap:5px;width:100%;text-align:left;
-  background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:11px 12px}
-.tile:active{background:var(--panel2)}
-.tile svg{width:21px;height:21px;color:var(--blue)}
-.tile b{font-size:14.5px;font-weight:700}
-.tile em{font-style:normal;font-size:11.5px;color:var(--dim);line-height:1.3}
-.tile .bar2{width:100%;height:5px;border-radius:99px;background:var(--panel2);overflow:hidden;margin-top:1px}
-.tile .bar2 i{display:block;height:100%;background:var(--blue);border-radius:99px;transition:width .25s}
+/* Grosse Karten auf der Startseite: Woche und Habits ohne Umweg sichtbar */
+.homeCard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:11px 12px;margin:0 0 12px}
+.homeKopf{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.homeKopf .lbl{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--dimmer);font-weight:600}
+.homeMehr{font-size:12.5px;color:var(--blue);font-weight:600;padding:2px 0 2px 8px}
+.wkChips{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:10px}
+.wkChip{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0 5px;border-radius:10px;
+  background:var(--panel2);border:1.5px solid transparent}
+.wkChip span{font-size:9.5px;color:var(--dimmer);line-height:1}
+.wkChip b{font-size:13px;font-weight:700;line-height:1.1}
+.wkChip i{width:4px;height:4px;border-radius:50%;background:var(--mint);opacity:0}
+.wkChip.hat i{opacity:1}
+.wkChip.heute{border-color:var(--blue)}
+.wkChip.heute b{color:var(--blue)}
+.evZeile{display:flex;gap:10px;align-items:baseline;width:100%;text-align:left;padding:6px 2px;
+  border-top:1px solid var(--line)}
+.evZeile .when{flex:0 0 74px;font-size:11.5px;color:var(--blue);font-weight:700;font-variant-numeric:tabular-nums}
+.evZeile .t{flex:1;min-width:0;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.homeLeer{font-size:13px;color:var(--dimmer);padding:4px 2px 2px}
+.homeMini{display:flex;align-items:flex-end;justify-content:space-around;gap:3px;height:42px;margin-bottom:10px}
+.homeMini i{width:13px;flex:none;background:var(--blue);border-radius:4px 4px 0 0;min-height:3px;opacity:.5}
+.homeMini i.heute{opacity:1;background:var(--mint)}
+.hbHeute{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:6px 2px;
+  border-top:1px solid var(--line)}
+.hbHeute .box{flex:0 0 auto;width:24px;height:24px;border-radius:8px;border:1.5px solid var(--line);
+  background:var(--panel2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px}
+.hbHeute.on .box{background:var(--blue);border-color:var(--blue)}
+.hbHeute .t{flex:1;min-width:0;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbHeute.on .t{color:var(--dim);text-decoration:line-through}
 
 /* Habit-Tracker */
 .hbKopf{margin:4px 0 14px}
@@ -92,6 +112,25 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 .hbBox.heute{border-color:rgba(62,123,250,.55)}
 .hbBox.on{background:var(--blue);border-color:var(--blue)}
 .hbBox.aus{opacity:.3}
+/* Verlauf: ein Balken je Tag des Monats */
+.hbChart{display:flex;align-items:flex-end;gap:2px;height:78px;background:var(--panel);
+  border:1px solid var(--line);border-radius:12px;padding:8px 8px 6px;margin-bottom:6px}
+.hbChart i{flex:1;background:var(--blue);border-radius:3px 3px 0 0;min-height:2px;opacity:.5}
+.hbChart i.woche{opacity:.95}
+.hbChart i.heute{background:var(--mint);opacity:1}
+.hbChart i.aus{background:var(--line);opacity:.5}
+.hbTrend{font-size:12px;color:var(--dim);margin:0 2px 14px}
+.hbTrend b.hoch{color:var(--mint)}
+.hbTrend b.runter{color:var(--red)}
+/* Erledigt / Ziel / Offen unter den Tagen, wie in der Vorlage */
+.hbStat{padding:2px 0}
+.hbStat span{text-align:center;font-size:10.5px;color:var(--dim);font-variant-numeric:tabular-nums}
+.hbStat .lbl{text-align:left;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--dimmer)}
+.hbStat.gruen span{color:var(--mint)}
+.hbVorschlaege{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.hbVorschlag{border:1px solid var(--line);background:var(--panel);border-radius:999px;
+  padding:9px 14px;font-size:13px;color:var(--text)}
+.hbVorschlag:active{border-color:var(--blue);color:var(--blue)}
 .hbWoche{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:14px 0 0}
 .hbWoche span{font-size:12px;color:var(--dim)}
 .hbWoche b{font-size:13px}
@@ -482,18 +521,17 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
         </g>
       </svg>
     </div>
-    <div class="tiles">
-      <button class="tile" id="tileCal">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
-          <rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
-        <b>Kalender</b><em id="tileCalTxt">—</em>
-      </button>
-      <button class="tile" id="tileHab">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="4" width="18" height="17" rx="3"/><path d="M7.5 12.5l2.5 2.5 5-5"/></svg>
-        <b>Habits</b><em id="tileHabTxt">—</em>
-        <span class="bar2"><i id="tileHabBar" style="width:0%"></i></span>
-      </button>
+    <div class="homeCard" id="cardCal">
+      <div class="homeKopf"><span class="lbl">Diese Woche</span>
+        <button class="homeMehr" id="calMehr">Kalender ›</button></div>
+      <div class="wkChips" id="wkChips"></div>
+      <div id="wkEvents"></div>
+    </div>
+    <div class="homeCard" id="cardHab">
+      <div class="homeKopf"><span class="lbl" id="habKartenLbl">Habits heute</span>
+        <button class="homeMehr" id="habMehr">Alle ›</button></div>
+      <div class="homeMini" id="habMini"></div>
+      <div id="habHeuteListe"></div>
     </div>
     <div class="search">🔍<input id="q" placeholder="Suchen" autocomplete="off"></div>
     <div id="list"></div>
@@ -1898,6 +1936,14 @@ function switcher(){
    weil 31 Spalten auf einem Handy nicht lesbar sind.
 ========================================================= */
 let habMontag=null, habEdit=null;
+/* Startvorschlaege, damit der erste Blick nicht auf eine leere Seite faellt */
+const HAB_VORSCHLAEGE=[
+  {name:'Um 06:00 aufstehen',ziel:25},{name:'Sport machen',ziel:26},
+  {name:'20 Seiten lesen',ziel:22},{name:'Kein Alkohol',ziel:27},
+  {name:'Social Media Detox',ziel:23},{name:'Tagebuch schreiben',ziel:28},
+  {name:'Kalt duschen',ziel:28},{name:'Gesund essen',ziel:24},
+  {name:'Budget prüfen',ziel:23}
+];
 
 const habTage=iso=>habitLog[iso]||[];
 function habAn(iso,id){ return habTage(iso).includes(id); }
@@ -1906,7 +1952,9 @@ function habToggle(iso,id){
   const i=liste.indexOf(id);
   if(i>=0) liste.splice(i,1); else liste.push(id);
   if(liste.length) habitLog[iso]=liste; else delete habitLog[iso];
-  saveNow(); renderHabits();
+  saveNow();
+  if($('#scrHabits').classList.contains('on')) renderHabits();
+  if($('#scrList').classList.contains('on')) kachelnAktualisieren();
 }
 /* Wie oft wurde ein Habit in diesem Monat erledigt? */
 function habMonat(id,y,m){
@@ -1932,10 +1980,15 @@ function renderHabits(){
   const tageImMonat=daysIn(y,m), monatsErster=isoOf(y,m,1), monatsLetzter=isoOf(y,m,tageImMonat);
 
   if(!habits.length){
+    // Leerer Start soll nicht leer wirken -- Vorschlaege zum Antippen
     $('#habBody').innerHTML=`
-      <div class="hbKopf"><h2>Habits</h2>
-        <small>Trag deine täglichen Gewohnheiten ein und hak sie jeden Tag ab.</small></div>
-      <div class="empty">Noch keine Gewohnheit angelegt.<br>Tipp oben rechts auf „+ Habit".</div>`;
+      <div class="hbKopf"><h2>Daily Habits</h2>
+        <small>Trag deine täglichen Gewohnheiten ein und hak sie jeden Tag ab.
+        Unten siehst du dann, wie konsequent du warst.</small></div>
+      <p class="wlegend" style="margin:0 2px 2px">Zum Starten antippen — ändern kannst du alles später:</p>
+      <div class="hbVorschlaege">${HAB_VORSCHLAEGE.map((v,i)=>
+        `<button class="hbVorschlag" data-habneu="${i}">+ ${esc(v.name)}</button>`).join('')}</div>
+      <p class="wlegend" style="margin-top:16px">Oder oben rechts über „+ Habit" eine eigene anlegen.</p>`;
     return;
   }
 
@@ -1964,12 +2017,58 @@ function renderHabits(){
       ${kaestchen}</div>`;
   }).join('');
 
+  // Verlauf: ein Balken je Tag des Monats -- zeigt, ob es aufwaerts geht
+  const balken=[...Array(tageImMonat)].map((_,i)=>{
+    const iso=isoOf(y,m,i+1);
+    const d=habTage(iso).filter(id=>habits.some(h=>h.id===id)).length;
+    const pct=Math.round(d/habits.length*100);
+    const cls=[iso===heute?'heute':'', (iso>=tage[0]&&iso<=tage[6])?'woche':'', iso>heute?'aus':'']
+      .filter(Boolean).join(' ');
+    return `<i class="${cls}" style="height:${Math.max(pct,3)}%" title="${i+1}. ${MON[m]}: ${pct} %"></i>`;
+  }).join('');
+
+  // Vergleich mit der Vorwoche -- nur gleich lange Zeitraeume gegenueberstellen.
+  // Eine angefangene Woche gegen eine volle zu rechnen ergaebe fast immer
+  // einen Abfall und wuerde den tatsaechlichen Fortschritt verdecken.
+  const vorMontag=addDays(tage[0],-7);
+  const laufend=heute>=tage[0]&&heute<=tage[6];
+  const bisTag=laufend?tage.indexOf(heute)+1:7;
+  const nenner=habits.length*bisTag;
+  const wTeil=habSumme(tage[0],tage[bisTag-1]);
+  const vTeil=habSumme(vorMontag,addDays(vorMontag,bisTag-1));
+  const wVgl=nenner?Math.round(wTeil/nenner*100):0;
+  const vVgl=nenner?Math.round(vTeil/nenner*100):0;
+  const diff=wVgl-vVgl;
+  const zeitraum=laufend&&bisTag<7
+    ? `erste ${bisTag} Tage: ${wVgl} % gegen ${vVgl} % in der Vorwoche`
+    : `${wVgl} % gegen ${vVgl} % in der Vorwoche`;
+  const trend=diff>0?`<b class="hoch">▲ ${diff} %</b> — ${zeitraum}`
+    :diff<0?`<b class="runter">▼ ${-diff} %</b> — ${zeitraum}`
+    :`Gleichauf — ${zeitraum}`;
+
+  // Erledigt / Ziel / Offen je Tag, wie in der Vorlage
+  const proTag=iso=>habTage(iso).filter(id=>habits.some(h=>h.id===id)).length;
+
+  // Noch nicht angelegte Vorschlaege weiter anbieten, solange die Liste kurz ist
+  const offeneVorschlaege=habits.length<6
+    ? HAB_VORSCHLAEGE.map((v,i)=>({v,i})).filter(({v})=>!habits.some(h=>h.name===v.name)).slice(0,5)
+    : [];
+  const vorschlagBlock=offeneVorschlaege.length
+    ? `<p class="wlegend" style="margin:16px 2px 0">Noch etwas hinzufügen?</p>
+       <div class="hbVorschlaege">${offeneVorschlaege.map(({v,i})=>
+         `<button class="hbVorschlag" data-habneu="${i}">+ ${esc(v.name)}</button>`).join('')}</div>`
+    : '';
+  const statZeile=(label,werte,cls)=>`<div class="hbZeile hbStat${cls?' '+cls:''}">`+
+    `<span class="lbl">${label}</span>${werte.map(v=>`<span>${v}</span>`).join('')}</div>`;
+
   $('#habBody').innerHTML=`
     <div class="hbKopf">
       <h2>${MON[m]} ${y}</h2>
-      <small>${mDone} von ${mZiel} Haken · ${mProz} %</small>
+      <small>Gesamt ${mDone} von ${mZiel} Haken · ${mProz} %</small>
       <div class="hbBalken"><i style="width:${mProz}%"></i></div>
     </div>
+    <div class="hbChart">${balken}</div>
+    <p class="hbTrend">${trend}</p>
     <div class="hbNav">
       <button class="navBtn" data-habweek="-1" aria-label="Woche zurück">‹</button>
       <h3>KW ${kw(habMontag)}<small>${tage[0].slice(8,10)}.${tage[0].slice(5,7)}. – ${tage[6].slice(8,10)}.${tage[6].slice(5,7)}.</small></h3>
@@ -1977,9 +2076,13 @@ function renderHabits(){
     </div>
     <div class="hbZeile hbTage"><span></span>${kopfTage}</div>
     <div class="hbListe">${zeilen}</div>
+    ${statZeile('Erledigt',tage.map(iso=>proTag(iso)),'gruen')}
+    ${statZeile('Ziel',tage.map(()=>habits.length))}
+    ${statZeile('Offen',tage.map(iso=>iso>heute?'–':habits.length-proTag(iso)))}
     <div class="hbWoche"><span>Diese Woche</span><b>${wDone}/${wZiel} · ${wProz} %</b></div>
     <div class="hbBalken"><i style="width:${wProz}%"></i></div>
-    <p class="wlegend" style="margin-top:12px">Tipp auf ein Kästchen hakt den Tag ab · Tipp auf den Namen bearbeitet die Gewohnheit</p>`;
+    ${vorschlagBlock}
+    <p class="wlegend" style="margin-top:14px">Tipp auf ein Kästchen hakt den Tag ab · Tipp auf den Namen bearbeitet die Gewohnheit</p>`;
 }
 function openHabits(){ habMontag=mondayOf(todayIso()); show('scrHabits'); renderHabits(); pushLayer('habits'); }
 
@@ -2025,6 +2128,12 @@ $('#habBody').addEventListener('click',e=>{
   if(nam){ oeffneHabit(nam.dataset.habedit); return; }
   const nav=e.target.closest('[data-habweek]');
   if(nav){ habMontag=addDays(habMontag,7*(+nav.dataset.habweek)); renderHabits(); return; }
+  const neu=e.target.closest('[data-habneu]');
+  if(neu){
+    const v=HAB_VORSCHLAEGE[+neu.dataset.habneu];
+    if(v){ habits.push({id:uid(),name:v.name,ziel:v.ziel}); saveNow(); renderHabits(); toast(v.name+' angelegt'); }
+    return;
+  }
 });
 
 /* ---- Ziele fuer Woche und Monat ---- */
@@ -2088,19 +2197,81 @@ function openCal(){
   show('scrCal'); renderCal(); pushLayer('cal');
 }
 $('#openCal').onclick=openCal;
-$('#tileCal').onclick=openCal;
-$('#tileHab').onclick=openHabits;
+$('#habMehr').onclick=openHabits;
+/* Kalender in der Wochenansicht oeffnen -- passt zur Karte auf der Startseite */
+function openCalWoche(iso){
+  calD=iso||todayIso();
+  const [y,m]=calD.split('-').map(Number); calY=y; calM=m-1;
+  calMode='week'; evForm=null; show('scrCal'); renderCal(); pushLayer('cal');
+}
+function openCalTag(iso){
+  calD=iso;
+  const [y,m]=iso.split('-').map(Number); calY=y; calM=m-1;
+  calMode='day'; evForm=null; show('scrCal'); renderCal(); pushLayer('cal');
+}
+$('#calMehr').onclick=()=>openCalWoche(todayIso());
+$('#cardCal').addEventListener('click',e=>{
+  const t=e.target.closest('[data-tag]');
+  if(t) openCalTag(t.dataset.tag);
+});
+$('#cardHab').addEventListener('click',e=>{
+  const h=e.target.closest('[data-hbheute]');
+  if(h){ habToggle(todayIso(),h.dataset.hbheute); return; }
+});
 /* Kurzstatus auf den beiden Kacheln der Startseite */
+/* Startseite: die Woche und die heutigen Habits ohne Umweg sichtbar machen */
 function kachelnAktualisieren(){
-  const heute=todayIso(), n=evOf(heute).length;
-  const cal=$('#tileCalTxt');
-  if(cal) cal.textContent=n?(n===1?'1 Termin heute':n+' Termine heute'):'Nichts heute';
-  const txt=$('#tileHabTxt'), bar=$('#tileHabBar');
-  if(!txt||!bar) return;
-  if(!habits.length){ txt.textContent='Noch keine angelegt'; bar.style.width='0%'; return; }
+  const heute=todayIso(), montag=mondayOf(heute);
+  const tage=[...Array(7)].map((_,i)=>addDays(montag,i));
+
+  // --- Wochenkarte ---
+  const chips=$('#wkChips');
+  if(chips) chips.innerHTML=tage.map(iso=>{
+    const [,,dd]=iso.split('-');
+    return `<button class="wkChip${iso===heute?' heute':''}${hasEv(iso)?' hat':''}" data-tag="${iso}">`+
+      `<span>${dayName(iso)}</span><b>${+dd}</b><i></i></button>`;
+  }).join('');
+
+  const box=$('#wkEvents');
+  if(box){
+    const wocheEv=tage.flatMap(iso=>evOf(iso).map(e=>({iso,e})));
+    if(!wocheEv.length) box.innerHTML='<p class="homeLeer">Keine Termine diese Woche.</p>';
+    else{
+      const zeig=wocheEv.slice(0,4);
+      box.innerHTML=zeig.map(({iso,e})=>
+        `<button class="evZeile" data-tag="${iso}">`+
+        `<span class="when">${dayName(iso)} ${e.allday?'ganztags':esc(e.start||'')}</span>`+
+        `<span class="t">${esc(e.title||'Termin')}</span></button>`).join('')+
+        (wocheEv.length>zeig.length?`<p class="homeLeer">+ ${wocheEv.length-zeig.length} weitere</p>`:'');
+    }
+  }
+
+  // --- Habit-Karte ---
+  const lbl=$('#habKartenLbl'), mini=$('#habMini'), liste=$('#habHeuteListe');
+  if(!lbl||!mini||!liste) return;
+  if(!habits.length){
+    lbl.textContent='Habits';
+    mini.innerHTML='';
+    liste.innerHTML='<p class="homeLeer">Noch keine Gewohnheit angelegt. Tipp auf „Alle" zum Starten.</p>';
+    return;
+  }
   const erledigt=habTage(heute).filter(id=>habits.some(h=>h.id===id)).length;
-  txt.textContent=erledigt+' von '+habits.length+' heute';
-  bar.style.width=Math.round(erledigt/habits.length*100)+'%';
+  lbl.textContent='Habits heute · '+erledigt+'/'+habits.length;
+
+  // Mini-Verlauf der letzten sieben Tage
+  mini.innerHTML=[...Array(7)].map((_,i)=>{
+    const iso=addDays(heute,i-6);
+    const d=habTage(iso).filter(id=>habits.some(h=>h.id===id)).length;
+    const pct=Math.max(Math.round(d/habits.length*100),3);
+    return `<i class="${iso===heute?'heute':''}" style="height:${pct}%" title="${iso}"></i>`;
+  }).join('');
+
+  const zeig=habits.slice(0,4);
+  liste.innerHTML=zeig.map(h=>{
+    const an=habAn(heute,h.id);
+    return `<button class="hbHeute${an?' on':''}" data-hbheute="${h.id}">`+
+      `<span class="box">${an?'✓':''}</span><span class="t">${esc(h.name)}</span></button>`;
+  }).join('')+(habits.length>zeig.length?`<p class="homeLeer">+ ${habits.length-zeig.length} weitere</p>`:'');
 }
 $('#calBack').onclick=goBack;
 $('#calToday').onclick=()=>{
