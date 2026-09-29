@@ -55,8 +55,7 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 .art{width:92px;height:72px;flex:0 0 auto;margin:-4px -4px -4px 0}
 @media (max-width:360px){.art{width:78px}.heroTxt h1{font-size:20px}}
 
-/* Zwei Kacheln direkt unter dem Kopfbereich: Kalender | Habits */
-/* Grosse Karten auf der Startseite: Woche und Habits ohne Umweg sichtbar */
+/* Wochenkarte auf der Startseite: alle Termine der Woche ohne Umweg sichtbar */
 .homeCard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:11px 12px;margin:0 0 12px}
 .homeKopf{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
 .homeKopf .lbl{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--dimmer);font-weight:600}
@@ -75,96 +74,25 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 .evZeile .when{flex:0 0 74px;font-size:11.5px;color:var(--blue);font-weight:700;font-variant-numeric:tabular-nums}
 .evZeile .t{flex:1;min-width:0;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .homeLeer{font-size:13px;color:var(--dimmer);padding:4px 2px 2px}
-.homeMini{display:flex;align-items:flex-end;justify-content:space-around;gap:3px;height:42px;margin-bottom:10px}
-.homeMini i{width:13px;flex:none;background:var(--blue);border-radius:4px 4px 0 0;min-height:3px;opacity:.5}
-.homeMini i.heute{opacity:1;background:var(--mint)}
-.hbHeute{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:6px 2px;
-  border-top:1px solid var(--line)}
-.hbHeute .box{flex:0 0 auto;width:24px;height:24px;border-radius:8px;border:1.5px solid var(--line);
-  background:var(--panel2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px}
-.hbHeute.on .box{background:var(--blue);border-color:var(--blue)}
-.hbHeute .t{flex:1;min-width:0;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hbHeute.on .t{color:var(--dim);text-decoration:line-through}
 
-/* Habit-Tracker */
-.hbKopf{margin:2px 0 12px}
-.hbKopf h2{font-size:23px;font-weight:800;letter-spacing:-.02em;margin:0}
-.hbKopf small{display:block;font-size:12px;color:var(--dim);margin-top:3px}
-/* Abschnittsueberschriften wie "GLOBAL PROGRESS" in der Vorlage */
-.hbLbl{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--dimmer);
-  font-weight:600;margin:0 0 8px}
-.hbCard{background:var(--panel);border:1px solid var(--line);border-radius:14px;
-  padding:12px 11px;margin-bottom:12px}
-.hbBalken{height:7px;border-radius:99px;background:var(--panel2);overflow:hidden;margin-top:9px}
-.hbBalken i{display:block;height:100%;background:var(--blue);border-radius:99px;transition:width .25s}
-.hbGesamt{display:flex;align-items:baseline;gap:7px}
-.hbGesamt b{font-size:22px;font-weight:800;letter-spacing:-.02em}
-.hbGesamt span{font-size:12px;color:var(--dim)}
-.hbGesamt em{margin-left:auto;font-style:normal;font-size:17px;font-weight:800;color:var(--blue)}
-.hbNav{display:flex;align-items:center;gap:10px;margin:0 0 10px}
-.hbNav h3{flex:1;margin:0;font-size:14px;font-weight:700;text-align:center}
-.hbNav h3 small{display:block;font-size:11px;font-weight:400;color:var(--dim);margin-top:2px}
-/* Ein gemeinsames Raster fuer Wochenblock und Habit-Tabelle,
-   damit die Tagesspalten in beiden Bloecken genau untereinander stehen */
-.hbZeile{display:grid;grid-template-columns:minmax(0,1fr) 24px repeat(7,25px);gap:3px;align-items:center}
-.hbZeile .span2{grid-column:1/3}
-.hbTage span{text-align:center;font-size:9.5px;color:var(--dimmer);line-height:1.25}
-.hbTage span b{display:block;font-size:12px;font-weight:700;color:var(--dim)}
-.hbTage span.heute b{color:var(--blue)}
-.hbTage .nm,.hbTage .span2{text-align:left}
-.hbTage .nm,.hbTage .zl,.hbTage .span2{font-size:9.5px;letter-spacing:.07em;
-  text-transform:uppercase;color:var(--dimmer)}
-/* Balken je Wochentag -- das Diagramm aus dem Wochenblock der Vorlage.
-   Als SVG gezeichnet: die sieben Tagesspalten sind feste 25 px mit 3 px Abstand,
-   die gleiche Geometrie steckt im viewBox. So stehen Balken und Kästchen
-   darunter exakt untereinander. */
-.hbBars{margin:4px 0 2px}
-.hbBars .chart{grid-column:3/10}
-.hbWk{display:block;width:100%;height:58px}
-.hbWk .b{fill:var(--blue);opacity:.9}
-.hbWk .b.aus{fill:var(--line);opacity:.6}
-.hbWk .b.heute{fill:var(--mint);opacity:1}
-.hbWk .t{fill:var(--dimmer);font-size:8px}
-.hbWk .t.heute{fill:var(--mint)}
-.hbListe .hbZeile{padding:6px 0;border-bottom:1px solid var(--line)}
-.hbListe .hbZeile:last-child{border-bottom:0}
-.hbName{text-align:left;min-width:0;padding:2px 4px 2px 0}
-.hbName b{font-size:12.5px;font-weight:600;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.hbName small{display:block;font-size:10px;color:var(--dimmer);margin-top:1px}
-.hbName small.voll{color:var(--mint)}
-.hbZiel{text-align:center;font-size:12.5px;font-weight:700;color:var(--dim);font-variant-numeric:tabular-nums}
-.hbBox{width:25px;height:25px;border-radius:8px;border:1.5px solid var(--line);background:var(--panel2);
-  margin:0 auto;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;line-height:1}
-.hbBox.heute{border-color:rgba(62,123,250,.55)}
-.hbBox.on{background:var(--blue);border-color:var(--blue)}
-.hbBox.aus{opacity:.3}
-/* Monatsverlauf als Linie -- das Diagramm ganz oben in der Vorlage */
-.hbLine{display:block;width:100%;height:auto}
-.hbLine .grid{stroke:var(--line);stroke-width:1}
-.hbLine .ax{fill:var(--dimmer);font-size:7.5px}
-.hbLine .ln{fill:none;stroke:var(--blue);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
-.hbLine .pt{fill:var(--blue)}
-.hbLine .pt.heute{fill:var(--mint)}
-.hbTrend{font-size:12px;color:var(--dim);margin:10px 2px 0}
-.hbTrend b.hoch{color:var(--mint)}
-.hbTrend b.runter{color:var(--red)}
-/* Erledigt / Ziel / Offen unter den Tagen, wie in der Vorlage */
-.hbStat{padding:3px 0}
-.hbStat span{text-align:center;font-size:10.5px;color:var(--dim);font-variant-numeric:tabular-nums}
-.hbStat .span2{text-align:left;font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--dimmer)}
-.hbStat.gruen span{color:var(--mint)}
-.hbStat.rand{border-top:1px solid var(--line);margin-top:3px;padding-top:6px}
-.hbVorschlaege{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.hbVorschlag{border:1px solid var(--line);background:var(--panel);border-radius:999px;
-  padding:9px 14px;font-size:13px;color:var(--text)}
-.hbVorschlag:active{border-color:var(--blue);color:var(--blue)}
-.hbWoche{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:14px 0 0}
-.hbWoche span{font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--dimmer)}
-.hbWoche b{font-size:13px;font-weight:700}
-#habName,#habZiel{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+
+/* Schnell-Taste in Listen: fuegt die festgelegten taeglichen To-dos ein */
+.schnell{display:flex;gap:8px;margin:-4px 0 16px}
+.schnellBtn{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:12px;
+  border:1px solid rgba(62,123,250,.45);background:rgba(62,123,250,.1);color:var(--blue);text-align:left}
+.schnellBtn svg,.schnellCfg svg{width:19px;height:19px;flex:0 0 auto}
+.schnellBtn span{flex:1;min-width:0;font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.schnellBtn small{flex:0 0 auto;font-size:12px;color:var(--dim)}
+.schnellBtn:active{background:rgba(62,123,250,.2)}
+.schnellCfg{flex:0 0 46px;display:flex;align-items:center;justify-content:center;border-radius:12px;
+  border:1px solid var(--line);background:var(--panel);color:var(--dim)}
+.schnellCfg:active{border-color:var(--blue);color:var(--blue)}
+#vorlageName,#vorlageText{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;
   color:var(--text);font:inherit;font-size:15px;padding:10px;color-scheme:dark}
-.hbLabel{display:block;font-size:12px;color:var(--dimmer);margin:12px 0 5px}
-.hbLabel:first-of-type{margin-top:0}
+#vorlageText{resize:vertical;line-height:1.45;min-height:150px}
+.pickLabel{display:block;font-size:12px;color:var(--dimmer);margin:12px 0 5px}
+.pickLabel:first-of-type{margin-top:0}
+.pickHint{font-size:12px;color:var(--dimmer);margin:6px 2px 0}
 .burger.cal{color:var(--dim)}
 .burger.cal svg{width:21px;height:21px}
 .calTop{display:flex;align-items:center;gap:10px;margin:16px 0 14px}
@@ -554,12 +482,6 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
       <div class="wkChips" id="wkChips"></div>
       <div id="wkEvents"></div>
     </div>
-    <div class="homeCard" id="cardHab">
-      <div class="homeKopf"><span class="lbl" id="habKartenLbl">Habits heute</span>
-        <button class="homeMehr" id="habMehr">Alle ›</button></div>
-      <div class="homeMini" id="habMini"></div>
-      <div id="habHeuteListe"></div>
-    </div>
     <div class="search">🔍<input id="q" placeholder="Suchen" autocomplete="off"></div>
     <div id="list"></div>
   </div>
@@ -581,20 +503,17 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
   <div class="body">
     <textarea class="title" id="title" rows="1" placeholder="Titel"></textarea>
     <p class="date" id="date"></p>
+    <div class="schnell">
+      <button class="schnellBtn" id="schnellAdd">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>
+        <span>Tägliche To-dos</span><small></small>
+      </button>
+      <button class="schnellCfg" id="schnellCfg" aria-label="Schnell-Taste einrichten">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+      </button>
+    </div>
     <div id="lines"></div>
   </div>
-</section>
-
-<!-- Habit-Tracker -->
-<section class="screen" id="scrHabits">
-  <div class="bar">
-    <button class="back" id="habBack">‹ Notizen</button>
-    <span style="display:flex;gap:14px;align-items:center">
-      <button class="act" id="habToday">Heute</button>
-      <button class="act" id="habAdd">+ Habit</button>
-    </span>
-  </div>
-  <div class="body" id="habBody"></div>
 </section>
 
 <!-- Kalender -->
@@ -729,18 +648,18 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
   </div>
 </div>
 
-<div class="pick" id="habPick">
-  <div class="veil" data-habclose></div>
+<div class="pick" id="vorlagePick">
+  <div class="veil" data-vorlageclose></div>
   <div class="pickBox">
-    <h3 id="habTitel">Habit</h3>
-    <label class="hbLabel">Name</label>
-    <input id="habName" type="text" placeholder="z. B. Sport machen" autocomplete="off">
-    <label class="hbLabel">Ziel pro Monat (an wie vielen Tagen?)</label>
-    <input id="habZiel" type="number" min="1" max="31" step="1" value="25">
+    <h3>Schnell-Taste einrichten</h3>
+    <label class="pickLabel" for="vorlageName">Name der Taste</label>
+    <input id="vorlageName" type="text" placeholder="Tägliche To-dos" autocomplete="off">
+    <label class="pickLabel" for="vorlageText">To-dos – eins pro Zeile</label>
+    <textarea id="vorlageText" rows="7" placeholder="Zähne putzen&#10;Wasser trinken&#10;Zimmer aufräumen"></textarea>
+    <p class="pickHint">Ein Tipp auf die Taste fügt alle diese To-dos in die offene Liste ein. Was dort schon offen steht, wird nicht doppelt eingetragen.</p>
     <div style="margin-top:14px">
-      <button id="habSave" style="justify-content:center;border-color:var(--blue);color:var(--blue)">Speichern</button>
-      <button id="habDel" style="justify-content:center;border-color:rgba(229,100,106,.4);color:var(--red)">Löschen</button>
-      <button id="habCancel" style="justify-content:center;margin-bottom:0">Abbrechen</button>
+      <button id="vorlageSave" style="justify-content:center;border-color:var(--blue);color:var(--blue)">Speichern</button>
+      <button id="vorlageCancel" style="justify-content:center;margin-bottom:0">Abbrechen</button>
     </div>
   </div>
 </div>
@@ -775,9 +694,6 @@ const $=s=>document.querySelector(s);
 let notes=[], events=[], folders=[], trash=[], curFolder=null, openId=null, showDone=false, editing=null;
 /* Ziele: 'm:2026-09' fuer den Monat, 'w:2026-09-07' (Montag) fuer die Woche */
 let ziele={};
-/* Habit-Tracker: habits = [{id,name,ziel}] (ziel = Tage pro Monat),
-   habitLog = { 'YYYY-MM-DD': [habitId, ...] } -- nur erledigte Tage stehen drin */
-let habits=[], habitLog={};
 let undoStack=[];
 let cfg={sort:'updated',size:17,done:'hide',land:'DE',bundesland:''};
 const urls={};
@@ -817,17 +733,17 @@ function save(){
   clearTimeout(saveT);
   saveT=setTimeout(()=>{
     try{
-      localStorage.setItem(KEY,JSON.stringify({cfg,notes,events,trash,folders,ziele,habits,habitLog}));
+      localStorage.setItem(KEY,JSON.stringify({cfg,notes,events,trash,folders,ziele}));
       flash('Gespeichert '+new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}));
     }catch(e){ flash('Nicht gespeichert – Speicher voll?',4000); }
   },250);
 }
-function saveNow(){clearTimeout(saveT);try{localStorage.setItem(KEY,JSON.stringify({cfg,notes,events,trash,folders,ziele,habits,habitLog}));}catch(e){}}
+function saveNow(){clearTimeout(saveT);try{localStorage.setItem(KEY,JSON.stringify({cfg,notes,events,trash,folders,ziele}));}catch(e){}}
 
 function load(){
   let raw=null;
   try{ raw=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
-  if(raw){ notes=raw.notes||[]; events=raw.events||[]; folders=raw.folders||[]; trash=raw.trash||[]; ziele=raw.ziele||{}; normalisiereZiele(); habits=raw.habits||[]; habitLog=raw.habitLog||{}; cfg={...cfg,...(raw.cfg||{})}; }
+  if(raw){ notes=raw.notes||[]; events=raw.events||[]; folders=raw.folders||[]; trash=raw.trash||[]; ziele=raw.ziele||{}; normalisiereZiele(); cfg={...cfg,...(raw.cfg||{})}; }
   else{
     try{ const old=JSON.parse(localStorage.getItem(OLD)||'null');
       if(old&&old.length) notes=old.map(n=>({id:n.id,title:n.title||'',created:+n.id||Date.now(),
@@ -990,6 +906,7 @@ async function fillMedia(){
 }
 function renderNote(){
   const n=note(); if(!n) return;
+  schnellAktualisieren();
   $('#title').value=n.title; grow($('#title'));
   $('#date').textContent='Zuletzt bearbeitet '+fmt(n.updated);
 
@@ -1144,7 +1061,7 @@ function addMedia(type,mid){
    noch verlassen werden, wenn wirklich die Startliste offen ist. */
 let puffer=false;
 const istOffen=sel=>{ const el=$(sel); return !!el&&el.classList.contains('on'); };
-const OVERLAYS=['#folderPick','#zielPick','#habPick','#drawer','#drawer2','#recScreen'];
+const OVERLAYS=['#folderPick','#zielPick','#vorlagePick','#drawer','#drawer2','#recScreen'];
 
 function imHauptmenue(){
   return istOffen('#scrList') && !curFolder && !fanOpen && !OVERLAYS.some(istOffen);
@@ -1162,11 +1079,10 @@ function eineEbeneZurueck(){
   }
   if(istOffen('#folderPick')){ $('#folderPick').classList.remove('on'); return true; }
   if(istOffen('#zielPick')){ $('#zielPick').classList.remove('on'); zielKey=null; return true; }
-  if(istOffen('#habPick')){ $('#habPick').classList.remove('on'); habEdit=null; return true; }
+  if(istOffen('#vorlagePick')){ $('#vorlagePick').classList.remove('on'); return true; }
   if(istOffen('#drawer2')){ $('#drawer2').classList.remove('on'); return true; }
   if(istOffen('#drawer')){ $('#drawer').classList.remove('on'); return true; }
   if(istOffen('#scrNote')){ saveNow(); renderList(); show('scrList'); return true; }
-  if(istOffen('#scrHabits')){ renderList(); show('scrList'); return true; }
   if(istOffen('#scrCal')){
     if(evForm){ evForm=null; renderCal(); return true; }         // erst das Termin-Formular
     if(calMode==='day'){ calMode='week'; renderCal(); return true; }
@@ -1553,7 +1469,7 @@ $('#optDone').addEventListener('click',e=>{const b=e.target.closest('[data-done]
   cfg.done=b.dataset.done;markOpts();saveNow();if(note())renderNote();});
 
 $('#exp').onclick=async()=>{
-  const out={version:6,exported:new Date().toISOString(),cfg,notes:[],events,folders,ziele,habits,habitLog,media:{}};
+  const out={version:6,exported:new Date().toISOString(),cfg,notes:[],events,folders,ziele,media:{}};
   out.notes=JSON.parse(JSON.stringify(notes));
   for(const n of notes) for(const b of n.blocks) if(b.mid){
     const blob=await mGet(b.mid); if(!blob) continue;
@@ -1583,10 +1499,6 @@ $('#pickJson').onchange=e=>{
       if(d.events){ const ev=new Set(events.map(x=>x.id)); d.events.forEach(x=>{ if(!ev.has(x.id)) events.push(x); }); }
       if(d.cfg) cfg={...cfg,...d.cfg};
       if(d.ziele){ ziele={...ziele,...d.ziele}; normalisiereZiele(); }
-      if(Array.isArray(d.habits)){ const hs=new Set(habits.map(h=>h.id));
-        d.habits.forEach(h=>{ if(!hs.has(h.id)) habits.push(h); }); }
-      if(d.habitLog) for(const [tag,ids] of Object.entries(d.habitLog))
-        habitLog[tag]=[...new Set([...(habitLog[tag]||[]),...(ids||[])])];
       saveNow(); renderList(); markOpts(); stats();
       toast(incoming.length+' Notizen geladen');
     }catch(err){ toast('Datei nicht lesbar'); }
@@ -1982,270 +1894,58 @@ function switcher(){
 }
 
 /* =========================================================
-   Habit-Tracker -- Tabelle aus der Vorlage, aber wochenweise,
-   weil 31 Spalten auf einem Handy nicht lesbar sind.
+   Schnell-Taste: fuegt die festgelegten taeglichen To-dos
+   mit einem Tipp in die offene Liste ein.
+   cfg.vorlage = {name, items:[text,...]} -- liegt in cfg und
+   wandert dadurch automatisch mit ins Backup.
 ========================================================= */
-let habMontag=null, habEdit=null;
-/* Startvorschlaege, damit der erste Blick nicht auf eine leere Seite faellt */
-const HAB_VORSCHLAEGE=[
-  {name:'Um 06:00 aufstehen',ziel:25},{name:'Sport machen',ziel:26},
-  {name:'20 Seiten lesen',ziel:22},{name:'Kein Alkohol',ziel:27},
-  {name:'Social Media Detox',ziel:23},{name:'Tagebuch schreiben',ziel:28},
-  {name:'Kalt duschen',ziel:28},{name:'Gesund essen',ziel:24},
-  {name:'Budget prüfen',ziel:23}
-];
-
-const habTage=iso=>habitLog[iso]||[];
-function habAn(iso,id){ return habTage(iso).includes(id); }
-function habToggle(iso,id){
-  const liste=habTage(iso).slice();
-  const i=liste.indexOf(id);
-  if(i>=0) liste.splice(i,1); else liste.push(id);
-  if(liste.length) habitLog[iso]=liste; else delete habitLog[iso];
-  saveNow();
-  if($('#scrHabits').classList.contains('on')) renderHabits();
-  if($('#scrList').classList.contains('on')) kachelnAktualisieren();
+function vorlage(){
+  const v=cfg.vorlage||{};
+  return {name:(v.name||'').trim()||'Tägliche To-dos', items:Array.isArray(v.items)?v.items:[]};
 }
-/* Wie oft wurde ein Habit in diesem Monat erledigt? */
-function habMonat(id,y,m){
-  const prefix=y+'-'+p2(m+1);
-  let n=0;
-  for(const [tag,ids] of Object.entries(habitLog))
-    if(tag.startsWith(prefix)&&ids.includes(id)) n++;
-  return n;
+function schnellAktualisieren(){
+  const btn=$('#schnellAdd'); if(!btn) return;
+  const v=vorlage();
+  btn.querySelector('span').textContent=v.name;
+  btn.querySelector('small').textContent=v.items.length?v.items.length+' To-dos':'einrichten';
 }
-/* Erledigte Haken in einem Zeitraum (beide Grenzen einschliesslich) */
-function habSumme(vonIso,bisIso){
-  let n=0;
-  for(const [tag,ids] of Object.entries(habitLog))
-    if(tag>=vonIso&&tag<=bisIso) n+=ids.filter(id=>habits.some(h=>h.id===id)).length;
-  return n;
-}
-function renderHabits(){
-  if(!habMontag) habMontag=mondayOf(todayIso());
-  const tage=[...Array(7)].map((_,i)=>addDays(habMontag,i));
-  const heute=todayIso();
-  const [jy,jm]=habMontag.split('-').map(Number);
-  const y=jy, m=jm-1;
-  const tageImMonat=daysIn(y,m), monatsErster=isoOf(y,m,1), monatsLetzter=isoOf(y,m,tageImMonat);
-
-  if(!habits.length){
-    // Leerer Start soll nicht leer wirken -- Vorschlaege zum Antippen
-    $('#habBody').innerHTML=`
-      <div class="hbKopf"><p class="hbLbl">Habit Tracker</p><h2>Daily Habits</h2>
-        <small>Trag deine täglichen Gewohnheiten ein und hak sie jeden Tag ab.
-        Darüber siehst du dann als Kurve, wie konsequent du warst.</small></div>
-      <p class="wlegend" style="margin:0 2px 2px">Zum Starten antippen — ändern kannst du alles später:</p>
-      <div class="hbVorschlaege">${HAB_VORSCHLAEGE.map((v,i)=>
-        `<button class="hbVorschlag" data-habneu="${i}">+ ${esc(v.name)}</button>`).join('')}</div>
-      <p class="wlegend" style="margin-top:16px">Oder oben rechts über „+ Habit" eine eigene anlegen.</p>`;
-    return;
+function vorlageEinfuegen(){
+  const n=note(); if(!n) return;
+  const v=vorlage();
+  if(!v.items.length){ oeffneVorlage(); return; }   // noch nichts festgelegt -> gleich einrichten
+  // Was schon offen in der Liste steht, nicht doppelt eintragen
+  const offen=new Set(n.blocks.filter(b=>(b.type==='line'||b.type==='plan')&&b.check!==true)
+    .map(b=>b.text.trim().toLowerCase()));
+  const neu=v.items.filter(t=>!offen.has(t.trim().toLowerCase()));
+  if(!neu.length){ toast('Alle To-dos stehen schon in der Liste'); return; }
+  snap();
+  // leere Zeilen am Ende entfernen, damit die To-dos direkt anschliessen
+  while(n.blocks.length){
+    const l=n.blocks[n.blocks.length-1];
+    if(l.type==='line'&&!l.text.trim()) n.blocks.pop(); else break;
   }
-
-  const proTag=iso=>habTage(iso).filter(id=>habits.some(h=>h.id===id)).length;
-  const prozTag=iso=>Math.round(proTag(iso)/habits.length*100);
-
-  // Gesamtbilanz des Monats -- "GLOBAL PROGRESS" aus der Vorlage
-  const mDone=habSumme(monatsErster,monatsLetzter), mZiel=habits.length*tageImMonat;
-  const mProz=mZiel?Math.round(mDone/mZiel*100):0;
-  // Wochenbilanz -- "WEEKLY PROGRESS"
-  const wDone=habSumme(tage[0],tage[6]), wZiel=habits.length*7;
-  const wProz=wZiel?Math.round(wDone/wZiel*100):0;
-
-  /* Monatsverlauf als Linie, wie das Diagramm ganz oben in der Vorlage.
-     Gezeichnet wird nur bis heute -- eine Linie in die Zukunft waere gelogen. */
-  const W=320,H=104,L=24,R=8,T=10,B=20,iw=W-L-R,ih=H-T-B;
-  const px=i=>L+(tageImMonat<2?iw/2:i*iw/(tageImMonat-1));
-  const py=pr=>T+ih-pr/100*ih;
-  const punkte=[];
-  for(let i=0;i<tageImMonat;i++){
-    const iso=isoOf(y,m,i+1);
-    if(iso>heute) break;
-    punkte.push({i,iso,p:prozTag(iso)});
-  }
-  const linie=punkte.map(q=>px(q.i).toFixed(1)+','+py(q.p).toFixed(1)).join(' ');
-  const flaeche=punkte.length>1
-    ? `<polygon points="${px(punkte[0].i).toFixed(1)},${T+ih} ${linie} ${px(punkte[punkte.length-1].i).toFixed(1)},${T+ih}" fill="url(#hbFill)"/>`
-    : '';
-  const raster=[0,25,50,75,100].map(pr=>
-    `<line class="grid" x1="${L}" y1="${py(pr).toFixed(1)}" x2="${W-R}" y2="${py(pr).toFixed(1)}"/>`+
-    (pr%50===0?`<text class="ax" x="${L-4}" y="${(py(pr)+2.6).toFixed(1)}" text-anchor="end">${pr}%</text>`:'')
-  ).join('');
-  const xAchse=[...Array(tageImMonat)].map((_,i)=>{
-    const d=i+1;
-    if(d!==1&&d!==tageImMonat&&d%5!==0) return '';
-    return `<text class="ax" x="${px(i).toFixed(1)}" y="${H-6}" text-anchor="middle">${d}</text>`;
-  }).join('');
-  const punkteSvg=punkte.map(q=>{
-    const ist=q.iso===heute;
-    return `<circle class="pt${ist?' heute':''}" cx="${px(q.i).toFixed(1)}" cy="${py(q.p).toFixed(1)}" r="${ist?3.4:1.9}">`+
-      `<title>${q.i+1}. ${MON[m]}: ${q.p} %</title></circle>`;
-  }).join('');
-  const chart=`<svg class="hbLine" viewBox="0 0 ${W} ${H}" role="img" aria-label="Verlauf im Monat">
-    <defs><linearGradient id="hbFill" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#3E7BFA" stop-opacity=".34"/>
-      <stop offset="1" stop-color="#3E7BFA" stop-opacity="0"/></linearGradient></defs>
-    ${raster}${flaeche}
-    ${punkte.length>1?`<polyline class="ln" points="${linie}"/>`:''}
-    ${punkteSvg}${xAchse}</svg>`;
-
-  // Vergleich mit der Vorwoche -- nur gleich lange Zeitraeume gegenueberstellen.
-  // Eine angefangene Woche gegen eine volle zu rechnen ergaebe fast immer
-  // einen Abfall und wuerde den tatsaechlichen Fortschritt verdecken.
-  const vorMontag=addDays(tage[0],-7);
-  const laufend=heute>=tage[0]&&heute<=tage[6];
-  const bisTag=laufend?tage.indexOf(heute)+1:7;
-  const nenner=habits.length*bisTag;
-  const wTeil=habSumme(tage[0],tage[bisTag-1]);
-  const vTeil=habSumme(vorMontag,addDays(vorMontag,bisTag-1));
-  const wVgl=nenner?Math.round(wTeil/nenner*100):0;
-  const vVgl=nenner?Math.round(vTeil/nenner*100):0;
-  const diff=wVgl-vVgl;
-  const zeitraum=laufend&&bisTag<7
-    ? `erste ${bisTag} Tage: ${wVgl} % gegen ${vVgl} % in der Vorwoche`
-    : `${wVgl} % gegen ${vVgl} % in der Vorwoche`;
-  const trend=diff>0?`<b class="hoch">▲ ${diff} %</b> — ${zeitraum}`
-    :diff<0?`<b class="runter">▼ ${-diff} %</b> — ${zeitraum}`
-    :`Gleichauf — ${zeitraum}`;
-
-  // Kopfzeile der Tage -- steht ueber dem Wochenbalken und ueber der Tabelle
-  const kopfTage=tage.map(iso=>{
-    const [,,dd]=iso.split('-');
-    return `<span class="${iso===heute?'heute':''}">${dayName(iso)}<b>${+dd}</b></span>`;
-  }).join('');
-
-  /* Balken je Tag der Woche, mit Prozentwert darueber wie in der Vorlage.
-     25 px Spalte + 3 px Abstand = 28 px Schritt, genau wie das Kaestchen-Raster. */
-  const wkBalken=tage.map((iso,i)=>{
-    const pr=prozTag(iso), zukunft=iso>heute;
-    const h=Math.max(2,Math.round(pr*.44)), x=i*28;
-    const cls=iso===heute?' heute':zukunft?' aus':'';
-    const wert=zukunft?'':`<text class="t${cls}" x="${x+12.5}" y="${58-h-3}" text-anchor="middle">${pr}%</text>`;
-    return `<rect class="b${cls}" x="${x}" y="${58-h}" width="25" height="${h}" rx="3"/>${wert}`;
-  }).join('');
-  const wochenChart=`<svg class="hbWk" viewBox="0 0 193 58" role="img" aria-label="Erledigt je Tag der Woche">${wkBalken}</svg>`;
-
-  const statZeile=(label,werte,cls)=>`<div class="hbZeile hbStat${cls?' '+cls:''}">`+
-    `<span class="span2">${label}</span>${werte.map(v=>`<span>${v}</span>`).join('')}</div>`;
-
-  // Habit-Tabelle: Name, Zielspalte, dann ein Kaestchen je Tag
-  const zeilen=habits.map(h=>{
-    const erledigt=habMonat(h.id,y,m), ziel=h.ziel||tageImMonat;
-    const kaestchen=tage.map(iso=>{
-      const an=habAn(iso,h.id), zukunft=iso>heute;
-      return `<button class="hbBox${an?' on':''}${iso===heute?' heute':''}${zukunft?' aus':''}"`+
-        ` data-hb="${h.id}|${iso}" aria-label="${esc(h.name)} am ${iso}${an?', erledigt':''}">${an?'✓':''}</button>`;
-    }).join('');
-    return `<div class="hbZeile">
-      <button class="hbName" data-habedit="${h.id}"><b>${esc(h.name)}</b>
-        <small class="${erledigt>=ziel?'voll':''}">${erledigt} im Monat</small></button>
-      <span class="hbZiel">${ziel}</span>
-      ${kaestchen}</div>`;
-  }).join('');
-
-  // Noch nicht angelegte Vorschlaege weiter anbieten, solange die Liste kurz ist
-  const offeneVorschlaege=habits.length<6
-    ? HAB_VORSCHLAEGE.map((v,i)=>({v,i})).filter(({v})=>!habits.some(h=>h.name===v.name)).slice(0,5)
-    : [];
-  const vorschlagBlock=offeneVorschlaege.length
-    ? `<p class="hbLbl" style="margin:16px 2px 8px">Noch etwas hinzufügen?</p>
-       <div class="hbVorschlaege" style="margin-top:0">${offeneVorschlaege.map(({v,i})=>
-         `<button class="hbVorschlag" data-habneu="${i}">+ ${esc(v.name)}</button>`).join('')}</div>`
-    : '';
-
-  $('#habBody').innerHTML=`
-    <div class="hbKopf">
-      <p class="hbLbl">Habit Tracker</p>
-      <h2>${MON[m]} ${y}</h2>
-    </div>
-
-    <div class="hbCard">
-      <p class="hbLbl">Gesamtfortschritt</p>
-      <div class="hbGesamt"><b>${mDone}</b><span>von ${mZiel} Haken</span><em>${mProz} %</em></div>
-      <div class="hbBalken"><i style="width:${mProz}%"></i></div>
-    </div>
-
-    <div class="hbCard">
-      <p class="hbLbl">Verlauf im Monat</p>
-      ${chart}
-      <p class="hbTrend">${trend}</p>
-    </div>
-
-    <div class="hbCard">
-      <p class="hbLbl">Wochenübersicht</p>
-      <div class="hbNav">
-        <button class="navBtn" data-habweek="-1" aria-label="Woche zurück">‹</button>
-        <h3>KW ${kw(habMontag)}<small>${tage[0].slice(8,10)}.${tage[0].slice(5,7)}. – ${tage[6].slice(8,10)}.${tage[6].slice(5,7)}.</small></h3>
-        <button class="navBtn" data-habweek="1" aria-label="Woche vor">›</button>
-      </div>
-      <div class="hbZeile hbTage"><span class="span2"></span>${kopfTage}</div>
-      <div class="hbZeile hbBars"><span class="span2"></span><span class="chart">${wochenChart}</span></div>
-      ${statZeile('Erledigt',tage.map(iso=>proTag(iso)),'gruen rand')}
-      ${statZeile('Ziel',tage.map(()=>habits.length))}
-      ${statZeile('Offen',tage.map(iso=>iso>heute?'–':habits.length-proTag(iso)))}
-      <div class="hbWoche"><span>Wochenfortschritt</span><b>${wDone}/${wZiel} · ${wProz} %</b></div>
-      <div class="hbBalken"><i style="width:${wProz}%"></i></div>
-    </div>
-
-    <div class="hbCard">
-      <p class="hbLbl">Daily Habits</p>
-      <div class="hbZeile hbTage"><span class="nm">Gewohnheit</span><span class="zl">Ziel</span>${kopfTage}</div>
-      <div class="hbListe">${zeilen}</div>
-    </div>
-    ${vorschlagBlock}
-    <p class="wlegend" style="margin-top:14px">Tipp auf ein Kästchen hakt den Tag ab · Tipp auf den Namen bearbeitet die Gewohnheit</p>`;
+  neu.forEach(t=>n.blocks.push({id:uid(),type:'line',text:t,check:false}));
+  touch(); renderNote();
+  toast(neu.length===1?'1 To-do hinzugefügt':neu.length+' To-dos hinzugefügt');
 }
-function openHabits(){ habMontag=mondayOf(todayIso()); show('scrHabits'); renderHabits(); pushLayer('habits'); }
-
-function oeffneHabit(id){
-  habEdit=id||null;
-  const h=habits.find(x=>x.id===id);
-  $('#habTitel').textContent=h?'Gewohnheit bearbeiten':'Neue Gewohnheit';
-  $('#habName').value=h?h.name:'';
-  $('#habZiel').value=h?(h.ziel||25):25;
-  $('#habDel').style.display=h?'flex':'none';
-  $('#habPick').classList.add('on');
-  pushLayer('habpick');
-  setTimeout(()=>{ const f=$('#habName'); if(f) f.focus(); },60);
+function oeffneVorlage(){
+  const v=vorlage();
+  $('#vorlageName').value=(cfg.vorlage&&cfg.vorlage.name)||'';
+  $('#vorlageText').value=v.items.join('\n');
+  $('#vorlagePick').classList.add('on');
+  pushLayer('vorlage');
+  setTimeout(()=>{ const f=$('#vorlageText'); if(f){ f.focus(); f.setSelectionRange(f.value.length,f.value.length); } },60);
 }
-$('#habSave').onclick=()=>{
-  const name=$('#habName').value.trim();
-  if(!name) return toast('Bitte einen Namen eintragen');
-  const ziel=Math.min(31,Math.max(1,+$('#habZiel').value||25));
-  const h=habits.find(x=>x.id===habEdit);
-  if(h){ h.name=name; h.ziel=ziel; } else habits.push({id:uid(),name,ziel});
-  saveNow(); goBack(); renderHabits(); renderList();
-  toast(h?'Gewohnheit gespeichert':'Gewohnheit angelegt');
+$('#vorlageSave').onclick=()=>{
+  const items=$('#vorlageText').value.split('\n').map(t=>t.trim()).filter(Boolean);
+  cfg.vorlage={name:$('#vorlageName').value.trim(),items};
+  saveNow(); schnellAktualisieren(); goBack();
+  toast(items.length?'Gespeichert · '+items.length+' To-dos auf der Taste':'Taste geleert');
 };
-$('#habDel').onclick=()=>{
-  if(!habEdit) return;
-  if(!confirm('Diese Gewohnheit mit allen Haken löschen?')) return;
-  habits=habits.filter(x=>x.id!==habEdit);
-  for(const [tag,ids] of Object.entries(habitLog)){
-    const rest=ids.filter(id=>id!==habEdit);
-    if(rest.length) habitLog[tag]=rest; else delete habitLog[tag];
-  }
-  saveNow(); goBack(); renderHabits(); renderList(); toast('Gewohnheit gelöscht');
-};
-$('#habCancel').onclick=()=>goBack();
-$('#habPick').addEventListener('click',e=>{ if(e.target.closest('[data-habclose]')) goBack(); });
-$('#habBack').onclick=goBack;
-$('#habAdd').onclick=()=>oeffneHabit(null);
-$('#habToday').onclick=()=>{ habMontag=mondayOf(todayIso()); renderHabits(); };
-$('#habBody').addEventListener('click',e=>{
-  const box=e.target.closest('[data-hb]');
-  if(box){ const [id,iso]=box.dataset.hb.split('|'); habToggle(iso,id); return; }
-  const nam=e.target.closest('[data-habedit]');
-  if(nam){ oeffneHabit(nam.dataset.habedit); return; }
-  const nav=e.target.closest('[data-habweek]');
-  if(nav){ habMontag=addDays(habMontag,7*(+nav.dataset.habweek)); renderHabits(); return; }
-  const neu=e.target.closest('[data-habneu]');
-  if(neu){
-    const v=HAB_VORSCHLAEGE[+neu.dataset.habneu];
-    if(v){ habits.push({id:uid(),name:v.name,ziel:v.ziel}); saveNow(); renderHabits(); toast(v.name+' angelegt'); }
-    return;
-  }
-});
+$('#vorlageCancel').onclick=()=>goBack();
+$('#vorlagePick').addEventListener('click',e=>{ if(e.target.closest('[data-vorlageclose]')) goBack(); });
+$('#schnellAdd').onclick=vorlageEinfuegen;
+$('#schnellCfg').onclick=oeffneVorlage;
 
 /* ---- Ziele fuer Woche und Monat ---- */
 let zielKey=null;
@@ -2308,7 +2008,6 @@ function openCal(){
   show('scrCal'); renderCal(); pushLayer('cal');
 }
 $('#openCal').onclick=openCal;
-$('#habMehr').onclick=openHabits;
 /* Kalender in der Wochenansicht oeffnen -- passt zur Karte auf der Startseite */
 function openCalWoche(iso){
   calD=iso||todayIso();
@@ -2325,12 +2024,7 @@ $('#cardCal').addEventListener('click',e=>{
   const t=e.target.closest('[data-tag]');
   if(t) openCalTag(t.dataset.tag);
 });
-$('#cardHab').addEventListener('click',e=>{
-  const h=e.target.closest('[data-hbheute]');
-  if(h){ habToggle(todayIso(),h.dataset.hbheute); return; }
-});
-/* Kurzstatus auf den beiden Kacheln der Startseite */
-/* Startseite: die Woche und die heutigen Habits ohne Umweg sichtbar machen */
+/* Startseite: die Termine der Woche ohne Umweg sichtbar machen */
 function kachelnAktualisieren(){
   const heute=todayIso(), montag=mondayOf(heute);
   const tage=[...Array(7)].map((_,i)=>addDays(montag,i));
@@ -2357,32 +2051,6 @@ function kachelnAktualisieren(){
     }
   }
 
-  // --- Habit-Karte ---
-  const lbl=$('#habKartenLbl'), mini=$('#habMini'), liste=$('#habHeuteListe');
-  if(!lbl||!mini||!liste) return;
-  if(!habits.length){
-    lbl.textContent='Habits';
-    mini.innerHTML='';
-    liste.innerHTML='<p class="homeLeer">Noch keine Gewohnheit angelegt. Tipp auf „Alle" zum Starten.</p>';
-    return;
-  }
-  const erledigt=habTage(heute).filter(id=>habits.some(h=>h.id===id)).length;
-  lbl.textContent='Habits heute · '+erledigt+'/'+habits.length;
-
-  // Mini-Verlauf der letzten sieben Tage
-  mini.innerHTML=[...Array(7)].map((_,i)=>{
-    const iso=addDays(heute,i-6);
-    const d=habTage(iso).filter(id=>habits.some(h=>h.id===id)).length;
-    const pct=Math.max(Math.round(d/habits.length*100),3);
-    return `<i class="${iso===heute?'heute':''}" style="height:${pct}%" title="${iso}"></i>`;
-  }).join('');
-
-  const zeig=habits.slice(0,4);
-  liste.innerHTML=zeig.map(h=>{
-    const an=habAn(heute,h.id);
-    return `<button class="hbHeute${an?' on':''}" data-hbheute="${h.id}">`+
-      `<span class="box">${an?'✓':''}</span><span class="t">${esc(h.name)}</span></button>`;
-  }).join('')+(habits.length>zeig.length?`<p class="homeLeer">+ ${habits.length-zeig.length} weitere</p>`:'');
 }
 $('#calBack').onclick=goBack;
 $('#calToday').onclick=()=>{
