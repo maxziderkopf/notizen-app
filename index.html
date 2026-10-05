@@ -15,7 +15,7 @@
 :root{
   --bg:#0C1017; --panel:#141A24; --panel2:#1A2130; --line:#232B3A;
   --text:#EAEFF7; --dim:#8792A5; --dimmer:#5C6678; --blue:#3E7BFA; --mint:#67E8F0;
-  --red:#E5646A; --fs:17px;
+  --red:#E5646A; --todo:#FFCE5C; --fs:17px;
   color-scheme:dark;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -77,7 +77,20 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 
 
 /* Schnell-Taste in Listen: fuegt die festgelegten taeglichen To-dos ein */
-.schnell{display:flex;gap:8px;margin:-4px 0 16px}
+.schnell{display:flex;gap:8px;margin:-4px 0 8px}
+/* "Im Kalender planen": bringt die To-dos dieser Liste in die Wochenansicht */
+.planBtn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 13px;border-radius:12px;
+  border:1px solid rgba(255,206,92,.4);background:rgba(255,206,92,.08);color:var(--todo);text-align:left;margin:0 0 16px}
+.planBtn svg{width:19px;height:19px;flex:0 0 auto}
+.planBtn span{flex:1;min-width:0;font-size:14.5px;font-weight:600}
+.planBtn small{flex:0 0 auto;font-size:12px;color:var(--dim)}
+.planBtn:active{background:rgba(255,206,92,.18)}
+/* Unter einem eingeplanten To-do steht, wann es im Kalender liegt */
+.kalTag{flex:0 0 calc(100% - 35px);min-width:0;display:flex;align-items:center;gap:6px;text-align:left;margin:0 0 3px 35px;
+  padding:2px 0;font-size:12px;color:var(--todo)}
+.kalTag svg{width:13px;height:13px;flex:0 0 auto}
+.kalTag.spaet{color:var(--red)}
+.line.done .kalTag{color:var(--dimmer)}
 .schnellBtn{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:12px;
   border:1px solid rgba(62,123,250,.45);background:rgba(62,123,250,.1);color:var(--blue);text-align:left}
 .schnellBtn svg,.schnellCfg svg{width:19px;height:19px;flex:0 0 auto}
@@ -148,6 +161,31 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 .cell.ferien{background:rgba(103,232,240,.10)}
 .cell.holiday{color:var(--red)}
 .cell.holiday.today{border-color:var(--red)}
+/* Festtag ohne freien Tag (Heiligabend, Muttertag ...): kleiner Punkt in der Ecke */
+.cell{position:relative}
+.cell.fest::after{content:'';position:absolute;top:5px;right:5px;width:4px;height:4px;border-radius:50%;
+  background:var(--red);opacity:.6}
+.festListe{margin-top:16px}
+.festListe h4{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--dimmer);font-weight:600;margin:0 2px 6px}
+.festZeile{display:flex;align-items:baseline;gap:9px;width:100%;text-align:left;padding:6px 2px;
+  border-top:1px solid var(--line);font-size:13.5px}
+.festZeile i{flex:0 0 auto;width:8px;height:8px;border-radius:50%;background:var(--dimmer);align-self:center}
+.festZeile b{flex:0 0 58px;font-size:12px;font-weight:700;color:var(--dim);font-variant-numeric:tabular-nums}
+.festZeile span{flex:1;min-width:0}
+.festZeile small{margin-left:7px;font-size:11px;color:var(--dimmer)}
+.festZeile.frei i{background:var(--red)}
+.festZeile.frei span{color:var(--red)}
+.festZeile.frei small{color:var(--red);opacity:.75}
+.festZeile.regional i{background:none;border:1.5px solid var(--red)}
+.festZeile.ferien i{background:var(--mint)}
+.tagInfo{display:flex;align-items:baseline;gap:10px;background:var(--panel);border:1px solid var(--line);
+  border-left:3px solid var(--dimmer);border-radius:10px;padding:9px 12px;margin-bottom:8px;font-size:14.5px}
+.tagInfo span{flex:0 0 auto;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dimmer);font-weight:600}
+.tagInfo.frei{border-left-color:var(--red)}
+.tagInfo.frei span{color:var(--red)}
+.tagInfo.regional{border-left-color:rgba(229,100,106,.45)}
+.tagInfo.ferien{border-left-color:var(--mint)}
+.tagInfo.ferien span{color:var(--mint)}
 .cell .dots{display:flex;gap:3px;height:5px}
 .cell .dots i{width:5px;height:5px;border-radius:50%;background:var(--mint)}
 .viewSwitch{display:flex;gap:7px;margin:0 0 14px}
@@ -184,10 +222,59 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 .dayCol.today{background:rgba(62,123,250,.05)}
 .dayCol.ferien{background:rgba(103,232,240,.05)}
 .slot{position:absolute;border-radius:5px;background:var(--blue);color:#08101f;
-  font-size:9.5px;font-weight:700;line-height:1.15;padding:2px 3px;overflow:hidden;
-  text-align:left;border:0}
-.slot small{display:block;font-weight:600;opacity:.85;font-size:9px}
+  font-size:9.5px;font-weight:700;line-height:1.15;padding:3px 3px;overflow:hidden;
+  text-align:left;border:0;display:flex;flex-direction:column;justify-content:flex-start;
+  align-items:stretch;overflow-wrap:anywhere;hyphens:auto;-webkit-hyphens:auto}
+.slot small{display:block;font-weight:600;opacity:.8;font-size:8.5px;margin-top:1px}
 .nowLine{position:absolute;left:0;right:0;height:2px;background:var(--red);z-index:2;pointer-events:none}
+/* To-dos im Kalender: gelb umrandet -- Termine bleiben blau gefuellt.
+   So sieht man auf einen Blick, was fest steht und was man sich vorgenommen hat. */
+.slot.todo,.allBar.todo{background:rgba(255,206,92,.15);border:1px solid rgba(255,206,92,.65);color:var(--text);font-weight:600}
+.slot.todo small{opacity:1;font-weight:600;color:var(--todo)}
+.slot.todo.done,.allBar.todo.done{opacity:.42;text-decoration:line-through}
+.dhFest{display:block;font-size:8.5px;color:var(--dimmer);white-space:normal;line-height:1.2;overflow-wrap:anywhere}
+.dhFest.frei{color:var(--red)}
+.wkV.ziel{border-color:var(--todo)}
+.cell .dots i.t{background:var(--todo)}
+.lg{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 5px 0 0;vertical-align:-1px}
+.lg.lgT{background:var(--blue)}
+.lg.lgD{background:rgba(255,206,92,.15);border:1px solid rgba(255,206,92,.65);margin-left:12px}
+/* Ablage ueber dem Wochenraster: die To-dos, die noch keinen Platz haben */
+.planer{background:var(--panel);border:1px solid rgba(255,206,92,.35);border-radius:14px;padding:10px 11px;margin:0 0 12px}
+.plKopf{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.plKopf .lbl{min-width:0;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--todo);
+  font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plKopf button{flex:0 0 auto;font-size:12.5px;color:var(--blue);font-weight:600;padding:2px 0 2px 8px}
+.plChips{display:flex;flex-wrap:wrap;gap:6px;max-height:124px;overflow-y:auto}
+.plChip{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1px solid var(--line);
+  background:var(--panel2);border-radius:10px;padding:8px 11px;font-size:13.5px}
+.plChip.on{border-color:var(--todo);background:rgba(255,206,92,.16);color:var(--todo);font-weight:600}
+.plHinweis{font-size:12px;color:var(--dim);margin:8px 1px 0;line-height:1.4}
+.plHinweis b{color:var(--todo);font-weight:600}
+.plFuss{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.plFuss:empty{display:none}
+.plFuss .chip{font-size:12.5px;padding:6px 11px}
+/* To-dos in der Tagesansicht -- eigener Block unter den Terminen */
+.tdKopf{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--todo);font-weight:600;margin:20px 2px 8px}
+.td{display:flex;align-items:center;gap:11px;background:var(--panel);border:1px solid rgba(255,206,92,.3);
+  border-radius:13px;padding:10px 12px;margin-bottom:8px}
+.td .t{flex:1;min-width:0;text-align:left}
+.td .t b{display:block;font-size:15.5px;font-weight:600;overflow-wrap:anywhere}
+.td .t span{display:block;font-size:12px;color:var(--dim);margin-top:2px}
+.td.done .tick{background:var(--blue);border-color:var(--blue)}
+.td.done .t b{color:var(--dimmer);text-decoration:line-through}
+/* Dialog: To-do einplanen */
+#tpDatum,#tpVon,#tpBis{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+  color:var(--text);font:inherit;font-size:15px;padding:10px;color-scheme:dark}
+.tpTage{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.pickBox .tpTage button{width:auto;margin:0;padding:8px 11px;font-size:13.5px;border-radius:999px}
+.pickBox .tpTage button.on{border-color:var(--todo);color:var(--todo);background:rgba(255,206,92,.12)}
+.tpCheck{display:flex;align-items:center;gap:9px;margin:12px 0 0;font-size:14px;color:var(--dim)}
+.tpCheck input{width:20px;height:20px;accent-color:var(--todo)}
+.tpZeit{display:flex;gap:10px;margin-top:10px}
+.tpZeit>div{flex:1;min-width:0}
+.tpReihe{display:flex;gap:8px}
+.pickBox .tpReihe button{flex:1;width:auto;justify-content:center;text-align:center;font-size:13.5px;padding:11px 8px}
 .wlegend{color:var(--dimmer);font-size:12px;margin:10px 2px 0}
 .ev{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:12px 14px;
   margin-bottom:9px;display:flex;gap:13px;align-items:flex-start;width:100%;text-align:left}
@@ -231,13 +318,13 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 /* Notiz */
 .title{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.25;margin:18px 0 6px;min-height:38px}
 .date{color:var(--dimmer);font-size:12px;margin-bottom:16px}
-.line{display:flex;align-items:flex-start;gap:11px;padding:5px 0}
+.line{display:flex;flex-wrap:wrap;align-items:flex-start;gap:0 11px;padding:5px 0}
 .tick{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:none;
   border:1.5px solid var(--dimmer);display:flex;align-items:center;justify-content:center;
   font-size:13px;color:#fff;line-height:1}
 .line.done .tick{background:var(--blue);border-color:var(--blue)}
 .line.done textarea{color:var(--dimmer);text-decoration:line-through}
-.line textarea{min-height:24px;line-height:24px}
+.line textarea{min-height:24px;line-height:24px;flex:1 1 0;min-width:0;width:auto}
 .grip{flex:0 0 auto;width:30px;height:30px;border-radius:8px;color:var(--dimmer);
   display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab;
   margin:-2px -6px 0 2px}
@@ -512,6 +599,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
       </button>
     </div>
+    <button class="planBtn" id="planBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <span>Im Kalender planen</span><small></small>
+    </button>
     <div id="lines"></div>
   </div>
 </section>
@@ -664,6 +755,33 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
   </div>
 </div>
 
+<div class="pick" id="todoPick">
+  <div class="veil" data-todoclose></div>
+  <div class="pickBox">
+    <h3 id="tpTitel">To-do</h3>
+    <p class="pickHint" id="tpListe" style="margin:-8px 0 12px"></p>
+    <label class="pickLabel">An welchem Tag?</label>
+    <div class="tpTage" id="tpTage"></div>
+    <input id="tpDatum" type="date" aria-label="Datum">
+    <label class="tpCheck"><input type="checkbox" id="tpOhne"> Ohne feste Uhrzeit</label>
+    <div class="tpZeit" id="tpZeit">
+      <div><label class="pickLabel" for="tpVon">Von</label><input id="tpVon" type="time"></div>
+      <div><label class="pickLabel" for="tpBis">Bis</label><input id="tpBis" type="time"></div>
+    </div>
+    <div style="margin-top:14px">
+      <button id="tpSave" style="justify-content:center;border-color:var(--todo);color:var(--todo)">Im Kalender eintragen</button>
+      <div class="tpReihe">
+        <button id="tpDone">✓ Erledigt</button>
+        <button id="tpRaus">Aus Kalender nehmen</button>
+      </div>
+      <div class="tpReihe">
+        <button id="tpZurListe" style="margin-bottom:0">Liste öffnen</button>
+        <button id="tpCancel" style="margin-bottom:0">Abbrechen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="pick" id="zielPick">
   <div class="veil" data-zielclose></div>
   <div class="pickBox">
@@ -695,6 +813,10 @@ let notes=[], events=[], folders=[], trash=[], curFolder=null, openId=null, show
 /* Ziele: 'm:2026-09' fuer den Monat, 'w:2026-09-07' (Montag) fuer die Woche */
 let ziele={};
 let undoStack=[];
+/* To-dos im Kalender: planer = offene Ablage in der Wochenansicht
+   {nid: Liste, aus der man kam | null, alle: alle Listen zeigen,
+    pick: gerade angetipptes To-do, rueck: Zurück führt wieder in die Liste} */
+let planer=null, todoRef=null, wkGeom={h0:7,PPH:54,start:''};
 let cfg={sort:'updated',size:17,done:'hide',land:'DE',bundesland:''};
 const urls={};
 
@@ -884,6 +1006,7 @@ function rowLine(b){
       ${b.end!==undefined?`<input type="time" class="clock end" data-end="${b.id}" value="${b.end||''}" aria-label="Ende">`:''}
     </span>`:''}
     ${b.check===true?'':`<button class="grip" data-grip="${b.id}" aria-label="Verschieben"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="2"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="18" r="2"/><circle cx="15" cy="18" r="2"/></svg></button>`}
+    ${b.kal&&b.text.trim()?`<button class="kalTag${b.check===false&&b.kal.d<todayIso()?' spaet':''}" data-kal="${b.id}" aria-label="Im Kalender ändern">${KAL_SVG}${esc(kalLabel(b))}</button>`:''}
   </div>`;
 }
 function rowMedia(b){
@@ -940,6 +1063,11 @@ function renderNote(){
   $('#lines').innerHTML=html;
 
   const endBtn=$('#endTime'); if(endBtn) endBtn.textContent=usesEnd()?'Endzeit ausblenden':'Endzeit anzeigen';
+  const pb=$('#planBtn');
+  if(pb){
+    const offen=n.blocks.filter(b=>istTodo(b)&&b.check===false), gepl=offen.filter(b=>b.kal).length;
+    pb.querySelector('small').textContent=offen.length?gepl+' von '+offen.length+' geplant':'';
+  }
   n.blocks.forEach(b=>{ if(isRow(b)){ const ta=$(`[data-txt="${b.id}"]`); if(ta) ta.value=b.text; } });
   requestAnimationFrame(growAll);
   fillMedia(); markUndo();
@@ -1061,7 +1189,7 @@ function addMedia(type,mid){
    noch verlassen werden, wenn wirklich die Startliste offen ist. */
 let puffer=false;
 const istOffen=sel=>{ const el=$(sel); return !!el&&el.classList.contains('on'); };
-const OVERLAYS=['#folderPick','#zielPick','#vorlagePick','#drawer','#drawer2','#recScreen'];
+const OVERLAYS=['#folderPick','#zielPick','#vorlagePick','#todoPick','#drawer','#drawer2','#recScreen'];
 
 function imHauptmenue(){
   return istOffen('#scrList') && !curFolder && !fanOpen && !OVERLAYS.some(istOffen);
@@ -1080,12 +1208,19 @@ function eineEbeneZurueck(){
   if(istOffen('#folderPick')){ $('#folderPick').classList.remove('on'); return true; }
   if(istOffen('#zielPick')){ $('#zielPick').classList.remove('on'); zielKey=null; return true; }
   if(istOffen('#vorlagePick')){ $('#vorlagePick').classList.remove('on'); return true; }
+  if(istOffen('#todoPick')){ $('#todoPick').classList.remove('on'); todoRef=null; return true; }
   if(istOffen('#drawer2')){ $('#drawer2').classList.remove('on'); return true; }
   if(istOffen('#drawer')){ $('#drawer').classList.remove('on'); return true; }
   if(istOffen('#scrNote')){ saveNow(); renderList(); show('scrList'); return true; }
   if(istOffen('#scrCal')){
     if(evForm){ evForm=null; renderCal(); return true; }         // erst das Termin-Formular
     if(calMode==='day'){ calMode='week'; renderCal(); return true; }
+    // Kam man aus einer Liste zum Planen, führt Zurück wieder genau dorthin
+    if(planer&&planer.rueck){
+      const id=planer.nid; planer=null;
+      if(notes.some(n=>n.id===id)){ openId=id; show('scrNote'); renderNote(); markUndo(); return true; }
+    }
+    planer=null;
     if(calMode==='week'){ calMode='month'; renderCal(); return true; }
     if(calMode==='month'){ calMode='year'; renderCal(); return true; }
     renderList(); show('scrList'); return true;
@@ -1226,9 +1361,12 @@ $('#lines').addEventListener('click',async e=>{
     snap();
     const n=note(); n.blocks=n.blocks.filter(x=>x.id!==b.id); touch(); renderNote(); return;
   }
+  const kt=e.target.closest('[data-kal]');
+  if(kt){ oeffneTodo(openId,kt.dataset.kal); return; }
   const t=e.target.closest('[data-tick]');
   if(t){ snap(); const b=blockById(t.dataset.tick); b.check=!b.check; touch(); renderNote(); }
 });
+$('#planBtn').onclick=()=>{ if(!note()) return; saveNow(); openPlaner(openId); };
 
 /* =========================================================
    Plus-Menü
@@ -1601,7 +1739,114 @@ async function ladeFeiertage(y){
     return {pub:{},school:[]};
   }
 }
-function feiertagAn(iso){ const d=holCache[holidayKey(iso.slice(0,4))]; return d?d.pub[iso]:undefined; }
+/* ---------------------------------------------------------
+   Feier- und Festtage für Deutschland -- in der App berechnet.
+   Die API oben kennt nur die gesetzlichen Feiertage des gewählten
+   Bundeslands. Andere Kalender zeigen aber auch Heiligabend,
+   Muttertag, Rosenmontag oder Feiertage anderer Bundesländer --
+   die kommen von hier und funktionieren auch ohne Internet.
+   art: 'g' gesetzlich in ganz Deutschland
+        'r' gesetzlich nur in den Ländern aus `nur`
+        'f' Fest- oder Gedenktag, kein freier Tag
+--------------------------------------------------------- */
+function osterSonntag(y){
+  const a=y%19, b=Math.floor(y/100), c=y%100, d=Math.floor(b/4), e=b%4,
+        f=Math.floor((b+8)/25), g=Math.floor((b-f+1)/3), h=(19*a+b-d-g+15)%30,
+        i=Math.floor(c/4), k=c%4, l=(32+2*e+2*i-h-k)%7, m=Math.floor((a+11*h+22*l)/451),
+        mon=Math.floor((h+l-7*m+114)/31), tag=((h+l-7*m+114)%31)+1;
+  return isoOf(y,mon-1,tag);
+}
+const festCache={};
+function festtageDE(y){
+  if(festCache[y]) return festCache[y];
+  const out={}, o=osterSonntag(y);
+  const add=(iso,name,art,nur)=>{ (out[iso]=out[iso]||[]).push({name,art,nur:nur||[]}); };
+  const fix=(m,d,name,art,nur)=>add(isoOf(y,m-1,d),name,art,nur);
+  const ost=(n,name,art,nur)=>add(addDays(o,n),name,art,nur);
+  // erster Sonntag ab einem Datum (einschliesslich)
+  const sonntagAb=(m,d)=>{ const iso=isoOf(y,m-1,d), [yy,mm,dd]=iso.split('-').map(Number);
+    return addDays(iso,(7-new Date(yy,mm-1,dd).getDay())%7); };
+  const advent1=sonntagAb(11,27);
+
+  fix(1,1,'Neujahr','g');
+  fix(1,6,'Heilige Drei Könige','r',['BW','BY','ST']);
+  fix(2,14,'Valentinstag','f');
+  ost(-52,'Weiberfastnacht','f');
+  ost(-48,'Rosenmontag','f');
+  ost(-47,'Faschingsdienstag','f');
+  ost(-46,'Aschermittwoch','f');
+  if(y>=2023) fix(3,8,'Internationaler Frauentag','r',['BE','MV']);
+  else if(y>=2019) fix(3,8,'Internationaler Frauentag','r',['BE']);
+  else fix(3,8,'Internationaler Frauentag','f');
+  add(sonntagAb(3,25),'Beginn der Sommerzeit','f');
+  ost(-7,'Palmsonntag','f');
+  ost(-3,'Gründonnerstag','f');
+  ost(-2,'Karfreitag','g');
+  ost(-1,'Karsamstag','f');
+  ost(0,'Ostersonntag','r',['BB']);
+  ost(1,'Ostermontag','g');
+  fix(4,30,'Walpurgisnacht','f');
+  fix(5,1,'Tag der Arbeit','g');
+  add(addDays(sonntagAb(5,1),7),'Muttertag','f');
+  ost(39,'Christi Himmelfahrt','g');
+  ost(39,'Vatertag','f');
+  ost(49,'Pfingstsonntag','r',['BB']);
+  ost(50,'Pfingstmontag','g');
+  fix(6,1,'Kindertag','f');
+  ost(60,'Fronleichnam','r',['BW','BY','HE','NW','RP','SL']);
+  add(isoOf(y,7,8),'Augsburger Friedensfest (nur Augsburg)','f');
+  out[isoOf(y,7,8)][0].ort=true;       // gilt nur in einer Stadt -- nie als freier Tag werten
+  fix(8,15,'Mariä Himmelfahrt','r',['BY','SL']);
+  if(y>=2019) fix(9,20,'Weltkindertag','r',['TH']); else fix(9,20,'Weltkindertag','f');
+  fix(10,3,'Tag der Deutschen Einheit','g');
+  add(sonntagAb(10,1),'Erntedankfest','f');
+  add(sonntagAb(10,25),'Ende der Sommerzeit','f');
+  if(y===2017) fix(10,31,'Reformationstag','g');
+  else fix(10,31,'Reformationstag','r',y>=2018?['BB','HB','HH','MV','NI','SN','ST','SH','TH']:['BB','MV','SN','ST','TH']);
+  fix(10,31,'Halloween','f');
+  fix(11,1,'Allerheiligen','r',['BW','BY','NW','RP','SL']);
+  fix(11,2,'Allerseelen','f');
+  fix(11,11,'Martinstag','f');
+  add(addDays(advent1,-14),'Volkstrauertag','f');
+  add(addDays(advent1,-11),'Buß- und Bettag','r',['SN']);
+  add(addDays(advent1,-7),'Totensonntag','f');
+  add(advent1,'1. Advent','f');
+  add(addDays(advent1,7),'2. Advent','f');
+  add(addDays(advent1,14),'3. Advent','f');
+  add(addDays(advent1,21),'4. Advent','f');
+  fix(12,6,'Nikolaus','f');
+  fix(12,24,'Heiligabend','f');
+  fix(12,25,'1. Weihnachtstag','g');
+  fix(12,26,'2. Weihnachtstag','g');
+  fix(12,31,'Silvester','f');
+  return festCache[y]=out;
+}
+const meinLand=()=>(cfg.land==='DE'&&cfg.bundesland)?(cfg.bundesland.split('-')[1]||''):'';
+/* Alles, was an einem Tag gefeiert wird:
+   [{name, art:'frei'|'regional'|'fest', nur:[Länderkürzel]}]
+   'frei' = gesetzlicher Feiertag bei dir, 'regional' = nur in anderen Bundesländern */
+function festeAn(iso){
+  const y=+iso.slice(0,4), out=[];
+  const apiName=((holCache[holidayKey(y)]||{}).pub||{})[iso];
+  if(cfg.land!=='DE'){ if(apiName) out.push({name:apiName,art:'frei',nur:[]}); return out; }
+  const bl=meinLand();
+  let frei=false, nurOrt=false;
+  (festtageDE(y)[iso]||[]).forEach(f=>{
+    if(f.ort) nurOrt=true;
+    if(f.art==='g'){ out.push({name:f.name,art:'frei',nur:[]}); frei=true; }
+    else if(f.art==='r'){
+      if((bl&&f.nur.includes(bl))||(apiName&&bl)){ out.push({name:f.name,art:'frei',nur:[]}); frei=true; }
+      else out.push({name:f.name,art:'regional',nur:f.nur});
+    }
+    else out.push({name:f.name,art:'fest',nur:[]});
+  });
+  // Die API kennt einen freien Tag, den die Tabelle nicht hat (z. B. einmalige Feiertage)
+  if(apiName&&!frei&&!nurOrt) out.unshift({name:apiName,art:'frei',nur:[]});
+  return out;
+}
+function feiertagAn(iso){ const f=festeAn(iso).find(x=>x.art==='frei'); return f?f.name:undefined; }
+/* Kurzer Name für enge Stellen: erst der freie Tag, sonst der erste Festtag */
+function festKurz(iso){ const f=festeAn(iso); return f.length?(f.find(x=>x.art==='frei')||f[0]):null; }
 function ferienAn(iso){ const d=holCache[holidayKey(iso.slice(0,4))]; if(!d) return null;
   return d.school.find(f=>iso>=f.start&&iso<=f.end)||null; }
 /* Laedt bei Bedarf nach und zeichnet die aktuell offene Kalenderansicht neu,
@@ -1621,6 +1866,121 @@ let calMode='year', calY=new Date().getFullYear(), calM=new Date().getMonth(), c
 
 function evOf(iso){ return events.filter(e=>e.date===iso).sort((a,b)=>(a.allday?'':a.start||'').localeCompare(b.allday?'':b.start||'')); }
 function hasEv(iso){ return events.some(e=>e.date===iso); }
+
+/* =========================================================
+   To-dos im Kalender
+   Ein Listeneintrag bekommt b.kal={d:'JJJJ-MM-TT', s?, e?} und
+   steht damit an diesem Tag im Kalender. Termine (events) bleiben
+   davon getrennt: eigene Daten, eigene Farbe, eigenes Formular.
+   Zeitplan-Einträge (type 'plan') bringen ihre Uhrzeit selbst mit --
+   dort ist b.time die Quelle, damit Liste und Kalender nie
+   zwei verschiedene Uhrzeiten zeigen.
+========================================================= */
+const KAL_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
+function istTodo(b){ return (b.type==='line'||b.type==='plan')&&b.check!==null&&b.text.trim()!==''; }
+function kurzText(b){ const t=b.text.trim().split('\n')[0]; return t.length>70?t.slice(0,68)+'…':t; }
+function kalVon(b){ return b.type==='plan'?(b.time||''):((b.kal&&b.kal.s)||''); }
+function kalBis(b){ return (b.type==='plan'&&b.end!==undefined)?(b.end||''):((b.kal&&b.kal.e)||''); }
+function bisNach(s,min){ const m=Math.min(mins(s)+min,23*60+59); return p2(Math.floor(m/60))+':'+p2(m%60); }
+function kalSetzen(b,d,s,e){
+  b.kal={d};
+  if(b.type==='plan'){
+    if(s){ b.time=s; if(b.end!==undefined) b.end=e||''; else if(e) b.kal.e=e; }
+  }else if(s){ b.kal.s=s; if(e) b.kal.e=e; }
+}
+function todosAm(iso){
+  const out=[];
+  notes.forEach(n=>n.blocks.forEach(b=>{ if(b.kal&&b.kal.d===iso&&istTodo(b)) out.push({n,b}); }));
+  return out.sort((x,y)=>(kalVon(x.b)||'99').localeCompare(kalVon(y.b)||'99'));
+}
+function todoFinden(nid,bid){
+  const n=notes.find(x=>x.id===nid), b=n&&n.blocks.find(x=>x.id===bid);
+  return b?{n,b}:null;
+}
+function kalLabel(b){
+  if(!b.kal) return '';
+  const d=b.kal.d, h=todayIso();
+  const tag=d===h?'Heute':d===addDays(h,1)?'Morgen':d===addDays(h,-1)?'Gestern'
+    :dayName(d)+' '+d.slice(8,10)+'.'+d.slice(5,7)+'.';
+  const s=kalVon(b), e=kalBis(b);
+  return tag+(s?' · '+s+(e&&e>s?'–'+e:''):'');
+}
+/* Offene To-dos, die noch keinen Platz im Kalender haben */
+function planerTodos(){
+  const quelle=(planer&&planer.nid&&!planer.alle)?notes.filter(n=>n.id===planer.nid):notes;
+  const out=[];
+  quelle.forEach(n=>n.blocks.forEach(b=>{ if(istTodo(b)&&b.check===false&&!b.kal) out.push({n,b}); }));
+  return out;
+}
+function planerHtml(){
+  if(!planer) return `<div class="chipRow" style="margin:0 0 12px"><button class="chip" data-planauf>＋ To-dos einplanen</button></div>`;
+  const liste=planerTodos();
+  const quelle=planer.nid&&notes.find(n=>n.id===planer.nid);
+  const titel=(quelle&&!planer.alle)?'Aus „'+(quelle.title||'Neue Notiz')+'"':'Aus allen Listen';
+  let pick=planer.pick&&todoFinden(planer.pick.nid,planer.pick.bid);
+  if(!pick) planer.pick=null;
+  const chips=liste.map(({n,b})=>
+    `<button class="plChip${pick&&pick.b.id===b.id?' on':''}" data-planpick="${n.id}|${b.id}">${esc(kurzText(b))}</button>`).join('');
+  const hinweis=pick
+    ? `<b>„${esc(kurzText(pick.b))}"</b> – tippe jetzt unten im Raster auf die Uhrzeit. Oben auf den Tag getippt = ohne Uhrzeit.`
+    : liste.length?'Tippe ein To-do an und danach im Raster auf die Uhrzeit, zu der du es erledigen willst.'
+                  :'Alle offenen To-dos sind eingeplant. ✓';
+  return `<div class="planer">
+    <div class="plKopf"><span class="lbl">${esc(titel)} · ${liste.length} ohne Platz</span>
+      <button data-planzu>${planer.rueck?'Zur Liste':'Schließen'}</button></div>
+    ${chips?`<div class="plChips">${chips}</div>`:''}
+    <p class="plHinweis">${hinweis}</p>
+    <div class="plFuss">${pick?'<button class="chip" data-plangenau>Datum &amp; Uhrzeit wählen …</button>':''}${
+      quelle?`<button class="chip" data-planalle>${planer.alle?'Nur diese Liste':'Alle Listen zeigen'}</button>`:''}</div>
+  </div>`;
+}
+/* Aus einer Liste heraus: Wochenansicht mit den To-dos dieser Liste öffnen */
+function openPlaner(nid){
+  planer={nid,alle:false,pick:null,rueck:true};
+  calD=todayIso(); const n=new Date(); calY=n.getFullYear(); calM=n.getMonth();
+  calMode='week'; evForm=null; show('scrCal'); renderCal(); pushLayer('cal');
+}
+function todoNeuZeichnen(){
+  if(istOffen('#scrCal')) renderCal();
+  else if(istOffen('#scrNote')) renderNote();
+}
+function todoPlanen(nid,bid,d,s,e){
+  const f=todoFinden(nid,bid); if(!f) return;
+  kalSetzen(f.b,d,s,e); saveNow();
+  if(planer) planer.pick=null;
+  todoNeuZeichnen();
+  toast('Eingeplant: '+kalLabel(f.b));
+}
+function todoAbhaken(nid,bid){
+  const f=todoFinden(nid,bid); if(!f) return;
+  f.b.check=!f.b.check; f.n.updated=Date.now(); saveNow(); todoNeuZeichnen();
+}
+/* Dialog: Tag und Uhrzeit eines To-dos festlegen */
+function tpZeichnen(){
+  const h=todayIso(), wahl=$('#tpDatum').value;
+  $('#tpTage').innerHTML=[...Array(7)].map((_,i)=>{
+    const iso=addDays(h,i), txt=i===0?'Heute':i===1?'Morgen':dayName(iso)+' '+(+iso.slice(8,10))+'.';
+    return `<button type="button" class="${iso===wahl?'on':''}" data-tptag="${iso}">${txt}</button>`;
+  }).join('');
+  $('#tpZeit').style.display=$('#tpOhne').checked?'none':'flex';
+}
+function oeffneTodo(nid,bid){
+  const f=todoFinden(nid,bid); if(!f) return;
+  todoRef={nid,bid};
+  const b=f.b, s=kalVon(b), e=kalBis(b);
+  $('#tpTitel').textContent=kurzText(b);
+  $('#tpListe').textContent='To-do aus „'+(f.n.title||'Neue Notiz')+'"';
+  $('#tpDatum').value=(b.kal&&b.kal.d)||(calMode==='day'&&istOffen('#scrCal')?calD:todayIso());
+  $('#tpOhne').checked=!!b.kal&&!s;
+  $('#tpVon').value=s||'09:00';
+  $('#tpBis').value=(e&&e>s?e:'')||bisNach(s||'09:00',60);
+  $('#tpSave').textContent=b.kal?'Änderung speichern':'Im Kalender eintragen';
+  $('#tpDone').textContent=b.check===true?'Wieder öffnen':'✓ Erledigt';
+  $('#tpRaus').style.display=b.kal?'flex':'none';
+  $('#tpZurListe').style.display=istOffen('#scrNote')?'none':'flex';
+  tpZeichnen();
+  $('#todoPick').classList.add('on'); pushLayer('todo');
+}
 
 function miniMonth(y,m){
   const first=firstWd(y,m), n=daysIn(y,m), t=todayIso();
@@ -1678,30 +2038,37 @@ function renderMonth(){
     const dnum=i-first+1;
     if(dnum<1){ cells+=`<div class="cell out">${prev+dnum}</div>`; continue; }
     if(dnum>n){ cells+=`<div class="cell out">${dnum-n}</div>`; continue; }
-    const iso=isoOf(calY,calM,dnum), evs=evOf(iso), feiertag=feiertagAn(iso), ferien=ferienAn(iso);
-    const dots=evs.slice(0,3).map(()=>'<i></i>').join('');
-    const cls=[iso===t?'today':'',feiertag?'holiday':'',ferien?'ferien':''].filter(Boolean).join(' ');
-    const label=feiertag||(ferien?ferien.name:'');
+    const iso=isoOf(calY,calM,dnum), evs=evOf(iso), feste=festeAn(iso), ferien=ferienAn(iso);
+    const feiertag=feste.some(f=>f.art==='frei');
+    const dots=evs.slice(0,3).map(()=>'<i></i>').join('')+
+      (todosAm(iso).some(x=>x.b.check===false)?'<i class="t"></i>':'');   // gelber Punkt = offenes To-do
+    const cls=[iso===t?'today':'',feiertag?'holiday':'',(!feiertag&&feste.length)?'fest':'',ferien?'ferien':''].filter(Boolean).join(' ');
+    const label=feste.map(f=>f.name).join(', ')||(ferien?ferien.name:'');
     cells+=`<button class="cell${cls?' '+cls:''}" data-day="${iso}"${label?` title="${esc(label)}"`:''}>${dnum}<span class="dots">${dots}</span></button>`;
   }
   const cnt=events.filter(e=>e.date.startsWith(`${calY}-${p2(calM+1)}`)).length;
 
   // Feiertage & Ferien dieses Monats als kleine Legende darunter (Tooltip allein reicht am Handy nicht)
   const monPrefix=`${calY}-${p2(calM+1)}`;
-  const feiertageImMonat=Object.entries((holCache[holidayKey(calY)]||{pub:{}}).pub||{})
-    .filter(([iso])=>iso.startsWith(monPrefix)).sort(([a],[b])=>a.localeCompare(b));
+  // alle Feier- und Festtage des Monats, der Reihe nach
+  const feiertageImMonat=[];
+  for(let d=1;d<=n;d++){ const iso=isoOf(calY,calM,d);
+    festeAn(iso).forEach(f=>feiertageImMonat.push({iso,...f})); }
   const ferienImMonat=((holCache[holidayKey(calY)]||{school:[]}).school||[])
     .filter(f=>f.start.startsWith(monPrefix)||f.end.startsWith(monPrefix)||(f.start<monPrefix+'-32'&&f.end>=monPrefix+'-01'));
   let legende='';
   if(feiertageImMonat.length||ferienImMonat.length){
-    legende='<div class="wlegend" style="margin-top:12px">'+
-      feiertageImMonat.map(([iso,name])=>`🔴 ${p2(+iso.slice(8,10))}. ${esc(name)}`).join('<br>')+
-      (feiertageImMonat.length&&ferienImMonat.length?'<br>':'')+
-      ferienImMonat.map(f=>`🟢 ${esc(f.name)} (${f.start.slice(8,10)}.${f.start.slice(5,7)}.–${f.end.slice(8,10)}.${f.end.slice(5,7)}.)`).join('<br>')+
+    legende='<div class="festListe"><h4>Feiertage &amp; Festtage</h4>'+
+      feiertageImMonat.map(f=>`<button class="festZeile ${f.art}" data-day="${f.iso}">`+
+        `<i></i><b>${dayName(f.iso)} ${p2(+f.iso.slice(8,10))}.</b><span>${esc(f.name)}`+
+        (f.art==='frei'?'<small>frei</small>':f.art==='regional'?`<small>nur ${f.nur.join(', ')}</small>`:'')+
+        `</span></button>`).join('')+
+      ferienImMonat.map(f=>`<div class="festZeile ferien"><i></i><b>Ferien</b><span>${esc(f.name)}`+
+        `<small>${f.start.slice(8,10)}.${f.start.slice(5,7)}.–${f.end.slice(8,10)}.${f.end.slice(5,7)}.</small></span></div>`).join('')+
       '</div>';
-  }else if(!cfg.bundesland){
-    legende='<p class="wlegend" style="margin-top:12px">Feiertage &amp; Ferien: Bundesland in den Einstellungen wählen.</p>';
   }
+  if(!cfg.bundesland)
+    legende+='<p class="wlegend" style="margin-top:10px">Wähle in den Einstellungen dein Bundesland – dann sind regionale Feiertage richtig als „frei" markiert und die Schulferien erscheinen.</p>';
 
   // Monatsziele als Karte ueber dem Raster -- jedes Ziel direkt abhakbar
   const mKey='m:'+calY+'-'+p2(calM+1), mP=zielPunkte(mKey), mD=mP.filter(z=>z.done).length;
@@ -1744,10 +2111,13 @@ function renderMonth(){
 }
 function renderDay(){
   $('#calBackTxt').textContent=MON[calM].slice(0,3)+' '+calY;
-  const evs=evOf(calD), feiertag=feiertagAn(calD), ferien=ferienAn(calD);
-  let html=`<div class="calTop"><h2>${prettyDate(calD)}<small>${evs.length?evs.length+(evs.length===1?' Termin':' Termine'):'Nichts eingetragen'}</small></h2></div>`+switcher();
-  if(feiertag) html+=`<div class="callout callout--warn" style="margin-bottom:12px"><span class="callout__label">Feiertag</span>${esc(feiertag)}</div>`;
-  if(ferien) html+=`<div class="callout callout--info" style="margin-bottom:12px"><span class="callout__label">Ferien</span>${esc(ferien.name)}</div>`;
+  const evs=evOf(calD), feste=festeAn(calD), ferien=ferienAn(calD), tds=todosAm(calD);
+  const zaehler=[evs.length?evs.length+(evs.length===1?' Termin':' Termine'):'',
+                 tds.length?tds.length+(tds.length===1?' To-do':' To-dos'):''].filter(Boolean).join(' · ');
+  let html=`<div class="calTop"><h2>${prettyDate(calD)}<small>${zaehler||'Nichts eingetragen'}</small></h2></div>`+switcher();
+  html+=feste.map(f=>`<div class="tagInfo ${f.art}"><span>${
+      f.art==='frei'?'Feiertag':f.art==='regional'?'Feiertag in '+f.nur.join(', '):'Festtag'}</span>${esc(f.name)}</div>`).join('');
+  if(ferien) html+=`<div class="tagInfo ferien"><span>Ferien</span>${esc(ferien.name)}</div>`;
   if(evForm) html+=formHtml();
   html+=evs.map(e=>`<button class="ev" data-ev="${e.id}">
       <span class="when">${e.allday?'ganztags':(e.start||'')+(e.end?'<br>'+e.end:'')}</span>
@@ -1755,6 +2125,14 @@ function renderDay(){
     </button>`).join('');
   if(!evs.length&&!evForm) html+='<div class="empty">Noch kein Termin an diesem Tag.</div>';
   if(!evForm) html+=`<div class="chipRow"><button class="chip" id="newEv">+ Termin</button></div>`;
+  // To-dos stehen bewusst in einem eigenen Block -- sie sind keine Termine
+  if(!evForm&&tds.length) html+='<p class="tdKopf">To-dos an diesem Tag</p>'+tds.map(({n,b})=>{
+    const s=kalVon(b), e=kalBis(b);
+    return `<div class="td${b.check===true?' done':''}">
+      <button class="tick" data-todotick="${n.id}|${b.id}" aria-label="${b.check?'Wieder öffnen':'Abhaken'}">${b.check===true?'✓':''}</button>
+      <button class="t" data-todo="${n.id}|${b.id}"><b>${esc(kurzText(b))}</b>
+        <span>${s?s+(e&&e>s?'–'+e:''):'ohne Uhrzeit'} · ${esc(n.title||'Neue Notiz')}</span></button></div>`;
+  }).join('');
   $('#calBody').innerHTML=html;
   if(evForm) markRemindOptions();
   mitFeiertagen([+calD.slice(0,4)],renderDay);
@@ -1821,29 +2199,40 @@ function lanes(evs){                             // Überschneidungen untereinan
 function renderWeek(){
   const start=mondayOf(calD), days=[...Array(7)].map((_,i)=>addDays(start,i));
   const t=todayIso(), PPH=54;
-  const timed=days.flatMap(d=>evOf(d).filter(e=>!e.allday));
-  let h0=7,h1=20;
+  /* Termine und eingeplante To-dos in dieselbe Form bringen, damit sie sich im
+     Raster nebeneinander einsortieren. Getrennt bleiben sie trotzdem:
+     Termine sind blau gefüllt, To-dos gelb umrandet. */
+  const proTag={};
+  days.forEach(iso=>{ proTag[iso]=[
+    ...evOf(iso).map(e=>({ev:e,allday:!!e.allday,start:e.start,end:e.end,title:e.title||'Termin'})),
+    ...todosAm(iso).map(({n,b})=>{ const s=kalVon(b), e=kalBis(b);
+      return {todo:b,nid:n.id,allday:!s,start:s,end:(e&&e>s)?e:(s?bisNach(s,30):''),title:kurzText(b),done:b.check===true}; })
+  ]; });
+  const timed=days.flatMap(d=>proTag[d].filter(x=>!x.allday));
+  let h0=planer?6:7, h1=planer?23:20;        // beim Planen frühen Morgen und Abend mit anbieten
   timed.forEach(e=>{ h0=Math.min(h0,Math.floor(mins(e.start||'8:00')/60));
                      h1=Math.max(h1,Math.ceil(mins(e.end||e.start||'9:00')/60)); });
   h0=Math.max(0,h0); h1=Math.min(24,Math.max(h1,h0+8));
   const span=h1-h0, H=span*PPH;
   const [sy,sm,sd]=start.split('-').map(Number), e6=days[6].split('-').map(Number);
-  $('#calBackTxt').textContent=calY;
+  $('#calBackTxt').textContent=(planer&&planer.rueck)?'Liste':calY;
 
   // Kopfzeile mit den sieben Tagen
   const head='<div class="wkHead"><div class="gut">KW '+kw(start)+'</div>'+
-    days.map(iso=>{const [,mm,dd]=iso.split('-').map(Number), feiertag=feiertagAn(iso), ferien=ferienAn(iso);
-      return `<button class="dh${iso===t?' today':''}${feiertag?' holiday':''}${ferien?' ferien':''}" data-day="${iso}"${feiertag?` title="${esc(feiertag)}"`:''}>
+    days.map(iso=>{const [,mm,dd]=iso.split('-').map(Number), feste=festeAn(iso), fest=festKurz(iso),
+        frei=!!fest&&fest.art==='frei', ferien=ferienAn(iso);
+      return `<button class="dh${iso===t?' today':''}${frei?' holiday':''}${ferien?' ferien':''}" data-day="${iso}"${fest?` title="${esc(feste.map(f=>f.name).join(', '))}"`:''}>
         ${dayName(iso)}<b>${dd}</b>${dd===1||iso===start?`<span style="font-size:9px">${MONK[mm-1]}</span>`:''}
-        ${feiertag?`<span style="display:block;font-size:8.5px;color:var(--red);white-space:normal;line-height:1.2">${esc(feiertag)}</span>`:''}</button>`;
+        ${fest?`<span class="dhFest${frei?' frei':''}">${esc(fest.name)}</span>`:''}</button>`;
     }).join('')+'</div>';
 
-  // Ganztägige Termine in eigener Zeile
-  const anyAll=days.some(d=>evOf(d).some(e=>e.allday));
-  const allRow=anyAll?'<div class="allRow"><div class="gut">ganz</div>'+
-    days.map(iso=>`<div class="allCell">`+
-      evOf(iso).filter(e=>e.allday).map(e=>
-        `<button class="allBar" data-ev="${e.id}">${esc(e.title||'Termin')}</button>`).join('')+
+  // Ganztägige Termine und To-dos ohne Uhrzeit in eigener Zeile
+  const anyAll=days.some(d=>proTag[d].some(x=>x.allday));
+  const allRow=anyAll?'<div class="allRow"><div class="gut">Tag</div>'+
+    days.map(iso=>`<div class="allCell" data-ganz="${iso}">`+
+      proTag[iso].filter(x=>x.allday).map(x=>x.todo
+        ?`<button class="allBar todo${x.done?' done':''}" data-todo="${x.nid}|${x.todo.id}">${esc(x.title)}</button>`
+        :`<button class="allBar" data-ev="${x.ev.id}">${esc(x.title)}</button>`).join('')+
       `</div>`).join('')+'</div>':'';
 
   // Stundenraster
@@ -1852,15 +2241,16 @@ function renderWeek(){
   const grid=`repeating-linear-gradient(180deg,var(--line) 0 1px,transparent 1px ${PPH}px)`;
 
   const cols=days.map(iso=>{
-    const placed=lanes(evOf(iso).filter(e=>!e.allday));
+    const placed=lanes(proTag[iso].filter(x=>!x.allday));
     const maxLane=placed.reduce((a,x)=>Math.max(a,x.lane),0)+1;
     const blocks=placed.map(x=>{
       const top=Math.max(0,(x.a-h0*60)/60*PPH);
       const hgt=Math.max(20,(x.b-x.a)/60*PPH-2);
       const w=100/maxLane;
-      return `<button class="slot" data-ev="${x.e.id}"
-        style="top:${top}px;height:${hgt}px;left:${x.lane*w}%;width:calc(${w}% - 2px)">
-        ${esc(x.e.start||'')}<small>${esc(x.e.title||'Termin')}</small></button>`;
+      const st=`top:${top}px;height:${hgt}px;left:${x.lane*w}%;width:calc(${w}% - 2px)`;
+      return x.e.todo
+        ?`<button class="slot todo${x.e.done?' done':''}" data-todo="${x.e.nid}|${x.e.todo.id}" style="${st}">${esc(x.e.title)}<small>${esc(x.e.start||'')}</small></button>`
+        :`<button class="slot" data-ev="${x.e.ev.id}" style="${st}">${esc(x.e.title)}<small>${esc(x.e.start||'')}</small></button>`;
     }).join('');
     let now='';
     if(iso===t){
@@ -1871,6 +2261,12 @@ function renderWeek(){
       style="height:${H}px;background-image:${grid}">${blocks}${now}</div>`;
   }).join('');
 
+  // Beim Neuzeichnen (z. B. nach dem Einplanen) dieselbe Uhrzeit sichtbar lassen
+  const alt=$('#calBody .wkV');
+  const altZeit=(alt&&wkGeom.start===start)?wkGeom.h0*60+alt.scrollTop/wkGeom.PPH*60:null;
+  const ablage=planerHtml();
+  const waehlt=!!(planer&&planer.pick);
+
   $('#calBody').innerHTML=`
     <div class="calTop">
       <button class="navBtn" data-week="-1" aria-label="Woche zurück">‹</button>
@@ -1878,14 +2274,17 @@ function renderWeek(){
       <button class="navBtn" data-week="1" aria-label="Woche vor">›</button>
     </div>
     ${switcher()}
-    <div class="wkV">${head}${allRow}
+    ${ablage}
+    <div class="wkV${waehlt?' ziel':''}">${head}${allRow}
       <div class="wkBody">
         <div class="gut" style="height:${H}px">${ticks}</div>${cols}
       </div>
     </div>
-    <p class="wlegend">Tipp auf einen Tag öffnet die Tagesansicht · Tipp auf einen Termin bearbeitet ihn</p>`;
+    <p class="wlegend"><i class="lg lgT"></i>Termin<i class="lg lgD"></i>To-do · Tipp auf einen Tag öffnet die Tagesansicht</p>`;
   const box=$('#calBody .wkV');
-  if(box){ const d=new Date(); box.scrollTop=Math.max(0,(d.getHours()-h0-1)*PPH); }
+  if(box) box.scrollTop=altZeit!==null?Math.max(0,(altZeit-h0*60)/60*PPH)
+                                      :Math.max(0,(new Date().getHours()-h0-1)*PPH);
+  wkGeom={h0,PPH,start};
   mitFeiertagen([...new Set(days.map(d=>+d.slice(0,4)))],renderWeek);
 }
 function switcher(){
@@ -1996,6 +2395,51 @@ $('#zielDel').onclick=()=>zielSchreiben('');
 $('#zielCancel').onclick=()=>goBack();
 $('#zielPick').addEventListener('click',e=>{ if(e.target.closest('[data-zielclose]')) goBack(); });
 
+$('#tpTage').addEventListener('click',e=>{
+  const b=e.target.closest('[data-tptag]'); if(!b) return;
+  $('#tpDatum').value=b.dataset.tptag; tpZeichnen();
+});
+$('#tpDatum').addEventListener('change',tpZeichnen);
+$('#tpOhne').addEventListener('change',tpZeichnen);
+$('#tpVon').addEventListener('change',()=>{
+  const von=$('#tpVon').value; if(von&&$('#tpBis').value<=von) $('#tpBis').value=bisNach(von,60);
+});
+$('#tpSave').onclick=()=>{
+  const f=todoRef&&todoFinden(todoRef.nid,todoRef.bid); if(!f){ goBack(); return; }
+  const d=$('#tpDatum').value||todayIso();
+  if($('#tpOhne').checked){
+    f.b.kal={d};
+    if(f.b.type==='plan'){ f.b.time=''; if(f.b.end!==undefined) f.b.end=''; }
+  }else{
+    const von=$('#tpVon').value||'09:00';
+    let bis=$('#tpBis').value; if(!bis||bis<=von) bis=bisNach(von,30);
+    kalSetzen(f.b,d,von,bis);
+  }
+  saveNow();
+  if(planer) planer.pick=null;
+  // im Kalender gleich zur Woche des gewählten Tages springen
+  if(istOffen('#scrCal')&&calMode==='week'){ calD=d; const [yy,mm]=d.split('-').map(Number); calY=yy; calM=mm-1; }
+  todoNeuZeichnen(); goBack();
+  toast('Eingeplant: '+kalLabel(f.b));
+};
+$('#tpDone').onclick=()=>{
+  if(!todoRef) return;
+  const {nid,bid}=todoRef; todoAbhaken(nid,bid); goBack();
+};
+$('#tpRaus').onclick=()=>{
+  const f=todoRef&&todoFinden(todoRef.nid,todoRef.bid); if(!f){ goBack(); return; }
+  delete f.b.kal; saveNow(); todoNeuZeichnen(); goBack();
+  toast('Aus dem Kalender genommen – in der Liste steht es weiter');
+};
+$('#tpZurListe').onclick=()=>{
+  if(!todoRef) return;
+  const nid=todoRef.nid;
+  $('#todoPick').classList.remove('on'); todoRef=null; planer=null;
+  openNote(nid);
+};
+$('#tpCancel').onclick=()=>goBack();
+$('#todoPick').addEventListener('click',e=>{ if(e.target.closest('[data-todoclose]')) goBack(); });
+
 function renderCal(){
   if(calMode==='year') renderYear();
   else if(calMode==='month') renderMonth();
@@ -2003,6 +2447,7 @@ function renderCal(){
   else renderDay();
 }
 function openCal(){
+  planer=null;
   calMode='year'; evForm=null;
   const n=new Date(); calY=n.getFullYear(); calM=n.getMonth();
   show('scrCal'); renderCal(); pushLayer('cal');
@@ -2010,11 +2455,13 @@ function openCal(){
 $('#openCal').onclick=openCal;
 /* Kalender in der Wochenansicht oeffnen -- passt zur Karte auf der Startseite */
 function openCalWoche(iso){
+  planer=null;
   calD=iso||todayIso();
   const [y,m]=calD.split('-').map(Number); calY=y; calM=m-1;
   calMode='week'; evForm=null; show('scrCal'); renderCal(); pushLayer('cal');
 }
 function openCalTag(iso){
+  planer=null;
   calD=iso;
   const [y,m]=iso.split('-').map(Number); calY=y; calM=m-1;
   calMode='day'; evForm=null; show('scrCal'); renderCal(); pushLayer('cal');
@@ -2058,6 +2505,40 @@ $('#calToday').onclick=()=>{
   renderCal();
 };
 $('#calBody').addEventListener('click',e=>{
+  // --- To-dos im Kalender ---
+  if(e.target.closest('[data-planauf]')){ planer={nid:null,alle:true,pick:null,rueck:false}; renderWeek(); return; }
+  if(e.target.closest('[data-planzu]')){
+    if(planer&&planer.rueck) goBack(); else { planer=null; renderWeek(); }
+    return; }
+  if(e.target.closest('[data-planalle]')){ if(planer){ planer.alle=!planer.alle; planer.pick=null; renderWeek(); } return; }
+  const pc=e.target.closest('[data-planpick]');
+  if(pc&&planer){
+    const [nid,bid]=pc.dataset.planpick.split('|');
+    planer.pick=(planer.pick&&planer.pick.bid===bid)?null:{nid,bid};
+    renderWeek(); return; }
+  if(e.target.closest('[data-plangenau]')){ if(planer&&planer.pick) oeffneTodo(planer.pick.nid,planer.pick.bid); return; }
+  const tt=e.target.closest('[data-todotick]');
+  if(tt){ const [nid,bid]=tt.dataset.todotick.split('|'); todoAbhaken(nid,bid); return; }
+  const td=e.target.closest('[data-todo]');
+  if(td){ const [nid,bid]=td.dataset.todo.split('|'); oeffneTodo(nid,bid); return; }
+  // Ein To-do ist angetippt: der nächste Tipp ins Raster legt es dorthin
+  if(planer&&planer.pick&&calMode==='week'){
+    const col=e.target.closest('[data-track]'), kopf=e.target.closest('.wkHead [data-day]'), ganz=e.target.closest('[data-ganz]');
+    if(col||kopf||ganz){
+      const {nid,bid}=planer.pick, f=todoFinden(nid,bid);
+      if(f&&col){
+        const r=col.getBoundingClientRect();
+        let m=wkGeom.h0*60+(e.clientY-r.top)/wkGeom.PPH*60;
+        m=Math.max(0,Math.min(23*60+30,Math.floor(m/30)*30));       // auf halbe Stunden einrasten
+        const s=p2(Math.floor(m/60))+':'+p2(m%60);
+        todoPlanen(nid,bid,col.dataset.track,s,bisNach(s,60));
+      }else if(f){
+        // ohne Uhrzeit -- Zeitplan-Einträge behalten dabei ihre eigene
+        todoPlanen(nid,bid,kopf?kopf.dataset.day:ganz.dataset.ganz,'','');
+      }
+      return;
+    }
+  }
   const zc=e.target.closest('[data-zielcheck]');
   if(zc){ const [k,id]=zc.dataset.zielcheck.split('|'); zielAbhaken(k,id); return; }
   const zg=e.target.closest('[data-ziel]');
