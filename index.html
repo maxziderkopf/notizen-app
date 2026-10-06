@@ -77,10 +77,24 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 
 
 /* Schnell-Taste in Listen: fuegt die festgelegten taeglichen To-dos ein */
-.schnell{display:flex;gap:8px;margin:-4px 0 8px}
-/* "Im Kalender planen": bringt die To-dos dieser Liste in die Wochenansicht */
+.schnell{display:flex;gap:8px;margin:-4px 0 16px}
+/* Zeitplan: fuer welchen Tag er gilt -- damit steht er automatisch im Kalender.
+   Der Kasten erscheint nur in Notizen mit Zeitplan-Eintraegen. */
+.planBox{display:none;background:rgba(255,206,92,.06);border:1px solid rgba(255,206,92,.35);border-radius:14px;
+  padding:10px 11px;margin:0 0 16px}
+.planBox.on{display:block}
+.planBox .lbl{display:block;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--todo);
+  font-weight:600;margin-bottom:8px}
+.planTage{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.planTage button,.planTage label{border:1px solid var(--line);background:var(--panel2);border-radius:999px;
+  padding:7px 12px;font-size:13.5px;color:var(--text)}
+.planTage .on{border-color:var(--todo);color:var(--todo);background:rgba(255,206,92,.14);font-weight:600}
+.planTage label{position:relative;display:flex;align-items:center;gap:6px;overflow:hidden}
+.planTage label svg{width:14px;height:14px;flex:0 0 auto}
+.planTage label input{position:absolute;inset:0;width:100%;height:100%;opacity:0}
+.planHinweis{font-size:12px;color:var(--dim);margin:8px 1px 0;line-height:1.4}
 .planBtn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 13px;border-radius:12px;
-  border:1px solid rgba(255,206,92,.4);background:rgba(255,206,92,.08);color:var(--todo);text-align:left;margin:0 0 16px}
+  border:1px solid rgba(255,206,92,.4);background:rgba(255,206,92,.12);color:var(--todo);text-align:left;margin:10px 0 0}
 .planBtn svg{width:19px;height:19px;flex:0 0 auto}
 .planBtn span{flex:1;min-width:0;font-size:14.5px;font-weight:600}
 .planBtn small{flex:0 0 auto;font-size:12px;color:var(--dim)}
@@ -234,26 +248,10 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 .slot.todo.done,.allBar.todo.done{opacity:.42;text-decoration:line-through}
 .dhFest{display:block;font-size:8.5px;color:var(--dimmer);white-space:normal;line-height:1.2;overflow-wrap:anywhere}
 .dhFest.frei{color:var(--red)}
-.wkV.ziel{border-color:var(--todo)}
 .cell .dots i.t{background:var(--todo)}
 .lg{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 5px 0 0;vertical-align:-1px}
 .lg.lgT{background:var(--blue)}
 .lg.lgD{background:rgba(255,206,92,.15);border:1px solid rgba(255,206,92,.65);margin-left:12px}
-/* Ablage ueber dem Wochenraster: die To-dos, die noch keinen Platz haben */
-.planer{background:var(--panel);border:1px solid rgba(255,206,92,.35);border-radius:14px;padding:10px 11px;margin:0 0 12px}
-.plKopf{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
-.plKopf .lbl{min-width:0;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--todo);
-  font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.plKopf button{flex:0 0 auto;font-size:12.5px;color:var(--blue);font-weight:600;padding:2px 0 2px 8px}
-.plChips{display:flex;flex-wrap:wrap;gap:6px;max-height:124px;overflow-y:auto}
-.plChip{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1px solid var(--line);
-  background:var(--panel2);border-radius:10px;padding:8px 11px;font-size:13.5px}
-.plChip.on{border-color:var(--todo);background:rgba(255,206,92,.16);color:var(--todo);font-weight:600}
-.plHinweis{font-size:12px;color:var(--dim);margin:8px 1px 0;line-height:1.4}
-.plHinweis b{color:var(--todo);font-weight:600}
-.plFuss{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
-.plFuss:empty{display:none}
-.plFuss .chip{font-size:12.5px;padding:6px 11px}
 /* To-dos in der Tagesansicht -- eigener Block unter den Terminen */
 .tdKopf{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--todo);font-weight:600;margin:20px 2px 8px}
 .td{display:flex;align-items:center;gap:11px;background:var(--panel);border:1px solid rgba(255,206,92,.3);
@@ -599,10 +597,15 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
       </button>
     </div>
-    <button class="planBtn" id="planBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
-      <span>Im Kalender planen</span><small></small>
-    </button>
+    <div class="planBox" id="planBox">
+      <span class="lbl">Zeitplan für</span>
+      <div class="planTage" id="planTage"></div>
+      <p class="planHinweis" id="planHinweis"></p>
+      <button class="planBtn" id="planBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        <span>Im Kalender ansehen</span><small></small>
+      </button>
+    </div>
     <div id="lines"></div>
   </div>
 </section>
@@ -813,10 +816,19 @@ let notes=[], events=[], folders=[], trash=[], curFolder=null, openId=null, show
 /* Ziele: 'm:2026-09' fuer den Monat, 'w:2026-09-07' (Montag) fuer die Woche */
 let ziele={};
 let undoStack=[];
-/* To-dos im Kalender: planer = offene Ablage in der Wochenansicht
-   {nid: Liste, aus der man kam | null, alle: alle Listen zeigen,
-    pick: gerade angetipptes To-do, rueck: Zurück führt wieder in die Liste} */
-let planer=null, todoRef=null, wkGeom={h0:7,PPH:54,start:''};
+/* planer merkt sich, aus welchem Zeitplan man in den Kalender gesprungen ist:
+   {nid, rueck:true} -- Zurück führt dann wieder genau in diese Notiz.
+   wkSprung: Uhrzeit (Minuten), zu der die Wochenansicht beim Öffnen scrollt. */
+let planer=null, todoRef=null, wkGeom={h0:7,PPH:54,start:''}, wkSprung=null;
+/* Zeitpläne von früher haben noch keinen Tag. Damit sie trotzdem von selbst im
+   Kalender stehen, bekommen sie den Tag, an dem sie zuletzt bearbeitet wurden. */
+function planTageErgaenzen(){
+  notes.forEach(n=>{
+    if(n.planTag||!n.blocks.some(b=>b.type==='plan')) return;
+    const d=new Date(n.updated||n.created||Date.now());
+    n.planTag=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  });
+}
 let cfg={sort:'updated',size:17,done:'hide',land:'DE',bundesland:''};
 const urls={};
 
@@ -1063,11 +1075,7 @@ function renderNote(){
   $('#lines').innerHTML=html;
 
   const endBtn=$('#endTime'); if(endBtn) endBtn.textContent=usesEnd()?'Endzeit ausblenden':'Endzeit anzeigen';
-  const pb=$('#planBtn');
-  if(pb){
-    const offen=n.blocks.filter(b=>istTodo(b)&&b.check===false), gepl=offen.filter(b=>b.kal).length;
-    pb.querySelector('small').textContent=offen.length?gepl+' von '+offen.length+' geplant':'';
-  }
+  planBoxZeichnen(n);
   n.blocks.forEach(b=>{ if(isRow(b)){ const ta=$(`[data-txt="${b.id}"]`); if(ta) ta.value=b.text; } });
   requestAnimationFrame(growAll);
   fillMedia(); markUndo();
@@ -1140,6 +1148,8 @@ function newPlan(after){
   const n=note();
   const start=nextTime();
   const b={id:uid(),type:'plan',text:'',check:false,time:start};
+  // Ein neuer Zeitplan gilt zunächst für heute -- oben in der Notiz umstellbar
+  if(!n.planTag) n.planTag=todayIso();
   if(usesEnd()||!n.blocks.some(x=>x.type==='plan')) b.end=plus(start,30);
   const i=after?n.blocks.findIndex(x=>x.id===after)+1:n.blocks.length;
   n.blocks.splice(i,0,b); touch(); renderNote();
@@ -1156,7 +1166,8 @@ function toggleEnd(){
 function clearTimes(){
   snap();
   const n=note();
-  n.blocks.forEach(b=>{ if(b.type==='plan'){ b.type='line'; delete b.time; delete b.end; } });
+  n.blocks.forEach(b=>{ if(b.type==='plan'){ b.type='line'; delete b.time; delete b.end; delete b.kal; } });
+  delete n.planTag;                       // ohne Uhrzeiten ist es wieder eine normale Liste
   touch(); renderNote(); toast('Uhrzeiten entfernt');
 }
 function sortPlans(){
@@ -1366,7 +1377,41 @@ $('#lines').addEventListener('click',async e=>{
   const t=e.target.closest('[data-tick]');
   if(t){ snap(); const b=blockById(t.dataset.tick); b.check=!b.check; touch(); renderNote(); }
 });
-$('#planBtn').onclick=()=>{ if(!note()) return; saveNow(); openPlaner(openId); };
+/* Kasten über dem Zeitplan: Tag wählen und in den Kalender springen */
+function planBoxZeichnen(n){
+  const box=$('#planBox'); if(!box) return;
+  const plaene=n.blocks.filter(b=>b.type==='plan');
+  box.classList.toggle('on',plaene.length>0);
+  if(!plaene.length) return;
+  const h=todayIso(), m=addDays(h,1), t=n.planTag||'', sonst=!!t&&t!==h&&t!==m;
+  $('#planTage').innerHTML=
+    `<button data-plantag="${h}" class="${t===h?'on':''}">Heute</button>`+
+    `<button data-plantag="${m}" class="${t===m?'on':''}">Morgen</button>`+
+    `<label class="${sonst?'on':''}">${KAL_SVG}<span>${sonst?dayName(t)+' '+t.slice(8,10)+'.'+t.slice(5,7)+'.':'Anderer Tag'}</span>`+
+    `<input type="date" id="planTagInput" value="${t}" aria-label="Tag des Zeitplans"></label>`;
+  $('#planHinweis').textContent=t
+    ? 'Alles aus diesem Zeitplan steht automatisch an diesem Tag im Kalender.'
+    : 'Wähle den Tag – dann steht dein Zeitplan automatisch im Kalender.';
+  const mit=plaene.filter(b=>b.text.trim()).length;
+  $('#planBtn').querySelector('small').textContent=mit?mit+(mit===1?' Eintrag':' Einträge'):'';
+}
+function planTagSetzen(iso){
+  const n=note(); if(!n||!iso) return;
+  n.planTag=iso; touch(); planBoxZeichnen(n);
+  toast('Zeitplan gilt für '+dayName(iso)+', '+iso.slice(8,10)+'.'+iso.slice(5,7)+'.');
+}
+$('#planTage').addEventListener('click',e=>{
+  const b=e.target.closest('[data-plantag]');
+  if(b){ planTagSetzen(b.dataset.plantag); return; }
+  const i=e.target.closest('#planTagInput');
+  if(i){ try{ i.showPicker(); }catch(_){} }      // öffnet den Datumswähler auch am PC
+});
+$('#planTage').addEventListener('change',e=>{ if(e.target.id==='planTagInput') planTagSetzen(e.target.value); });
+$('#planBtn').onclick=()=>{
+  const n=note(); if(!n) return;
+  if(!n.planTag){ toast('Wähle erst den Tag für diesen Zeitplan'); return; }
+  saveNow(); openZeitplan(openId);
+};
 
 /* =========================================================
    Plus-Menü
@@ -1633,6 +1678,7 @@ $('#pickJson').onchange=e=>{
       }
       const ids=new Set(notes.map(n=>n.id));
       incoming.forEach(n=>{ if(!ids.has(n.id)) notes.push(n); });
+      planTageErgaenzen();
       if(d.folders){ const fs=new Set(folders.map(x=>x.id)); d.folders.forEach(x=>{ if(!fs.has(x.id)) folders.push(x); }); }
       if(d.events){ const ev=new Set(events.map(x=>x.id)); d.events.forEach(x=>{ if(!ev.has(x.id)) events.push(x); }); }
       if(d.cfg) cfg={...cfg,...d.cfg};
@@ -1869,12 +1915,14 @@ function hasEv(iso){ return events.some(e=>e.date===iso); }
 
 /* =========================================================
    To-dos im Kalender
-   Ein Listeneintrag bekommt b.kal={d:'JJJJ-MM-TT', s?, e?} und
-   steht damit an diesem Tag im Kalender. Termine (events) bleiben
-   davon getrennt: eigene Daten, eigene Farbe, eigenes Formular.
-   Zeitplan-Einträge (type 'plan') bringen ihre Uhrzeit selbst mit --
-   dort ist b.time die Quelle, damit Liste und Kalender nie
-   zwei verschiedene Uhrzeiten zeigen.
+   Zeitplan im Kalender
+   Jede Notiz mit Zeitplan hat einen Tag (n.planTag). Ihre Einträge
+   stehen damit von selbst an diesem Tag im Kalender, zur Uhrzeit aus
+   dem Zeitplan (b.time ist die einzige Quelle -- Liste und Kalender
+   zeigen nie zwei verschiedene Zeiten). Termine (events) bleiben davon
+   getrennt: eigene Daten, eigene Farbe, eigenes Formular.
+   b.kal={d,s?,e?} verschiebt einen einzelnen Eintrag auf einen anderen
+   Tag; normale Listeneinträge stehen nur mit b.kal im Kalender.
 ========================================================= */
 const KAL_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
 function istTodo(b){ return (b.type==='line'||b.type==='plan')&&b.check!==null&&b.text.trim()!==''; }
@@ -1888,9 +1936,24 @@ function kalSetzen(b,d,s,e){
     if(s){ b.time=s; if(b.end!==undefined) b.end=e||''; else if(e) b.kal.e=e; }
   }else if(s){ b.kal.s=s; if(e) b.kal.e=e; }
 }
+/* An welchem Tag steht ein Eintrag im Kalender? '' = gar nicht */
+function tagVon(n,b){ return b.kal?b.kal.d:(b.type==='plan'?(n.planTag||''):''); }
+/* Ende eines Eintrags fürs Raster. Ohne eigene Endzeit reicht ein Zeitplan-
+   Eintrag bis zum nächsten -- höchstens aber eine Stunde, damit eine lange
+   Lücke im Plan nicht wie ein einziger Riesenblock aussieht. */
+function planEnde(n,b){
+  const s=kalVon(b), e=kalBis(b);
+  if(!s) return '';
+  if(e&&e>s) return e;
+  if(b.type!=='plan') return bisNach(s,30);
+  const tag=tagVon(n,b);
+  const naechste=n.blocks.filter(x=>x.type==='plan'&&x!==b&&x.time&&x.time>s&&tagVon(n,x)===tag)
+    .map(x=>x.time).sort()[0];
+  return (naechste&&mins(naechste)-mins(s)<=60)?naechste:bisNach(s,naechste?60:30);
+}
 function todosAm(iso){
   const out=[];
-  notes.forEach(n=>n.blocks.forEach(b=>{ if(b.kal&&b.kal.d===iso&&istTodo(b)) out.push({n,b}); }));
+  notes.forEach(n=>n.blocks.forEach(b=>{ if(istTodo(b)&&tagVon(n,b)===iso) out.push({n,b}); }));
   return out.sort((x,y)=>(kalVon(x.b)||'99').localeCompare(kalVon(y.b)||'99'));
 }
 function todoFinden(nid,bid){
@@ -1905,51 +1968,20 @@ function kalLabel(b){
   const s=kalVon(b), e=kalBis(b);
   return tag+(s?' · '+s+(e&&e>s?'–'+e:''):'');
 }
-/* Offene To-dos, die noch keinen Platz im Kalender haben */
-function planerTodos(){
-  const quelle=(planer&&planer.nid&&!planer.alle)?notes.filter(n=>n.id===planer.nid):notes;
-  const out=[];
-  quelle.forEach(n=>n.blocks.forEach(b=>{ if(istTodo(b)&&b.check===false&&!b.kal) out.push({n,b}); }));
-  return out;
-}
-function planerHtml(){
-  if(!planer) return `<div class="chipRow" style="margin:0 0 12px"><button class="chip" data-planauf>＋ To-dos einplanen</button></div>`;
-  const liste=planerTodos();
-  const quelle=planer.nid&&notes.find(n=>n.id===planer.nid);
-  const titel=(quelle&&!planer.alle)?'Aus „'+(quelle.title||'Neue Notiz')+'"':'Aus allen Listen';
-  let pick=planer.pick&&todoFinden(planer.pick.nid,planer.pick.bid);
-  if(!pick) planer.pick=null;
-  const chips=liste.map(({n,b})=>
-    `<button class="plChip${pick&&pick.b.id===b.id?' on':''}" data-planpick="${n.id}|${b.id}">${esc(kurzText(b))}</button>`).join('');
-  const hinweis=pick
-    ? `<b>„${esc(kurzText(pick.b))}"</b> – tippe jetzt unten im Raster auf die Uhrzeit. Oben auf den Tag getippt = ohne Uhrzeit.`
-    : liste.length?'Tippe ein To-do an und danach im Raster auf die Uhrzeit, zu der du es erledigen willst.'
-                  :'Alle offenen To-dos sind eingeplant. ✓';
-  return `<div class="planer">
-    <div class="plKopf"><span class="lbl">${esc(titel)} · ${liste.length} ohne Platz</span>
-      <button data-planzu>${planer.rueck?'Zur Liste':'Schließen'}</button></div>
-    ${chips?`<div class="plChips">${chips}</div>`:''}
-    <p class="plHinweis">${hinweis}</p>
-    <div class="plFuss">${pick?'<button class="chip" data-plangenau>Datum &amp; Uhrzeit wählen …</button>':''}${
-      quelle?`<button class="chip" data-planalle>${planer.alle?'Nur diese Liste':'Alle Listen zeigen'}</button>`:''}</div>
-  </div>`;
-}
-/* Aus einer Liste heraus: Wochenansicht mit den To-dos dieser Liste öffnen */
-function openPlaner(nid){
-  planer={nid,alle:false,pick:null,rueck:true};
-  calD=todayIso(); const n=new Date(); calY=n.getFullYear(); calM=n.getMonth();
+/* Aus einem Zeitplan heraus: Wochenansicht beim Tag des Plans öffnen */
+function openZeitplan(nid){
+  const n=notes.find(x=>x.id===nid); if(!n) return;
+  planer={nid,rueck:true};
+  calD=n.planTag||todayIso();
+  const [y,m]=calD.split('-').map(Number); calY=y; calM=m-1;
+  // gleich dorthin scrollen, wo der Plan anfängt
+  const erste=todosAm(calD).map(x=>kalVon(x.b)).filter(Boolean).sort()[0];
+  wkSprung=erste?Math.max(0,mins(erste)-45):null;
   calMode='week'; evForm=null; show('scrCal'); renderCal(); pushLayer('cal');
 }
 function todoNeuZeichnen(){
   if(istOffen('#scrCal')) renderCal();
   else if(istOffen('#scrNote')) renderNote();
-}
-function todoPlanen(nid,bid,d,s,e){
-  const f=todoFinden(nid,bid); if(!f) return;
-  kalSetzen(f.b,d,s,e); saveNow();
-  if(planer) planer.pick=null;
-  todoNeuZeichnen();
-  toast('Eingeplant: '+kalLabel(f.b));
 }
 function todoAbhaken(nid,bid){
   const f=todoFinden(nid,bid); if(!f) return;
@@ -1969,14 +2001,17 @@ function oeffneTodo(nid,bid){
   todoRef={nid,bid};
   const b=f.b, s=kalVon(b), e=kalBis(b);
   $('#tpTitel').textContent=kurzText(b);
-  $('#tpListe').textContent='To-do aus „'+(f.n.title||'Neue Notiz')+'"';
-  $('#tpDatum').value=(b.kal&&b.kal.d)||(calMode==='day'&&istOffen('#scrCal')?calD:todayIso());
-  $('#tpOhne').checked=!!b.kal&&!s;
+  const tag=tagVon(f.n,b), imPlan=b.type==='plan'&&!!f.n.planTag;
+  $('#tpListe').textContent='aus „'+(f.n.title||'Neue Notiz')+'"';
+  $('#tpDatum').value=tag||(calMode==='day'&&istOffen('#scrCal')?calD:todayIso());
+  $('#tpOhne').checked=!!tag&&!s;
   $('#tpVon').value=s||'09:00';
-  $('#tpBis').value=(e&&e>s?e:'')||bisNach(s||'09:00',60);
-  $('#tpSave').textContent=b.kal?'Änderung speichern':'Im Kalender eintragen';
+  $('#tpBis').value=planEnde(f.n,b)||bisNach(s||'09:00',60);
+  $('#tpSave').textContent=tag?'Änderung speichern':'Im Kalender eintragen';
   $('#tpDone').textContent=b.check===true?'Wieder öffnen':'✓ Erledigt';
+  // Ein einzeln verschobener Eintrag kann zurück auf den Tag seines Zeitplans
   $('#tpRaus').style.display=b.kal?'flex':'none';
+  $('#tpRaus').textContent=imPlan?'Zurück zum Plan-Tag':'Aus Kalender nehmen';
   $('#tpZurListe').style.display=istOffen('#scrNote')?'none':'flex';
   tpZeichnen();
   $('#todoPick').classList.add('on'); pushLayer('todo');
@@ -2113,7 +2148,7 @@ function renderDay(){
   $('#calBackTxt').textContent=MON[calM].slice(0,3)+' '+calY;
   const evs=evOf(calD), feste=festeAn(calD), ferien=ferienAn(calD), tds=todosAm(calD);
   const zaehler=[evs.length?evs.length+(evs.length===1?' Termin':' Termine'):'',
-                 tds.length?tds.length+(tds.length===1?' To-do':' To-dos'):''].filter(Boolean).join(' · ');
+                 tds.length?tds.length+' im Zeitplan':''].filter(Boolean).join(' · ');
   let html=`<div class="calTop"><h2>${prettyDate(calD)}<small>${zaehler||'Nichts eingetragen'}</small></h2></div>`+switcher();
   html+=feste.map(f=>`<div class="tagInfo ${f.art}"><span>${
       f.art==='frei'?'Feiertag':f.art==='regional'?'Feiertag in '+f.nur.join(', '):'Festtag'}</span>${esc(f.name)}</div>`).join('');
@@ -2125,9 +2160,9 @@ function renderDay(){
     </button>`).join('');
   if(!evs.length&&!evForm) html+='<div class="empty">Noch kein Termin an diesem Tag.</div>';
   if(!evForm) html+=`<div class="chipRow"><button class="chip" id="newEv">+ Termin</button></div>`;
-  // To-dos stehen bewusst in einem eigenen Block -- sie sind keine Termine
-  if(!evForm&&tds.length) html+='<p class="tdKopf">To-dos an diesem Tag</p>'+tds.map(({n,b})=>{
-    const s=kalVon(b), e=kalBis(b);
+  // Der Zeitplan steht bewusst in einem eigenen Block -- das sind keine Termine
+  if(!evForm&&tds.length) html+='<p class="tdKopf">Zeitplan an diesem Tag</p>'+tds.map(({n,b})=>{
+    const s=kalVon(b), e=planEnde(n,b);
     return `<div class="td${b.check===true?' done':''}">
       <button class="tick" data-todotick="${n.id}|${b.id}" aria-label="${b.check?'Wieder öffnen':'Abhaken'}">${b.check===true?'✓':''}</button>
       <button class="t" data-todo="${n.id}|${b.id}"><b>${esc(kurzText(b))}</b>
@@ -2206,16 +2241,16 @@ function renderWeek(){
   days.forEach(iso=>{ proTag[iso]=[
     ...evOf(iso).map(e=>({ev:e,allday:!!e.allday,start:e.start,end:e.end,title:e.title||'Termin'})),
     ...todosAm(iso).map(({n,b})=>{ const s=kalVon(b), e=kalBis(b);
-      return {todo:b,nid:n.id,allday:!s,start:s,end:(e&&e>s)?e:(s?bisNach(s,30):''),title:kurzText(b),done:b.check===true}; })
+      return {todo:b,nid:n.id,allday:!s,start:s,end:planEnde(n,b),title:kurzText(b),done:b.check===true}; })
   ]; });
   const timed=days.flatMap(d=>proTag[d].filter(x=>!x.allday));
-  let h0=planer?6:7, h1=planer?23:20;        // beim Planen frühen Morgen und Abend mit anbieten
+  let h0=7, h1=20;
   timed.forEach(e=>{ h0=Math.min(h0,Math.floor(mins(e.start||'8:00')/60));
                      h1=Math.max(h1,Math.ceil(mins(e.end||e.start||'9:00')/60)); });
   h0=Math.max(0,h0); h1=Math.min(24,Math.max(h1,h0+8));
   const span=h1-h0, H=span*PPH;
   const [sy,sm,sd]=start.split('-').map(Number), e6=days[6].split('-').map(Number);
-  $('#calBackTxt').textContent=(planer&&planer.rueck)?'Liste':calY;
+  $('#calBackTxt').textContent=(planer&&planer.rueck)?'Zeitplan':calY;
 
   // Kopfzeile mit den sieben Tagen
   const head='<div class="wkHead"><div class="gut">KW '+kw(start)+'</div>'+
@@ -2264,8 +2299,6 @@ function renderWeek(){
   // Beim Neuzeichnen (z. B. nach dem Einplanen) dieselbe Uhrzeit sichtbar lassen
   const alt=$('#calBody .wkV');
   const altZeit=(alt&&wkGeom.start===start)?wkGeom.h0*60+alt.scrollTop/wkGeom.PPH*60:null;
-  const ablage=planerHtml();
-  const waehlt=!!(planer&&planer.pick);
 
   $('#calBody').innerHTML=`
     <div class="calTop">
@@ -2274,16 +2307,19 @@ function renderWeek(){
       <button class="navBtn" data-week="1" aria-label="Woche vor">›</button>
     </div>
     ${switcher()}
-    ${ablage}
-    <div class="wkV${waehlt?' ziel':''}">${head}${allRow}
+    <div class="wkV">${head}${allRow}
       <div class="wkBody">
         <div class="gut" style="height:${H}px">${ticks}</div>${cols}
       </div>
     </div>
-    <p class="wlegend"><i class="lg lgT"></i>Termin<i class="lg lgD"></i>To-do · Tipp auf einen Tag öffnet die Tagesansicht</p>`;
+    <p class="wlegend"><i class="lg lgT"></i>Termin<i class="lg lgD"></i>Zeitplan · Tipp auf einen Tag öffnet die Tagesansicht</p>`;
   const box=$('#calBody .wkV');
-  if(box) box.scrollTop=altZeit!==null?Math.max(0,(altZeit-h0*60)/60*PPH)
-                                      :Math.max(0,(new Date().getHours()-h0-1)*PPH);
+  if(box){
+    const ziel=wkSprung!==null?wkSprung:altZeit;      // aus dem Zeitplan: zum Anfang des Plans
+    box.scrollTop=ziel!==null?Math.max(0,(ziel-h0*60)/60*PPH)
+                             :Math.max(0,(new Date().getHours()-h0-1)*PPH);
+    wkSprung=null;
+  }
   wkGeom={h0,PPH,start};
   mitFeiertagen([...new Set(days.map(d=>+d.slice(0,4)))],renderWeek);
 }
@@ -2415,12 +2451,17 @@ $('#tpSave').onclick=()=>{
     let bis=$('#tpBis').value; if(!bis||bis<=von) bis=bisNach(von,30);
     kalSetzen(f.b,d,von,bis);
   }
+  // Steht der Eintrag wieder am Tag seines Zeitplans, braucht er keine eigene Verschiebung
+  if(f.b.type==='plan'&&f.b.kal&&f.b.kal.d===f.n.planTag){
+    const ende=f.b.kal.e; delete f.b.kal;
+    // eine bewusst gewählte Endzeit bleibt als Endzeit im Zeitplan erhalten
+    if(ende&&f.b.end===undefined&&ende!==planEnde(f.n,f.b)) f.b.end=ende;
+  }
   saveNow();
-  if(planer) planer.pick=null;
   // im Kalender gleich zur Woche des gewählten Tages springen
   if(istOffen('#scrCal')&&calMode==='week'){ calD=d; const [yy,mm]=d.split('-').map(Number); calY=yy; calM=mm-1; }
   todoNeuZeichnen(); goBack();
-  toast('Eingeplant: '+kalLabel(f.b));
+  toast('Gespeichert');
 };
 $('#tpDone').onclick=()=>{
   if(!todoRef) return;
@@ -2429,7 +2470,7 @@ $('#tpDone').onclick=()=>{
 $('#tpRaus').onclick=()=>{
   const f=todoRef&&todoFinden(todoRef.nid,todoRef.bid); if(!f){ goBack(); return; }
   delete f.b.kal; saveNow(); todoNeuZeichnen(); goBack();
-  toast('Aus dem Kalender genommen – in der Liste steht es weiter');
+  toast(f.b.type==='plan'&&f.n.planTag?'Steht wieder am Tag des Zeitplans':'Aus dem Kalender genommen – in der Liste steht es weiter');
 };
 $('#tpZurListe').onclick=()=>{
   if(!todoRef) return;
@@ -2506,39 +2547,10 @@ $('#calToday').onclick=()=>{
 };
 $('#calBody').addEventListener('click',e=>{
   // --- To-dos im Kalender ---
-  if(e.target.closest('[data-planauf]')){ planer={nid:null,alle:true,pick:null,rueck:false}; renderWeek(); return; }
-  if(e.target.closest('[data-planzu]')){
-    if(planer&&planer.rueck) goBack(); else { planer=null; renderWeek(); }
-    return; }
-  if(e.target.closest('[data-planalle]')){ if(planer){ planer.alle=!planer.alle; planer.pick=null; renderWeek(); } return; }
-  const pc=e.target.closest('[data-planpick]');
-  if(pc&&planer){
-    const [nid,bid]=pc.dataset.planpick.split('|');
-    planer.pick=(planer.pick&&planer.pick.bid===bid)?null:{nid,bid};
-    renderWeek(); return; }
-  if(e.target.closest('[data-plangenau]')){ if(planer&&planer.pick) oeffneTodo(planer.pick.nid,planer.pick.bid); return; }
   const tt=e.target.closest('[data-todotick]');
   if(tt){ const [nid,bid]=tt.dataset.todotick.split('|'); todoAbhaken(nid,bid); return; }
   const td=e.target.closest('[data-todo]');
   if(td){ const [nid,bid]=td.dataset.todo.split('|'); oeffneTodo(nid,bid); return; }
-  // Ein To-do ist angetippt: der nächste Tipp ins Raster legt es dorthin
-  if(planer&&planer.pick&&calMode==='week'){
-    const col=e.target.closest('[data-track]'), kopf=e.target.closest('.wkHead [data-day]'), ganz=e.target.closest('[data-ganz]');
-    if(col||kopf||ganz){
-      const {nid,bid}=planer.pick, f=todoFinden(nid,bid);
-      if(f&&col){
-        const r=col.getBoundingClientRect();
-        let m=wkGeom.h0*60+(e.clientY-r.top)/wkGeom.PPH*60;
-        m=Math.max(0,Math.min(23*60+30,Math.floor(m/30)*30));       // auf halbe Stunden einrasten
-        const s=p2(Math.floor(m/60))+':'+p2(m%60);
-        todoPlanen(nid,bid,col.dataset.track,s,bisNach(s,60));
-      }else if(f){
-        // ohne Uhrzeit -- Zeitplan-Einträge behalten dabei ihre eigene
-        todoPlanen(nid,bid,kopf?kopf.dataset.day:ganz.dataset.ganz,'','');
-      }
-      return;
-    }
-  }
   const zc=e.target.closest('[data-zielcheck]');
   if(zc){ const [k,id]=zc.dataset.zielcheck.split('|'); zielAbhaken(k,id); return; }
   const zg=e.target.closest('[data-ziel]');
@@ -2838,7 +2850,7 @@ $('#list').addEventListener('click',e=>{
 ========================================================= */
 addEventListener('pagehide',saveNow);
 document.addEventListener('visibilitychange',()=>{ if(document.hidden) saveNow(); });
-load(); renderList(); markOpts();
+load(); planTageErgaenzen(); renderList(); markOpts();
 /* Erinnerungen liegen nur dann beim Server, wenn sie dort auch ankommen.
    Deshalb nicht nur beim Start abgleichen, sondern auch bei jeder Rückkehr in
    die App und sobald die Verbindung wieder da ist – ein einmal fehlgeschlagener
