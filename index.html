@@ -246,6 +246,11 @@ button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
 .slot.todo,.allBar.todo{background:rgba(255,206,92,.15);border:1px solid rgba(255,206,92,.65);color:var(--text);font-weight:600}
 .slot.todo small{opacity:1;font-weight:600;color:var(--todo)}
 .slot.todo.done,.allBar.todo.done{opacity:.42;text-decoration:line-through}
+/* halbe Breite: Platz sparen, damit vom Titel möglichst viel zu lesen ist */
+.slot.eng{font-size:8.5px;padding:2px 1px 2px 2px;letter-spacing:-.02em}
+.slot.eng small{display:none}
+.slotMehr{position:absolute;right:1px;z-index:2;font-size:9px;font-weight:700;line-height:1;color:var(--todo);
+  background:var(--bg);border:1px solid rgba(255,206,92,.65);border-radius:8px;padding:2px 4px;pointer-events:none}
 .dhFest{display:block;font-size:8.5px;color:var(--dimmer);white-space:normal;line-height:1.2;overflow-wrap:anywhere}
 .dhFest.frei{color:var(--red)}
 .cell .dots i.t{background:var(--todo)}
@@ -829,6 +834,17 @@ function planTageErgaenzen(){
     n.planTag=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   });
 }
+/* Einmalige Reparatur: Bis Version 10 ist beim Umstellen des Tages auch alles
+   Abgehakte mit umgezogen. Steht ein Zeitplan auf einem Tag in der Zukunft,
+   kann dort nichts schon erledigt sein -- diese alten Einträge kommen aus dem
+   Kalender (in der Notiz bleiben sie unter "abgehakte Einträge"). */
+function altesErledigtesAufraeumen(){
+  if(cfg.planRep) return;
+  const h=todayIso();
+  notes.forEach(n=>{ if(n.planTag&&n.planTag>h) n.blocks.forEach(b=>{
+    if(b.type==='plan'&&b.check===true&&!b.kal) b.nk=1; }); });
+  cfg.planRep=1; saveNow();
+}
 let cfg={sort:'updated',size:17,done:'hide',land:'DE',bundesland:''};
 const urls={};
 
@@ -1397,8 +1413,16 @@ function planBoxZeichnen(n){
 }
 function planTagSetzen(iso){
   const n=note(); if(!n||!iso) return;
-  n.planTag=iso; touch(); planBoxZeichnen(n);
-  toast('Zeitplan gilt für '+dayName(iso)+', '+iso.slice(8,10)+'.'+iso.slice(5,7)+'.');
+  /* Was schon abgehakt ist, bleibt an dem Tag stehen, an dem es erledigt wurde.
+     Nur das Offene wandert auf den neuen Tag -- sonst türmt sich dort alles
+     Alte neben den neuen Einträgen und nichts ist mehr lesbar. */
+  const alt=n.planTag;
+  let fest=0;
+  if(alt&&alt!==iso) n.blocks.forEach(b=>{
+    if(b.type==='plan'&&b.check===true&&!b.kal&&!b.nk){ b.kal={d:alt}; fest++; }
+  });
+  n.planTag=iso; touch(); renderNote();
+  toast('Zeitplan gilt für '+dayName(iso)+', '+iso.slice(8,10)+'.'+iso.slice(5,7)+'.'+(fest?' Erledigtes bleibt am alten Tag.':''));
 }
 $('#planTage').addEventListener('click',e=>{
   const b=e.target.closest('[data-plantag]');
@@ -1937,7 +1961,10 @@ function kalSetzen(b,d,s,e){
   }else if(s){ b.kal.s=s; if(e) b.kal.e=e; }
 }
 /* An welchem Tag steht ein Eintrag im Kalender? '' = gar nicht */
-function tagVon(n,b){ return b.kal?b.kal.d:(b.type==='plan'?(n.planTag||''):''); }
+function tagVon(n,b){
+  if(b.nk&&b.check===true) return '';     // altes Erledigtes ohne bekannten Tag: nicht im Kalender
+  return b.kal?b.kal.d:(b.type==='plan'?(n.planTag||''):'');
+}
 /* Ende eines Eintrags fürs Raster. Ohne eigene Endzeit reicht ein Zeitplan-
    Eintrag bis zum nächsten -- höchstens aber eine Stunde, damit eine lange
    Lücke im Plan nicht wie ein einziger Riesenblock aussieht. */
@@ -2242,6 +2269,7 @@ function renderWeek(){
     ...evOf(iso).map(e=>({ev:e,allday:!!e.allday,start:e.start,end:e.end,title:e.title||'Termin'})),
     ...todosAm(iso).map(({n,b})=>{ const s=kalVon(b), e=kalBis(b);
       return {todo:b,nid:n.id,allday:!s,start:s,end:planEnde(n,b),title:kurzText(b),done:b.check===true}; })
+      .sort((x,y)=>x.done-y.done)        // Offenes zuerst -- es bekommt bei Gedränge den Platz
   ]; });
   const timed=days.flatMap(d=>proTag[d].filter(x=>!x.allday));
   let h0=7, h1=20;
@@ -2276,16 +2304,23 @@ function renderWeek(){
   const grid=`repeating-linear-gradient(180deg,var(--line) 0 1px,transparent 1px ${PPH}px)`;
 
   const cols=days.map(iso=>{
-    const placed=lanes(proTag[iso].filter(x=>!x.allday));
-    const maxLane=placed.reduce((a,x)=>Math.max(a,x.lane),0)+1;
+    /* Eine Tagesspalte ist am Handy nur gut 40 px breit. Mehr als zwei Blöcke
+       nebeneinander kann niemand lesen -- der Rest steckt hinter einem "+3",
+       die Tagesansicht zeigt dann alles untereinander. */
+    const alle=lanes(proTag[iso].filter(x=>!x.allday));
+    const placed=alle.filter(x=>x.lane<2), rest=alle.filter(x=>x.lane>=2);
+    const mehr=rest.length?`<span class="slotMehr" style="top:${Math.max(0,(Math.min(...rest.map(x=>x.b))-h0*60)/60*PPH-16)}px">+${rest.length}</span>`:'';   // unten rechts, dort verdeckt sie keinen Titel
     const blocks=placed.map(x=>{
       const top=Math.max(0,(x.a-h0*60)/60*PPH);
       const hgt=Math.max(20,(x.b-x.a)/60*PPH-2);
-      const w=100/maxLane;
+      // Nur teilen, wenn zur selben Zeit wirklich etwas daneben liegt --
+      // sonst bekommt der Block die volle Spaltenbreite
+      const eng=placed.some(o=>o!==x&&o.a<x.b&&o.b>x.a);
+      const w=eng?50:100;
       const st=`top:${top}px;height:${hgt}px;left:${x.lane*w}%;width:calc(${w}% - 2px)`;
       return x.e.todo
-        ?`<button class="slot todo${x.e.done?' done':''}" data-todo="${x.e.nid}|${x.e.todo.id}" style="${st}">${esc(x.e.title)}<small>${esc(x.e.start||'')}</small></button>`
-        :`<button class="slot" data-ev="${x.e.ev.id}" style="${st}">${esc(x.e.title)}<small>${esc(x.e.start||'')}</small></button>`;
+        ?`<button class="slot todo${eng?' eng':''}${x.e.done?' done':''}" data-todo="${x.e.nid}|${x.e.todo.id}" style="${st}">${esc(x.e.title)}<small>${esc(x.e.start||'')}</small></button>`
+        :`<button class="slot${eng?' eng':''}" data-ev="${x.e.ev.id}" style="${st}">${esc(x.e.title)}<small>${esc(x.e.start||'')}</small></button>`;
     }).join('');
     let now='';
     if(iso===t){
@@ -2293,7 +2328,7 @@ function renderWeek(){
       if(m>=h0*60&&m<=h1*60) now=`<i class="nowLine" style="top:${(m-h0*60)/60*PPH}px"></i>`;
     }
     return `<div class="dayCol${iso===t?' today':''}${ferienAn(iso)?' ferien':''}" data-track="${iso}"
-      style="height:${H}px;background-image:${grid}">${blocks}${now}</div>`;
+      style="height:${H}px;background-image:${grid}">${blocks}${mehr}${now}</div>`;
   }).join('');
 
   // Beim Neuzeichnen (z. B. nach dem Einplanen) dieselbe Uhrzeit sichtbar lassen
@@ -2312,7 +2347,7 @@ function renderWeek(){
         <div class="gut" style="height:${H}px">${ticks}</div>${cols}
       </div>
     </div>
-    <p class="wlegend"><i class="lg lgT"></i>Termin<i class="lg lgD"></i>Zeitplan · Tipp auf einen Tag öffnet die Tagesansicht</p>`;
+    <p class="wlegend"><i class="lg lgT"></i>Termin<i class="lg lgD"></i>Zeitplan · Tipp auf einen Tag zeigt alles untereinander</p>`;
   const box=$('#calBody .wkV');
   if(box){
     const ziel=wkSprung!==null?wkSprung:altZeit;      // aus dem Zeitplan: zum Anfang des Plans
@@ -2850,7 +2885,7 @@ $('#list').addEventListener('click',e=>{
 ========================================================= */
 addEventListener('pagehide',saveNow);
 document.addEventListener('visibilitychange',()=>{ if(document.hidden) saveNow(); });
-load(); planTageErgaenzen(); renderList(); markOpts();
+load(); planTageErgaenzen(); altesErledigtesAufraeumen(); renderList(); markOpts();
 /* Erinnerungen liegen nur dann beim Server, wenn sie dort auch ankommen.
    Deshalb nicht nur beim Start abgleichen, sondern auch bei jeder Rückkehr in
    die App und sobald die Verbindung wieder da ist – ein einmal fehlgeschlagener
