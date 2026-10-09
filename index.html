@@ -425,18 +425,25 @@ body.inNote .fabMini{display:none}
 /* Ordner */
 .fsec{display:flex;align-items:center;justify-content:space-between;margin:0 2px 9px}
 .fsec h3{margin:0;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--dimmer)}
-.folders{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:20px}
-@media (min-width:520px){.folders{grid-template-columns:repeat(3,1fr)}}
+.folders{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:20px}
+@media (min-width:520px){.folders{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .fcard{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);
-  border-radius:13px;padding:12px 12px;text-align:left;width:100%;transition:border-color .15s,background .15s}
+  border-radius:13px;padding:12px 12px;text-align:left;width:100%;min-width:0;transition:border-color .15s,background .15s}
 .fcard svg{width:20px;height:20px;flex:0 0 auto;color:var(--mint)}
 .fcard .fn{flex:1;min-width:0}
 .fcard .fn b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fcard .fn span{font-size:11px;color:var(--dimmer)}
 .fcard.hit{border-color:var(--mint);background:rgba(103,232,240,.12)}
-.crumb{display:flex;align-items:center;gap:9px;margin:0 0 14px}
-.crumb button{color:var(--blue);font-size:15px}
+/* Pfad-Leiste wie im Explorer: Alle Notizen > Schule > Mathe -- jede Stufe antippbar */
+.crumb{display:flex;align-items:center;flex-wrap:wrap;gap:4px 7px;margin:0 0 14px}
+.crumb button{color:var(--blue);font-size:15px;padding:2px 0}
 .crumb b{font-size:15px}
+.crumb i{font-style:normal;color:var(--dimmer);font-size:14px}
+.fcard.up svg{color:var(--dim)}
+.fcard.up .fn b{color:var(--dim)}
+/* Ordnerbaum im Auswahlfenster */
+#pickList button span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pickList .pickLeer{font-size:12.5px;color:var(--dimmer);margin:2px 2px 10px;line-height:1.4}
 .dragGhost{position:fixed;z-index:70;pointer-events:none;background:var(--panel2);
   border:1px solid var(--blue);border-radius:11px;padding:10px 13px;font-size:14px;max-width:70vw;
   box-shadow:0 12px 30px rgba(0,0,0,.55);opacity:.95;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -933,11 +940,75 @@ function sorted(list){
   return c;
 }
 const FOLDER_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5h3.2l2 2.5h7.8A2.5 2.5 0 0 1 21 10v7.5A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5z"/></svg>';
+const UP_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 6 6v5"/></svg>';
+const HOME_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg>';
 const inFolder=(n,f)=>(n.folder||null)===f;
 const folderName=id=>{const f=folders.find(x=>x.id===id);return f?f.name:'';};
 const folderCount=id=>notes.filter(n=>inFolder(n,id)).length;
+/* ---------------------------------------------------------
+   Ordner in Ordnern: jeder Ordner kann einen Elternordner haben
+   (f.parent, fehlt = oberste Ebene). Notizen kennen weiter nur
+   ihren direkten Ordner (n.folder).
+--------------------------------------------------------- */
+const folderById=id=>folders.find(x=>x.id===id)||null;
+const parentOf=id=>{ const f=folderById(id); return (f&&f.parent&&folderById(f.parent))?f.parent:null; };
+const subFolders=id=>folders.filter(f=>parentOf(f.id)===(id||null));
+/* Weg von der obersten Ebene bis zum Ordner, als Liste von Ordnern */
+function folderPath(id){
+  const out=[]; let c=id, n=0;
+  while(c&&n++<60){ const f=folderById(c); if(!f) break; out.unshift(f); c=parentOf(c); }
+  return out;
+}
+const folderPfad=id=>folderPath(id).map(f=>f.name).join(' › ');
+/* Alle Ordner unterhalb eines Ordners -- dorthin darf er selbst nicht verschoben werden */
+function nachfahren(id){
+  const out=[];
+  const lauf=x=>subFolders(x).forEach(f=>{ if(!out.includes(f.id)){ out.push(f.id); lauf(f.id); } });
+  lauf(id); return out;
+}
+/* Alle Ordner als Baum in Lesereihenfolge: [{f,tiefe}] */
+function ordnerBaum(){
+  const out=[];
+  const lauf=(eltern,tiefe)=>subFolders(eltern).forEach(f=>{
+    if(out.some(o=>o.f.id===f.id)) return;
+    out.push({f,tiefe}); lauf(f.id,tiefe+1); });
+  lauf(null,0); return out;
+}
+/* Aufräumen, damit nichts unsichtbar wird: Verweise auf gelöschte Ordner
+   lösen (z. B. nach Wiederherstellen aus dem Papierkorb oder einem Import)
+   und Ordner, die sich im Kreis enthalten, wieder nach oben holen. */
+function ordnerPruefen(){
+  folders.forEach(f=>{
+    if(f.parent&&!folderById(f.parent)) f.parent=null;
+    let c=f.parent, n=0;
+    while(c&&n++<60){ if(c===f.id){ f.parent=null; break; } const e=folderById(c); c=e?e.parent:null; }
+  });
+  notes.forEach(n=>{ if(n.folder&&!folderById(n.folder)) n.folder=null; });
+  if(curFolder&&!folderById(curFolder)) curFolder=null;
+}
+/* Direkt in einen Ordner springen (Pfad-Leiste, nach dem Löschen ...) */
+function geheZuOrdner(id){
+  curFolder=id||null; renderList(); window.scrollTo(0,0);
+  // Zurück in der obersten Ebene: den bereitgelegten Verlaufseintrag wieder abbauen
+  if(!curFolder&&puffer&&imHauptmenue()) history.back(); else pushLayer('folder');
+}
+/* Auswahlfenster mit dem Ordnerbaum -- für Notizen und für Ordner */
+let pickCb=null;
+function ordnerWahl(titel,aktuell,gesperrt,cb){
+  pickCb=cb;
+  $('#folderPick h3').textContent=titel;
+  const zeile=(id,name,tiefe)=>`<button class="${(aktuell||null)===(id||null)?'on':''}" data-pickfolder="${id||''}"`+
+    ` style="padding-left:${13+tiefe*18}px">${id?FOLDER_SVG:HOME_SVG}<span>${esc(name)}</span></button>`;
+  const baum=ordnerBaum().filter(o=>!gesperrt.includes(o.f.id));
+  $('#pickList').innerHTML=zeile(null,'Alle Notizen (oberste Ebene)',0)+
+    baum.map(o=>zeile(o.f.id,o.f.name,o.tiefe+1)).join('')+
+    (folders.length?'':'<p class="pickLeer">Noch kein Ordner angelegt. Einen neuen machst du in der Übersicht über das Ordner-Symbol unten links.</p>')+
+    `<button data-close style="justify-content:center;margin:6px 0 0">Abbrechen</button>`;
+  $('#folderPick').classList.add('on'); pushLayer('pick');
+}
 
 function renderList(){
+  ordnerPruefen();
   const q=$('#q').value.trim().toLowerCase();
   const hit=n=>!q||(n.title+' '+plain(n)).toLowerCase().includes(q);
   // Suche greift über alle Ebenen, sonst wird nur die aktuelle Ebene gezeigt
@@ -945,32 +1016,41 @@ function renderList(){
   $('#count').textContent=notes.length?notes.length+(notes.length===1?' Notiz':' Notizen'):'Noch nichts angelegt';
 
   let html='';
+  const kinder=q?[]:subFolders(curFolder);
+  const karte=f=>{
+    const c=folderCount(f.id), u=subFolders(f.id).length;
+    const info=[u?(u===1?'1 Ordner':u+' Ordner'):'', (c||!u)?(c===1?'1 Notiz':c+' Notizen'):''].filter(Boolean).join(' · ');
+    return `<button class="fcard" data-folder="${f.id}" data-drop="${f.id}">${FOLDER_SVG}
+      <span class="fn"><b>${esc(f.name)}</b><span>${info}</span></span></button>`;
+  };
   if(curFolder){
-    html+=`<div class="crumb"><button id="upFolder">‹ Alle Notizen</button><b>${esc(folderName(curFolder))}</b></div>
+    const pfad=folderPath(curFolder), eltern=parentOf(curFolder);
+    html+=`<div class="crumb"><button data-crumb="">Alle Notizen</button>`+
+      pfad.map((f,i)=>'<i>›</i>'+(i===pfad.length-1?`<b>${esc(f.name)}</b>`
+        :`<button data-crumb="${f.id}">${esc(f.name)}</button>`)).join('')+`</div>
       <div class="chipRow" style="margin-bottom:14px">
+        <button class="chip" id="subFolder">＋ Unterordner</button>
         <button class="chip" id="renFolder">Umbenennen</button>
+        <button class="chip" id="movFolder">Verschieben</button>
         <button class="chip" id="delFolder" style="border-color:rgba(229,100,106,.4);color:var(--red)">Ordner löschen</button>
-      </div>
-      <div class="folders" style="margin-bottom:16px">
-        <button class="fcard" data-drop="root">${FOLDER_SVG}
-          <span class="fn"><b>Aus dem Ordner heraus</b><span>Notiz hierher ziehen</span></span></button>
       </div>`;
-  }else if(folders.length&&!q){
+    if(!q) html+=`<div class="folders" style="margin-bottom:16px">
+        <button class="fcard up" data-up data-drop="up">${UP_SVG}
+          <span class="fn"><b>Eine Ebene höher</b><span>${esc(eltern?folderName(eltern):'Alle Notizen')}</span></span></button>
+        ${kinder.map(karte).join('')}
+      </div>`;
+  }else if(kinder.length){
     html+=`<div class="fsec"><h3>Ordner</h3><span style="font-size:11px;color:var(--dimmer)">Notiz halten und hineinziehen</span></div>`;
-    html+='<div class="folders">'+folders.map(f=>{
-      const c=folderCount(f.id);
-      return `<button class="fcard" data-folder="${f.id}" data-drop="${f.id}">${FOLDER_SVG}
-        <span class="fn"><b>${esc(f.name)}</b><span>${c===1?'1 Notiz':c+' Notizen'}</span></span></button>`;
-    }).join('')+'</div>';
+    html+='<div class="folders">'+kinder.map(karte).join('')+'</div>';
   }
 
   if(!shown.length){
     html+='<div class="empty">'+(q?'Nichts gefunden.'
-      :(curFolder?'Dieser Ordner ist leer.<br>Zieh eine Notiz hinein.'
+      :(curFolder?(kinder.length?'Keine Notizen direkt in diesem Ordner.':'Dieser Ordner ist leer.<br>Zieh eine Notiz hinein oder leg einen Unterordner an.')
                  :'Noch keine Notiz.<br>Tipp unten links auf „+".'))+'</div>';
   }else{
     html+='<div class="card">'+shown.map(n=>{
-      const fn=(!curFolder&&n.folder)?`<span class="tags" style="font-size:11px;color:var(--dimmer)">${esc(folderName(n.folder))}</span>`:'';
+      const fn=(q&&n.folder)?`<span class="tags" style="font-size:11px;color:var(--dimmer)">${esc(folderPfad(n.folder))}</span>`:'';
       return `<button class="item" data-open="${n.id}" data-note="${n.id}">
         <span class="t"><b>${esc(n.title||'Neue Notiz')}</b><span>${esc(fmt(n.updated))} · ${esc(preview(n))}</span></span>
         ${fn}<span class="tags">${marks(n)}</span><span class="chev">›</span></button>`;
@@ -1252,7 +1332,7 @@ function eineEbeneZurueck(){
     if(calMode==='month'){ calMode='year'; renderCal(); return true; }
     renderList(); show('scrList'); return true;
   }
-  if(curFolder){ curFolder=null; renderList(); return true; }    // Ordner verlassen
+  if(curFolder){ curFolder=parentOf(curFolder); renderList(); window.scrollTo(0,0); return true; }   // eine Ordner-Ebene höher
   return false;                                                  // nichts mehr offen
 }
 addEventListener('popstate',()=>{
@@ -1290,17 +1370,33 @@ $('#q').oninput=renderList;
 $('#list').addEventListener('click',e=>{
   const f=e.target.closest('[data-folder]');
   if(f){ openFolder(f.dataset.folder); return; }
-  if(e.target.closest('#upFolder')){ goBack(); return; }
+  const cr=e.target.closest('[data-crumb]');
+  if(cr){ geheZuOrdner(cr.dataset.crumb||null); return; }
+  if(e.target.closest('[data-up]')){ goBack(); return; }
+  if(e.target.closest('#subFolder')){ neuerOrdner(); return; }
   if(e.target.closest('#renFolder')){
-    const fo=folders.find(x=>x.id===curFolder); if(!fo) return;
+    const fo=folderById(curFolder); if(!fo) return;
     const name=prompt('Neuer Name des Ordners:',fo.name); if(!name||!name.trim()) return;
     fo.name=name.trim(); saveNow(); renderList(); return;
   }
+  if(e.target.closest('#movFolder')){
+    const fo=folderById(curFolder); if(!fo) return;
+    // sich selbst und alles darunter ausblenden -- ein Ordner kann nicht in sich selbst liegen
+    ordnerWahl('„'+fo.name+'" verschieben nach …', parentOf(fo.id), [fo.id,...nachfahren(fo.id)], ziel=>{
+      fo.parent=ziel||null; saveNow(); renderList();
+      toast(ziel?'Liegt jetzt in „'+folderPfad(ziel)+'"':'Liegt jetzt auf der obersten Ebene');
+    });
+    return;
+  }
   if(e.target.closest('#delFolder')){
-    const c=folderCount(curFolder);
-    if(!confirm('Ordner löschen? Die '+c+' Notizen darin bleiben erhalten und liegen danach in der Übersicht.')) return;
-    notes.forEach(n=>{ if(n.folder===curFolder) n.folder=null; });
-    folders=folders.filter(x=>x.id!==curFolder); saveNow(); goBack(); toast('Ordner gelöscht'); return;
+    const fo=folderById(curFolder); if(!fo) return;
+    const c=folderCount(fo.id), u=subFolders(fo.id).length, eltern=parentOf(fo.id);
+    const inhalt=[c?(c===1?'1 Notiz':c+' Notizen'):'', u?(u===1?'1 Unterordner':u+' Unterordner'):''].filter(Boolean).join(' und ');
+    if(!confirm('Ordner „'+fo.name+'" löschen?'+(inhalt?'\n\nSein Inhalt ('+inhalt+') bleibt erhalten und rutscht eine Ebene nach oben.':''))) return;
+    notes.forEach(n=>{ if(n.folder===fo.id) n.folder=eltern; });
+    folders.forEach(f=>{ if(f.parent===fo.id) f.parent=eltern; });
+    folders=folders.filter(x=>x.id!==fo.id); saveNow();
+    geheZuOrdner(eltern); toast('Ordner gelöscht'); return;
   }
   const b=e.target.closest('[data-open]'); if(b) openNote(b.dataset.open);
 });
@@ -2768,9 +2864,26 @@ function exportIcs(e){
    erscheint eine Leiste mit allen Ordnern als Ziel – so muss man
    während des Ziehens nicht scrollen.
 ========================================================= */
-$('#newFolder').onclick=()=>{
-  const name=prompt('Name des Ordners:'); if(!name||!name.trim()) return;
-  folders.push({id:uid(),name:name.trim()}); saveNow(); renderList(); toast('Ordner angelegt');
+/* Legt den Ordner dort an, wo man gerade steht -- in einem Ordner also als Unterordner */
+function neuerOrdner(){
+  const hier=folderById(curFolder);
+  const name=prompt(hier?'Name des Unterordners in „'+hier.name+'":':'Name des Ordners:'); if(!name||!name.trim()) return;
+  folders.push({id:uid(),name:name.trim(),parent:hier?hier.id:null}); saveNow(); renderList();
+  toast(hier?'Unterordner angelegt':'Ordner angelegt');
+}
+$('#newFolder').onclick=neuerOrdner;
+$('#folderPick').addEventListener('click',e=>{
+  const b=e.target.closest('[data-pickfolder]');
+  if(b){ const cb=pickCb; pickCb=null; if(cb) cb(b.dataset.pickfolder||null); goBack(); return; }
+  if(e.target.closest('[data-close]')){ pickCb=null; goBack(); }
+});
+/* Ordner-Symbol oben in der Notiz: Notiz in einen Ordner legen */
+$('#folderBtn').onclick=()=>{
+  const n=note(); if(!n) return;
+  ordnerWahl('Notiz einordnen', n.folder||null, [], ziel=>{
+    n.folder=ziel||null; saveNow();
+    toast(ziel?'Liegt jetzt in „'+folderPfad(ziel)+'"':'Liegt jetzt in der Übersicht');
+  });
 };
 
 let ndrag=null, dropBar=null;
@@ -2784,8 +2897,11 @@ function buzz(ms){ try{ navigator.vibrate&&navigator.vibrate(ms); }catch(e){} }
 
 function openDropBar(){
   const targets=[];
-  if(curFolder) targets.push({id:'root',name:'Aus dem Ordner heraus'});
-  folders.forEach(f=>{ if(f.id!==curFolder) targets.push({id:f.id,name:f.name}); });
+  if(curFolder) targets.push({id:'up',name:'Eine Ebene höher'});
+  // erst die Unterordner von hier (das wahrscheinlichste Ziel), dann alle anderen mit ihrem Pfad
+  const hier=subFolders(curFolder).map(f=>f.id);
+  hier.forEach(id=>targets.push({id,name:folderName(id)}));
+  ordnerBaum().forEach(o=>{ if(o.f.id!==curFolder&&!hier.includes(o.f.id)) targets.push({id:o.f.id,name:folderPfad(o.f.id)}); });
   if(!targets.length) return false;
   dropBar=document.createElement('div');
   dropBar.className='dropBar on';
@@ -2837,8 +2953,8 @@ function endNDrag(apply){
   if(!wasOn) return;
   if(!drop){ toast('Abgelegt außerhalb – nichts verschoben'); return; }
   const n=notes.find(x=>x.id===id); if(!n) return;
-  if(drop==='root'){ n.folder=null; saveNow(); renderList(); toast('Aus dem Ordner genommen'); }
-  else { n.folder=drop; saveNow(); renderList(); buzz(14); toast('Verschoben nach „'+folderName(drop)+'"'); }
+  if(drop==='up'){ n.folder=parentOf(curFolder); saveNow(); renderList(); toast('Eine Ebene höher gelegt'); }
+  else if(folderById(drop)){ n.folder=drop; saveNow(); renderList(); buzz(14); toast('Verschoben nach „'+folderPfad(drop)+'"'); }
 }
 
 $('#list').addEventListener('pointerdown',e=>{
