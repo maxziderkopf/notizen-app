@@ -1015,7 +1015,7 @@ function renderList(){
   const shown=sorted(notes.filter(n=>hit(n)&&(q?true:inFolder(n,curFolder))));
   $('#count').textContent=notes.length?notes.length+(notes.length===1?' Notiz':' Notizen'):'Noch nichts angelegt';
 
-  let html='';
+  let html='', ordnerUnten='';
   const kinder=q?[]:subFolders(curFolder);
   const karte=f=>{
     const c=folderCount(f.id), u=subFolders(f.id).length;
@@ -1040,14 +1040,18 @@ function renderList(){
         ${kinder.map(karte).join('')}
       </div>`;
   }else if(kinder.length){
-    html+=`<div class="fsec"><h3>Ordner</h3><span style="font-size:11px;color:var(--dimmer)">Notiz halten und hineinziehen</span></div>`;
-    html+='<div class="folders">'+kinder.map(karte).join('')+'</div>';
+    /* Auf der Startseite stehen die Ordner UNTER den Notizen: Die losen Notizen
+       sind das, was täglich gebraucht wird -- dafür soll man nicht erst an den
+       Ordnern vorbeiscrollen müssen. */
+    ordnerUnten=`<div class="fsec" style="margin-top:24px"><h3>Ordner</h3><span style="font-size:11px;color:var(--dimmer)">Notiz halten und hineinziehen</span></div>`+
+      '<div class="folders">'+kinder.map(karte).join('')+'</div>';
   }
 
   if(!shown.length){
     html+='<div class="empty">'+(q?'Nichts gefunden.'
       :(curFolder?(kinder.length?'Keine Notizen direkt in diesem Ordner.':'Dieser Ordner ist leer.<br>Zieh eine Notiz hinein oder leg einen Unterordner an.')
-                 :'Noch keine Notiz.<br>Tipp unten links auf „+".'))+'</div>';
+                 :(kinder.length?'Keine losen Notizen.<br>Alles liegt in den Ordnern darunter.'
+                                :'Noch keine Notiz.<br>Tipp unten links auf „+".')))+'</div>';
   }else{
     html+='<div class="card">'+shown.map(n=>{
       const fn=(q&&n.folder)?`<span class="tags" style="font-size:11px;color:var(--dimmer)">${esc(folderPfad(n.folder))}</span>`:'';
@@ -1056,7 +1060,7 @@ function renderList(){
         ${fn}<span class="tags">${marks(n)}</span><span class="chev">›</span></button>`;
     }).join('')+'</div>';
   }
-  $('#list').innerHTML=html;
+  $('#list').innerHTML=html+ordnerUnten;
   kachelnAktualisieren();
 }
 function openFolder(id){ curFolder=id; renderList(); window.scrollTo(0,0); pushLayer('folder'); }
