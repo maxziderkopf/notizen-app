@@ -409,6 +409,76 @@ body.inNote .fabWrap{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
 .fabMini svg{width:21px;height:21px}
 body.inNote .fabMini{display:none}
 
+/* =========================================================
+   Wochenplan (z. B. Trainingsplan): Wochen > Tage > Übungen
+   Eigene Notiz-Art. Ansicht zum Lesen im Gym, Bearbeiten-Modus
+   zum Ändern -- so öffnet ein Tipp beim Scrollen keine Tastatur.
+========================================================= */
+#wp{display:none}
+body.wpOffen #wp{display:block}
+body.wpOffen #lines,body.wpOffen .schnell,body.wpOffen #planBox{display:none!important}
+.wpWochen{display:flex;gap:7px;overflow-x:auto;margin:0 -16px 14px;padding:2px 16px;scrollbar-width:none}
+.wpWochen::-webkit-scrollbar{display:none}
+.wpTab{flex:0 0 auto;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:8px 14px;font-size:13.5px;color:var(--dim)}
+.wpTab.on{border-color:var(--blue);background:rgba(62,123,250,.14);color:var(--blue);font-weight:600}
+.wpTab.neu{color:var(--blue);border-style:dashed;background:none}
+.wpKopf{display:flex;align-items:center;gap:10px;margin:0 2px 14px}
+.wpKopf .info{flex:1;min-width:0}
+.wpKopf h2{margin:0;font-size:22px;font-weight:800;letter-spacing:-.01em;overflow-wrap:anywhere}
+.wpKopf small{display:block;font-size:12px;color:var(--dim);margin-top:3px}
+.wpWname{width:100%;font:inherit;font-size:20px;font-weight:800;color:var(--text);background:none;border:0;
+  border-bottom:1px dashed var(--line);padding:2px 0;outline:none}
+.wpModusBtn{flex:0 0 auto;border:1px solid var(--line);background:var(--panel);border-radius:11px;
+  padding:9px 13px;font-size:13.5px;font-weight:600;color:var(--blue)}
+.wpModusBtn.fertig{background:var(--blue);border-color:var(--blue);color:#08101f}
+.wpAkt{display:flex;flex-wrap:wrap;gap:7px;margin:-4px 0 14px}
+.wpAkt .chip{font-size:13px;padding:7px 12px}
+.wpAkt .wpRot{border-color:rgba(229,100,106,.4);color:var(--red)}
+.wpTag{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  padding:13px 14px 12px 18px;margin-bottom:12px;overflow:hidden}
+.wpTag::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue)}
+.wpTag.ruhe{opacity:.72}
+.wpTag.ruhe::before{background:var(--dimmer)}
+.wpTagKopf{display:flex;align-items:center;gap:6px}
+.wpTagKopf h3{flex:1;min-width:0;margin:0;font-size:19px;font-weight:800;letter-spacing:-.01em;overflow-wrap:anywhere}
+.wpTagKopf .n{flex:0 0 auto;font-size:12px;color:var(--dimmer)}
+.wpFokus{margin:3px 0 0;color:var(--mint);font-size:14.5px;font-weight:600;white-space:pre-wrap;overflow-wrap:anywhere}
+.wpUeb{list-style:none;margin:10px 0 0;padding:0;border-top:1px solid var(--line)}
+.wpUeb li{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--line)}
+.wpUeb li:last-child{border-bottom:0}
+.wpNr{flex:0 0 22px;height:22px;border-radius:50%;background:var(--panel2);color:var(--dim);
+  font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.wpName{flex:1;min-width:0;font-size:15.5px;white-space:pre-wrap;overflow-wrap:anywhere}
+.wpDetail{flex:0 0 auto;max-width:46%;background:var(--panel2);border-radius:8px;padding:3px 9px;font-size:13px;
+  font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;overflow-wrap:anywhere;text-align:right}
+.wpLeer{margin:8px 0 0;color:var(--dimmer);font-size:13.5px}
+.wpTitelIn{flex:1;min-width:0;font:inherit;font-size:19px;font-weight:800;color:var(--text);background:none;
+  border:0;border-bottom:1px dashed var(--line);padding:2px 0;outline:none}
+.wpFokusIn{display:block;margin-top:8px;color:var(--mint);font-size:14.5px;font-weight:600;line-height:21px;
+  min-height:24px;border-bottom:1px dashed var(--line);padding-bottom:2px}
+.wpWname:focus,.wpTitelIn:focus,.wpFokusIn:focus{border-bottom-color:var(--blue)}
+.wpIcon{flex:0 0 30px;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--dim)}
+.wpIcon svg{width:17px;height:17px}
+.wpIcon:disabled{opacity:.25}
+.wpIcon.weg{color:var(--red)}
+.wpUeb.edit li{align-items:flex-start}
+.wpUeb.edit .wpNr{margin-top:2px}
+.wpNameIn{flex:1;min-width:0;font-size:15.5px;line-height:22px;min-height:22px;margin-top:2px}
+.wpDetailIn{flex:0 0 94px;width:94px;font:inherit;font-size:13px;color:var(--text);background:var(--panel2);
+  border:1px solid var(--line);border-radius:8px;padding:4px 7px;outline:none}
+.wpDetailIn:focus{border-color:var(--blue)}
+.wpX{flex:0 0 26px;height:26px;border-radius:50%;color:var(--dimmer);font-size:19px;line-height:1;
+  display:flex;align-items:center;justify-content:center}
+.wpPlus{display:flex;align-items:center;gap:7px;margin-top:6px;padding:8px 0 2px;color:var(--blue);font-size:14.5px;font-weight:600}
+.wpTagNeu{border:1px dashed var(--line);border-radius:16px;padding:12px 14px;margin-bottom:12px}
+.wpTagNeu .lbl{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dimmer);font-weight:600}
+.wpChips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.wpHilfe{margin:6px 0 0;font-size:13px;color:var(--dim);line-height:1.45}
+.wpChips button{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:8px 12px;font-size:13.5px}
+.wpChips button.da{opacity:.45}
+.wpChips button:active{border-color:var(--blue);color:var(--blue)}
+
 /* Auswahlfenster für Ordner */
 .pick{position:fixed;inset:0;z-index:46;display:none}
 .pick.on{display:block}
@@ -619,6 +689,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
       </button>
     </div>
     <div id="lines"></div>
+    <div id="wp"></div>
   </div>
 </section>
 
@@ -635,6 +706,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 <div class="fanBg" id="fanBg"></div>
 <div class="fabWrap">
   <div class="fan" id="fan" style="display:none">
+    <button data-add="woche"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg> Wochenplan</button>
     <button data-add="image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M4 18l5-5 4 4 3-2 4 4"/></svg> Bild</button>
     <button data-add="draw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l4-1 11-11a2.5 2.5 0 0 0-3.5-3.5L3.5 16.5 3 21z"/><path d="M14 6l4 4"/></svg> Zeichnung</button>
     <button data-add="audio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg> Audio</button>
@@ -832,6 +904,7 @@ let undoStack=[];
    {nid, rueck:true} -- Zurück führt dann wieder genau in diese Notiz.
    wkSprung: Uhrzeit (Minuten), zu der die Wochenansicht beim Öffnen scrollt. */
 let planer=null, todoRef=null, wkGeom={h0:7,PPH:54,start:''}, wkSprung=null;
+let wpBearbeiten=null;      // Wochenplan: true = Bearbeiten, false = Ansicht, null = beim Öffnen entscheiden
 /* Zeitpläne von früher haben noch keinen Tag. Damit sie trotzdem von selbst im
    Kalender stehen, bekommen sie den Tag, an dem sie zuletzt bearbeitet wurden. */
 function planTageErgaenzen(){
@@ -920,12 +993,23 @@ function load(){
 /* =========================================================
    Übersicht
 ========================================================= */
-function plain(n){ return n.blocks.filter(b=>b.type==='line'||b.type==='plan').map(b=>b.text).join(' '); }
+function plain(n){
+  const txt=n.blocks.filter(b=>b.type==='line'||b.type==='plan').map(b=>b.text);
+  // Suche findet auch Tage und Übungen eines Wochenplans
+  if(n.wp&&Array.isArray(n.wp.wochen)) n.wp.wochen.forEach(w=>{ txt.push(w.name||'');
+    (w.tage||[]).forEach(t=>{ txt.push(t.titel||'',t.fokus||'');
+      (t.uebungen||[]).forEach(u=>txt.push(u.name||'',u.detail||'')); }); });
+  return txt.join(' ');
+}
 function marks(n){
   const k=new Set(n.blocks.map(b=>b.type));
-  return (k.has('plan')?'🕗':'')+(k.has('image')?'🖼':'')+(k.has('draw')?'✏️':'')+(k.has('audio')?'🎤':'');
+  return (istWochenplan(n)?'🏋️':'')+(k.has('plan')?'🕗':'')+(k.has('image')?'🖼':'')+(k.has('draw')?'✏️':'')+(k.has('audio')?'🎤':'');
 }
 function preview(n){
+  if(istWochenplan(n)){
+    const wo=(n.wp&&n.wp.wochen)||[], tage=wo.reduce((a,w)=>a+(w.tage||[]).length,0);
+    return 'Wochenplan · '+(wo.length===1?'1 Woche':wo.length+' Wochen')+' · '+(tage===1?'1 Tag':tage+' Tage');
+  }
   const first=n.blocks.find(b=>(b.type==='line'||b.type==='plan')&&b.text.trim());
   const open=n.blocks.filter(b=>(b.type==='line'||b.type==='plan')&&b.check===false).length;
   if(first) return (open?open+' offen · ':'')+((first.type==='plan'&&first.time?first.time+' ':'')+first.text.trim());
@@ -1073,7 +1157,7 @@ function note(){ return notes.find(n=>n.id===openId); }
 function snap(){
   const n=note(); if(!n) return;
   if(!snapText._busy) textSnapKey=null;   // strukturelle Änderung beendet die Schreibphase
-  undoStack.push(JSON.stringify({title:n.title,blocks:n.blocks}));
+  undoStack.push(JSON.stringify({title:n.title,blocks:n.blocks,wp:n.wp}));
   if(undoStack.length>40) undoStack.shift();
   markUndo();
 }
@@ -1093,6 +1177,7 @@ function doUndo(){
   const n=note(); if(!n||!undoStack.length) return toast('Nichts zum Rückgängigmachen');
   const st=JSON.parse(undoStack.pop());
   n.title=st.title; n.blocks=st.blocks;
+  if(st.wp) n.wp=st.wp;
   endTextPhase();
   touch(); renderNote(); markUndo(); toast('Rückgängig gemacht');
 }
@@ -1144,6 +1229,12 @@ function renderNote(){
   schnellAktualisieren();
   $('#title').value=n.title; grow($('#title'));
   $('#date').textContent='Zuletzt bearbeitet '+fmt(n.updated);
+  // Ein Wochenplan hat einen eigenen Aufbau statt Listenzeilen
+  const istWp=istWochenplan(n);
+  document.body.classList.toggle('wpOffen',istWp);
+  $('#title').placeholder=istWp?'Name des Plans':'Titel';
+  if(istWp){ $('#lines').innerHTML=''; renderWochenplan(n); markUndo(); return; }
+  $('#wp').innerHTML='';
 
   const isRow=b=>b.type==='line'||b.type==='plan';
   const open=n.blocks.filter(b=>!(isRow(b)&&b.check===true));
@@ -1352,10 +1443,11 @@ function goBack(){ if(puffer) history.back(); else { eineEbeneZurueck(); } }
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));
   document.body.classList.toggle('inNote',id!=='scrList');
+  if(id!=='scrNote') document.body.classList.remove('wpOffen');
   if(id==='scrNote') closeFan();
   window.scrollTo(0,0);
 }
-function openNote(id){ openId=id; showDone=false; undoStack=[]; show('scrNote'); renderNote(); markUndo(); pushLayer('note'); }
+function openNote(id){ openId=id; showDone=false; undoStack=[]; wpBearbeiten=null; show('scrNote'); renderNote(); markUndo(); pushLayer('note'); }
 function newNote(){
   const n={id:uid(),title:'',created:Date.now(),updated:Date.now(),blocks:[],folder:curFolder};
   notes.unshift(n); save(); openNote(n.id); return n;
@@ -1412,6 +1504,7 @@ $('#title').addEventListener('input',e=>{
   $('#date').textContent='Zuletzt bearbeitet '+fmt(n.updated);
 });
 $('#title').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&istWochenplan(note())){ e.preventDefault(); e.target.blur(); return; }
   if(e.key==='Enter'){ e.preventDefault(); const f=$('#lines textarea'); if(f) f.focus(); else newLine(null,false); }
 });
 $('#lines').addEventListener('input',e=>{
@@ -1538,6 +1631,229 @@ $('#planBtn').onclick=()=>{
 };
 
 /* =========================================================
+   Wochenplan (z. B. Trainingsplan)
+   n.art='wochenplan', n.wp={aktiv: Wochen-ID,
+     wochen:[{id,name,tage:[{id,titel,fokus,uebungen:[{id,name,detail}]}]}]}
+   Unabhängig vom Kalender: es steht nur drin, was man selbst einträgt.
+========================================================= */
+const WP_TAGE=['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
+const WP_HOCH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>';
+const WP_RUNTER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+const WP_WEG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
+
+function istWochenplan(n){ return !!n&&n.art==='wochenplan'; }
+function wpWocheNeu(name){ return {id:uid(),name,tage:[]}; }
+function wpTagNeu(titel){ return {id:uid(),titel,fokus:'',uebungen:[]}; }
+function wpUebungNeu(){ return {id:uid(),name:'',detail:''}; }
+/* Struktur prüfen und ergänzen -- auch für Pläne aus einem Backup */
+function wpDaten(n){
+  if(!n.wp||!Array.isArray(n.wp.wochen)) n.wp={aktiv:null,wochen:[]};
+  if(!n.wp.wochen.length) n.wp.wochen.push(wpWocheNeu('Woche 1'));
+  n.wp.wochen.forEach(w=>{
+    if(!Array.isArray(w.tage)) w.tage=[];
+    w.tage.forEach(t=>{ if(!Array.isArray(t.uebungen)) t.uebungen=[];
+      t.titel=t.titel||''; t.fokus=t.fokus||'';
+      t.uebungen.forEach(u=>{ u.name=u.name||''; u.detail=u.detail||''; }); });
+  });
+  if(!n.wp.wochen.some(w=>w.id===n.wp.aktiv)) n.wp.aktiv=n.wp.wochen[0].id;
+  return n.wp;
+}
+function wpWoche(n){ const wp=wpDaten(n); return wp.wochen.find(w=>w.id===wp.aktiv); }
+function wpTagFinden(n,tid){ return wpWoche(n).tage.find(t=>t.id===tid)||null; }
+function wpHatInhalt(n){ return wpDaten(n).wochen.some(w=>w.tage.length); }
+const wpGefuellt=u=>!!(u.name.trim()||u.detail.trim());
+/* Welcher Wochentag steckt in einer Überschrift? -1 = eigener Name */
+function wpWochentag(titel){
+  const t=(titel||'').trim().toLowerCase();
+  return WP_TAGE.findIndex(d=>t.startsWith(d.toLowerCase()));
+}
+/* Wochentage landen gleich an der richtigen Stelle (Mittwoch vor Freitag) */
+function wpTagEinfuegen(w,t){
+  const wd=wpWochentag(t.titel);
+  let i=w.tage.length;
+  if(wd>=0){ const k=w.tage.findIndex(x=>wpWochentag(x.titel)>wd); if(k>=0) i=k; }
+  w.tage.splice(i,0,t);
+}
+function wpFokus(sel){
+  const el=document.querySelector(sel); if(!el) return;
+  el.focus();
+  try{ const L=el.value.length; el.setSelectionRange(L,L); }catch(_){}
+}
+function newWochenplan(){
+  const n={id:uid(),title:'Trainingsplan',created:Date.now(),updated:Date.now(),blocks:[],folder:curFolder,
+           art:'wochenplan',wp:{aktiv:null,wochen:[wpWocheNeu('Woche 1')]}};
+  notes.unshift(n); save(); openNote(n.id);
+}
+
+/* ---- Anzeige ---- */
+function wpTagAnsicht(t){
+  const ueb=t.uebungen.filter(wpGefuellt);
+  const ruhe=!ueb.length&&/ruhe|pause|frei/i.test(t.fokus+' '+t.titel);
+  return `<div class="wpTag${ruhe?' ruhe':''}">
+    <div class="wpTagKopf"><h3>${esc(t.titel||'Ohne Überschrift')}</h3>${ueb.length?`<span class="n">${ueb.length===1?'1 Übung':ueb.length+' Übungen'}</span>`:''}</div>
+    ${t.fokus.trim()?`<p class="wpFokus">${esc(t.fokus.trim())}</p>`:''}
+    ${ueb.length?'<ol class="wpUeb">'+ueb.map((u,i)=>`<li><span class="wpNr">${i+1}</span>`+
+        `<span class="wpName">${esc(u.name)}</span>${u.detail.trim()?`<span class="wpDetail">${esc(u.detail.trim())}</span>`:''}</li>`).join('')+'</ol>'
+      :(t.fokus.trim()?'':'<p class="wpLeer">Noch nichts eingetragen</p>')}
+  </div>`;
+}
+function wpTagEdit(t,i,anzahl){
+  return `<div class="wpTag edit">
+    <div class="wpTagKopf">
+      <input class="wpTitelIn" data-wptitel="${t.id}" value="${esc(t.titel)}" placeholder="Überschrift, z. B. Montag" aria-label="Überschrift des Tages" autocomplete="off">
+      <button class="wpIcon" data-wptaghoch="${t.id}" aria-label="Tag nach oben"${i===0?' disabled':''}>${WP_HOCH}</button>
+      <button class="wpIcon" data-wptagrunter="${t.id}" aria-label="Tag nach unten"${i===anzahl-1?' disabled':''}>${WP_RUNTER}</button>
+      <button class="wpIcon weg" data-wptagweg="${t.id}" aria-label="Tag löschen">${WP_WEG}</button>
+    </div>
+    <textarea class="wpFokusIn" rows="1" data-wpfokus="${t.id}" placeholder="Was trainierst du? z. B. Push – Brust &amp; Trizeps">${esc(t.fokus)}</textarea>
+    ${t.uebungen.length?'<ol class="wpUeb edit">'+t.uebungen.map((u,k)=>`<li>
+        <span class="wpNr">${k+1}</span>
+        <textarea class="wpNameIn" rows="1" data-wpname="${t.id}|${u.id}" placeholder="Übung">${esc(u.name)}</textarea>
+        <input class="wpDetailIn" data-wpdetail="${t.id}|${u.id}" value="${esc(u.detail)}" placeholder="3×10" aria-label="Sätze und Wiederholungen" autocomplete="off">
+        <button class="wpX" data-wpuebweg="${t.id}|${u.id}" aria-label="Übung löschen">×</button></li>`).join('')+'</ol>':''}
+    <button class="wpPlus" data-wpuebneu="${t.id}">＋ Übung</button>
+  </div>`;
+}
+function wpTagNeuHtml(w){
+  const da=new Set(w.tage.map(t=>wpWochentag(t.titel)));
+  const hilfe=w.tage.length?'':'<p class="wpHilfe">So geht’s: Tag antippen, darunter eintragen, was du trainierst, dann die Übungen mit Sätzen und Gewicht.</p>';
+  return `<div class="wpTagNeu"><span class="lbl">Tag hinzufügen</span>${hilfe}
+    <div class="wpChips">${WP_TAGE.map((d,i)=>`<button class="${da.has(i)?'da':''}" data-wptagneu="${d}">${d.slice(0,2)}</button>`).join('')}
+      <button data-wptagneu="">＋ Eigene Überschrift</button></div></div>`;
+}
+function renderWochenplan(n){
+  const wp=wpDaten(n), w=wpWoche(n);
+  if(wpBearbeiten===null) wpBearbeiten=!wpHatInhalt(n);   // leerer Plan öffnet gleich zum Eintragen
+  const ed=wpBearbeiten, nr=wp.wochen.indexOf(w)+1;
+  const tage=w.tage.length, ueb=w.tage.reduce((a,t)=>a+t.uebungen.filter(u=>u.name.trim()).length,0);
+  let h=`<div class="wpWochen" id="wpWochen">`+wp.wochen.map(x=>
+      `<button class="wpTab${x.id===w.id?' on':''}" data-wpwoche="${x.id}">${esc(x.name||'Woche')}</button>`).join('')+
+    `<button class="wpTab neu" data-wpneuewoche>＋ Woche</button></div>`;
+  h+=`<div class="wpKopf"><div class="info">`+
+    (ed?`<input class="wpWname" data-wpwname="${w.id}" value="${esc(w.name)}" placeholder="Name der Woche" aria-label="Name der Woche" autocomplete="off">`
+       :`<h2>${esc(w.name||'Woche '+nr)}</h2>`)+
+    `<small>${wp.wochen.length>1?'Woche '+nr+' von '+wp.wochen.length+' · ':''}${tage===1?'1 Tag':tage+' Tage'} · ${ueb===1?'1 Übung':ueb+' Übungen'}</small></div>`+
+    `<button class="wpModusBtn${ed?' fertig':''}" data-wpmodus>${ed?'✓ Fertig':'✎ Bearbeiten'}</button></div>`;
+  // Kopieren lohnt sich erst, wenn in der Woche etwas steht
+  const akt=(tage?`<button class="chip" data-wpkopie>⧉ Woche kopieren</button>`:'')+
+    (wp.wochen.length>1?`<button class="chip wpRot" data-wpwocheweg>Woche löschen</button>`:'');
+  if(ed&&akt) h+=`<div class="wpAkt">${akt}</div>`;
+  h+='<div class="wpTage">'+w.tage.map((t,i)=>ed?wpTagEdit(t,i,w.tage.length):wpTagAnsicht(t)).join('')+'</div>';
+  if(ed) h+=wpTagNeuHtml(w);
+  else if(!w.tage.length) h+='<div class="empty">In dieser Woche steht noch nichts.<br>Tipp oben auf „Bearbeiten".</div>';
+  $('#wp').innerHTML=h;
+  // aktive Woche in der Leiste sichtbar machen
+  const lst=$('#wpWochen'), on=lst&&lst.querySelector('.on');
+  if(on) lst.scrollLeft=Math.max(0,on.offsetLeft-lst.clientWidth/2+on.offsetWidth/2);
+  document.querySelectorAll('#wp textarea').forEach(grow);
+}
+
+/* ---- Tippen ---- */
+$('#wp').addEventListener('click',e=>{
+  const n=note(); if(!istWochenplan(n)) return;
+  const wp=wpDaten(n), w=wpWoche(n), z=sel=>e.target.closest(sel);
+  let b;
+  if((b=z('[data-wpwoche]'))){ wp.aktiv=b.dataset.wpwoche; endTextPhase(); saveNow(); renderWochenplan(n); return; }
+  if(z('[data-wpneuewoche]')){
+    snap(); const nw=wpWocheNeu('Woche '+(wp.wochen.length+1));
+    wp.wochen.push(nw); wp.aktiv=nw.id; wpBearbeiten=true; touch(); renderWochenplan(n);
+    toast(nw.name+' angelegt'); return; }
+  if(z('[data-wpmodus]')){
+    if(wpBearbeiten){            // beim Fertigmachen leere Übungszeilen wegräumen
+      wp.wochen.forEach(x=>x.tage.forEach(t=>{ t.uebungen=t.uebungen.filter(wpGefuellt); }));
+      touch(); }
+    wpBearbeiten=!wpBearbeiten; endTextPhase(); renderWochenplan(n); window.scrollTo(0,0); return; }
+  if(z('[data-wpkopie]')){
+    snap();
+    const k=JSON.parse(JSON.stringify(w));
+    k.id=uid(); k.tage.forEach(t=>{ t.id=uid(); t.uebungen.forEach(u=>{ u.id=uid(); }); });
+    // "Woche 2" kopiert wird zur nächsten Nummer; ein eigener Name bekommt "(Kopie)"
+    k.name=/^woche\s*\d+$/i.test((w.name||'').trim())?'Woche '+(wp.wochen.length+1):(w.name||'Woche')+' (Kopie)';
+    wp.wochen.push(k); wp.aktiv=k.id; touch(); renderWochenplan(n);
+    toast('„'+(w.name||'Woche')+'" kopiert – neu: '+k.name); return; }
+  if(z('[data-wpwocheweg]')){
+    if(wp.wochen.length<2) return;
+    if(!confirm('„'+(w.name||'Woche')+'" löschen?'+(w.tage.length?'\n\nAlle '+w.tage.length+' Tage darin werden entfernt. „↶" oben holt sie zurück.':''))) return;
+    snap(); const i=wp.wochen.indexOf(w); wp.wochen.splice(i,1);
+    wp.aktiv=(wp.wochen[i-1]||wp.wochen[0]).id; touch(); renderWochenplan(n); toast('Woche gelöscht'); return; }
+  if((b=z('[data-wptagneu]'))){
+    snap(); const t=wpTagNeu(b.dataset.wptagneu); wpTagEinfuegen(w,t); touch(); renderWochenplan(n);
+    // Wochentag gewählt: gleich eintragen, was trainiert wird -- sonst erst die Überschrift
+    wpFokus(t.titel?`[data-wpfokus="${t.id}"]`:`[data-wptitel="${t.id}"]`); return; }
+  if((b=z('[data-wptaghoch]'))||(b=z('[data-wptagrunter]'))){
+    const hoch=b.hasAttribute('data-wptaghoch'), id=hoch?b.dataset.wptaghoch:b.dataset.wptagrunter;
+    const i=w.tage.findIndex(t=>t.id===id), j=hoch?i-1:i+1;
+    if(i<0||j<0||j>=w.tage.length) return;
+    snap(); [w.tage[i],w.tage[j]]=[w.tage[j],w.tage[i]]; touch(); renderWochenplan(n); return; }
+  if((b=z('[data-wptagweg]'))){
+    const t=wpTagFinden(n,b.dataset.wptagweg); if(!t) return;
+    const voll=t.uebungen.some(wpGefuellt)||t.fokus.trim();
+    if(voll&&!confirm('„'+(t.titel||'Tag')+'" mit allen Übungen löschen?')) return;
+    snap(); w.tage=w.tage.filter(x=>x!==t); touch(); renderWochenplan(n); toast('Tag gelöscht'); return; }
+  if((b=z('[data-wpuebneu]'))){ wpUebungNach(n,b.dataset.wpuebneu,null); return; }
+  if((b=z('[data-wpuebweg]'))){
+    const [tid,id]=b.dataset.wpuebweg.split('|'), t=wpTagFinden(n,tid); if(!t) return;
+    snap(); t.uebungen=t.uebungen.filter(u=>u.id!==id); touch(); renderWochenplan(n); return; }
+});
+function wpUebungNach(n,tid,nachId){
+  const t=wpTagFinden(n,tid); if(!t) return;
+  snap();
+  const u=wpUebungNeu(), i=nachId?t.uebungen.findIndex(x=>x.id===nachId)+1:t.uebungen.length;
+  t.uebungen.splice(i,0,u); touch(); renderWochenplan(n);
+  wpFokus(`[data-wpname="${tid}|${u.id}"]`);
+}
+
+/* ---- Schreiben ---- */
+$('#wp').addEventListener('input',e=>{
+  const n=note(); if(!istWochenplan(n)) return;
+  const el=e.target, d=el.dataset;
+  if(d.wpwname!==undefined){
+    snapText('wpw:'+d.wpwname);
+    const w=wpDaten(n).wochen.find(x=>x.id===d.wpwname); if(!w) return;
+    w.name=el.value;
+    const tab=document.querySelector(`[data-wpwoche="${w.id}"]`); if(tab) tab.textContent=el.value||'Woche';
+    touch(); return; }
+  if(d.wptitel){ snapText('wpt:'+d.wptitel); const t=wpTagFinden(n,d.wptitel); if(t){ t.titel=el.value; touch(); } return; }
+  if(d.wpfokus){ snapText('wpf:'+d.wpfokus); const t=wpTagFinden(n,d.wpfokus); if(t){ t.fokus=el.value; grow(el); touch(); } return; }
+  const ref=d.wpname||d.wpdetail;
+  if(ref){
+    const [tid,id]=ref.split('|'), t=wpTagFinden(n,tid), u=t&&t.uebungen.find(x=>x.id===id); if(!u) return;
+    snapText((d.wpname?'wpn:':'wpd:')+id);
+    if(d.wpname){ u.name=el.value; grow(el); } else u.detail=el.value;
+    touch(); }
+});
+$('#wp').addEventListener('keydown',e=>{
+  if(e.key!=='Enter'&&e.key!=='Backspace') return;
+  const n=note(); if(!istWochenplan(n)) return;
+  const d=e.target.dataset;
+  if(e.key==='Enter'){
+    if(d.wpwname!==undefined){ e.preventDefault(); e.target.blur(); return; }
+    if(d.wptitel){ e.preventDefault(); wpFokus(`[data-wpfokus="${d.wptitel}"]`); return; }
+    if(d.wpfokus){
+      e.preventDefault();
+      const t=wpTagFinden(n,d.wpfokus); if(!t) return;
+      if(t.uebungen.length) wpFokus(`[data-wpname="${t.id}|${t.uebungen[0].id}"]`);
+      else wpUebungNach(n,t.id,null);
+      return; }
+    const ref=d.wpname||d.wpdetail;
+    if(ref){
+      e.preventDefault();
+      const [tid,id]=ref.split('|'), t=wpTagFinden(n,tid), u=t&&t.uebungen.find(x=>x.id===id);
+      if(u&&!wpGefuellt(u)){ e.target.blur(); return; }   // Enter in leerer Zeile = fertig
+      wpUebungNach(n,tid,id); return; }
+  }
+  // Löschtaste in leerer Übung: Zeile weg, zurück in die Zeile davor -- wie in Listen
+  if(e.key==='Backspace'&&d.wpname&&e.target.value===''){
+    const [tid,id]=d.wpname.split('|'), t=wpTagFinden(n,tid), u=t&&t.uebungen.find(x=>x.id===id);
+    if(!u||u.detail.trim()) return;
+    e.preventDefault(); snap();
+    const i=t.uebungen.indexOf(u); t.uebungen.splice(i,1); touch(); renderWochenplan(n);
+    const vor=t.uebungen[i-1];
+    wpFokus(vor?`[data-wpname="${tid}|${vor.id}"]`:`[data-wpfokus="${tid}"]`);
+  }
+});
+
+/* =========================================================
    Plus-Menü
 ========================================================= */
 let fanOpen=false;
@@ -1558,6 +1874,7 @@ $('#fan').addEventListener('click',e=>{
 });
 function ensureNote(){ if(!$('#scrNote').classList.contains('on')||!note()) newNote(); }
 function doAdd(kind){
+  if(kind==='woche'){ newWochenplan(); return; }     // eigene Notiz, nicht in eine bestehende
   ensureNote();
   if(kind==='list'){ newLine(null,false); }
   else if(kind==='text'){ newLine(null,null); }

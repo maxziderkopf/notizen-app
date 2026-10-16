@@ -1,4 +1,4 @@
-const CACHE = 'notizen-v13';
+const CACHE = 'notizen-v14';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon.png', './icon-maskable.png', './badge.png'];
 
 self.addEventListener('install', e => {
