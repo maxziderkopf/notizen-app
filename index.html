@@ -411,8 +411,8 @@ body.inNote .fabMini{display:none}
 
 /* =========================================================
    Wochenplan (z. B. Trainingsplan): Wochen > Tage > Übungen
-   Eigene Notiz-Art. Ansicht zum Lesen im Gym, Bearbeiten-Modus
-   zum Ändern -- so öffnet ein Tipp beim Scrollen keine Tastatur.
+   Ansicht mit Figur und Farben, getrennter Bearbeiten-Modus --
+   so öffnet ein Tipp beim Scrollen im Gym keine Tastatur.
 ========================================================= */
 #wp{display:none}
 body.wpOffen #wp{display:block}
@@ -429,45 +429,80 @@ body.wpOffen #lines,body.wpOffen .schnell,body.wpOffen #planBox{display:none!imp
 .wpKopf small{display:block;font-size:12px;color:var(--dim);margin-top:3px}
 .wpWname{width:100%;font:inherit;font-size:20px;font-weight:800;color:var(--text);background:none;border:0;
   border-bottom:1px dashed var(--line);padding:2px 0;outline:none}
+.wpWname:focus{border-bottom-color:var(--blue)}
 .wpModusBtn{flex:0 0 auto;border:1px solid var(--line);background:var(--panel);border-radius:11px;
   padding:9px 13px;font-size:13.5px;font-weight:600;color:var(--blue)}
 .wpModusBtn.fertig{background:var(--blue);border-color:var(--blue);color:#08101f}
 .wpAkt{display:flex;flex-wrap:wrap;gap:7px;margin:-4px 0 14px}
 .wpAkt .chip{font-size:13px;padding:7px 12px}
 .wpAkt .wpRot{border-color:rgba(229,100,106,.4);color:var(--red)}
-.wpTag{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:16px;
+/* Übersicht oben: Figur, Körperteile, Tage */
+.wpUe{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:13px 14px 14px;margin-bottom:14px}
+.wpUe>.lbl{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dimmer);font-weight:600}
+.wpUeOben{display:flex;gap:14px;align-items:center;margin-top:8px}
+.wpUeFig{flex:0 0 138px}
+.wpUeFig svg,.wpMini svg{display:block;width:100%;height:auto}
+.wpUeRechts{flex:1;min-width:0}
+.wpUeInfo{margin:0 0 6px;font-size:13px;color:var(--dim);overflow-wrap:anywhere}
+.wpLeg{list-style:none;margin:0;padding:0}
+.wpLeg li{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:14px}
+.wpLeg i{flex:0 0 10px;height:10px;border-radius:50%}
+.wpLeg span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wpLeg b{flex:0 0 auto;font-size:12.5px;color:var(--dim);font-weight:600}
+.wpUeHinweis{margin:0;font-size:12.5px;color:var(--dimmer);line-height:1.4}
+.wpStreifen{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:14px}
+.wpKachel{min-width:0;text-align:left;border:1px solid var(--line);background:var(--panel2);border-radius:11px;padding:7px 8px}
+.wpKachel b{display:block;font-size:13.5px}
+.wpKachel span{display:block;font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.wpKachel .p{display:flex;gap:3px;height:7px;margin-top:5px;overflow:hidden}
+.wpKachel .p i{flex:0 0 7px;height:7px;border-radius:50%}
+.wpKachel.on{border-color:var(--blue);background:rgba(62,123,250,.16)}
+.wpKachel.ruhe{opacity:.55}
+/* Tageskarten */
+.wpTag{--c:var(--blue);position:relative;background:var(--panel);border:1px solid var(--line);border-radius:16px;
   padding:13px 14px 12px 18px;margin-bottom:12px;overflow:hidden}
-.wpTag::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue)}
+.wpTag::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
 .wpTag.ruhe{opacity:.72}
-.wpTag.ruhe::before{background:var(--dimmer)}
-.wpTagKopf{display:flex;align-items:center;gap:6px}
-.wpTagKopf h3{flex:1;min-width:0;margin:0;font-size:19px;font-weight:800;letter-spacing:-.01em;overflow-wrap:anywhere}
-.wpTagKopf .n{flex:0 0 auto;font-size:12px;color:var(--dimmer)}
-.wpFokus{margin:3px 0 0;color:var(--mint);font-size:14.5px;font-weight:600;white-space:pre-wrap;overflow-wrap:anywhere}
-.wpUeb{list-style:none;margin:10px 0 0;padding:0;border-top:1px solid var(--line)}
-.wpUeb li{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--line)}
+.wpTagOben{display:flex;gap:10px;align-items:flex-start}
+.wpTagText{flex:1;min-width:0}
+.wpTagText h3{margin:0;font-size:19px;font-weight:800;letter-spacing:-.01em;overflow-wrap:anywhere}
+.wpAktiv{display:inline-block;max-width:100%;margin:7px 0 0;padding:4px 11px;border-radius:999px;border:1px solid var(--c);
+  background:var(--panel2);font-size:14px;font-weight:700;overflow-wrap:anywhere}
+.wpKs{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.wpK{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 9px 3px 7px;background:var(--panel2);
+  font-size:12.5px;font-weight:600}
+.wpK i{flex:0 0 8px;height:8px;border-radius:50%}
+.wpMini{flex:0 0 72px}
+.wpUeb{list-style:none;margin:11px 0 0;padding:0;border-top:1px solid var(--line)}
+.wpUeb li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
 .wpUeb li:last-child{border-bottom:0}
 .wpNr{flex:0 0 22px;height:22px;border-radius:50%;background:var(--panel2);color:var(--dim);
   font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .wpName{flex:1;min-width:0;font-size:15.5px;white-space:pre-wrap;overflow-wrap:anywhere}
-.wpDetail{flex:0 0 auto;max-width:46%;background:var(--panel2);border-radius:8px;padding:3px 9px;font-size:13px;
-  font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;overflow-wrap:anywhere;text-align:right}
 .wpLeer{margin:8px 0 0;color:var(--dimmer);font-size:13.5px}
-.wpTitelIn{flex:1;min-width:0;font:inherit;font-size:19px;font-weight:800;color:var(--text);background:none;
-  border:0;border-bottom:1px dashed var(--line);padding:2px 0;outline:none}
-.wpFokusIn{display:block;margin-top:8px;color:var(--mint);font-size:14.5px;font-weight:600;line-height:21px;
-  min-height:24px;border-bottom:1px dashed var(--line);padding-bottom:2px}
-.wpWname:focus,.wpTitelIn:focus,.wpFokusIn:focus{border-bottom-color:var(--blue)}
+/* Bearbeiten: jede Zeile mit Beschriftung, damit klar ist, was wohin gehört */
+.wpLbl{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dimmer);
+  font-weight:600;margin:13px 0 6px}
+.wpZeile{display:flex;align-items:center;gap:4px}
+.wpZeile .wpLbl{flex:1;margin:0}
+.wpIn{width:100%;font:inherit;font-size:15px;color:var(--text);background:var(--panel2);border:1px solid var(--line);
+  border-radius:10px;padding:9px 11px;outline:none}
+.wpIn:focus{border-color:var(--blue)}
+.wpIn.wpTitelIn{margin-top:6px;font-size:17px;font-weight:800}
 .wpIcon{flex:0 0 30px;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--dim)}
 .wpIcon svg{width:17px;height:17px}
 .wpIcon:disabled{opacity:.25}
 .wpIcon.weg{color:var(--red)}
+.wpKWahl{display:flex;flex-wrap:wrap;gap:6px}
+.wpKWahl button{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);
+  border-radius:999px;padding:7px 11px;font-size:13px;color:var(--dim)}
+.wpKWahl button i{flex:0 0 9px;height:9px;border-radius:50%}
+.wpKWahl button.on{color:var(--text);font-weight:600}
+.wpKWahl button.neu{color:var(--blue);border-style:dashed}
+.wpUeb.edit{margin-top:0}
 .wpUeb.edit li{align-items:flex-start}
-.wpUeb.edit .wpNr{margin-top:2px}
-.wpNameIn{flex:1;min-width:0;font-size:15.5px;line-height:22px;min-height:22px;margin-top:2px}
-.wpDetailIn{flex:0 0 94px;width:94px;font:inherit;font-size:13px;color:var(--text);background:var(--panel2);
-  border:1px solid var(--line);border-radius:8px;padding:4px 7px;outline:none}
-.wpDetailIn:focus{border-color:var(--blue)}
+.wpUeb.edit .wpNr{margin-top:1px}
+.wpNameIn{flex:1;min-width:0;font-size:15.5px;line-height:22px;min-height:22px;margin-top:1px}
 .wpX{flex:0 0 26px;height:26px;border-radius:50%;color:var(--dimmer);font-size:19px;line-height:1;
   display:flex;align-items:center;justify-content:center}
 .wpPlus{display:flex;align-items:center;gap:7px;margin-top:6px;padding:8px 0 2px;color:var(--blue);font-size:14.5px;font-weight:600}
@@ -905,6 +940,7 @@ let undoStack=[];
    wkSprung: Uhrzeit (Minuten), zu der die Wochenansicht beim Öffnen scrollt. */
 let planer=null, todoRef=null, wkGeom={h0:7,PPH:54,start:''}, wkSprung=null;
 let wpBearbeiten=null;      // Wochenplan: true = Bearbeiten, false = Ansicht, null = beim Öffnen entscheiden
+let wpAuswahl=null;         // Wochenplan-Übersicht: null = ganze Woche, sonst ID des gezeigten Tages
 /* Zeitpläne von früher haben noch keinen Tag. Damit sie trotzdem von selbst im
    Kalender stehen, bekommen sie den Tag, an dem sie zuletzt bearbeitet wurden. */
 function planTageErgaenzen(){
@@ -997,8 +1033,8 @@ function plain(n){
   const txt=n.blocks.filter(b=>b.type==='line'||b.type==='plan').map(b=>b.text);
   // Suche findet auch Tage und Übungen eines Wochenplans
   if(n.wp&&Array.isArray(n.wp.wochen)) n.wp.wochen.forEach(w=>{ txt.push(w.name||'');
-    (w.tage||[]).forEach(t=>{ txt.push(t.titel||'',t.fokus||'');
-      (t.uebungen||[]).forEach(u=>txt.push(u.name||'',u.detail||'')); }); });
+    (w.tage||[]).forEach(t=>{ txt.push(t.titel||'',t.fokus||'',...(t.koerper||[]));
+      (t.uebungen||[]).forEach(u=>txt.push(u.name||'')); }); });
   return txt.join(' ');
 }
 function marks(n){
@@ -1447,7 +1483,7 @@ function show(id){
   if(id==='scrNote') closeFan();
   window.scrollTo(0,0);
 }
-function openNote(id){ openId=id; showDone=false; undoStack=[]; wpBearbeiten=null; show('scrNote'); renderNote(); markUndo(); pushLayer('note'); }
+function openNote(id){ openId=id; showDone=false; undoStack=[]; wpBearbeiten=null; wpAuswahl=null; show('scrNote'); renderNote(); markUndo(); pushLayer('note'); }
 function newNote(){
   const n={id:uid(),title:'',created:Date.now(),updated:Date.now(),blocks:[],folder:curFolder};
   notes.unshift(n); save(); openNote(n.id); return n;
@@ -1632,8 +1668,10 @@ $('#planBtn').onclick=()=>{
 
 /* =========================================================
    Wochenplan (z. B. Trainingsplan)
-   n.art='wochenplan', n.wp={aktiv: Wochen-ID,
-     wochen:[{id,name,tage:[{id,titel,fokus,uebungen:[{id,name,detail}]}]}]}
+   n.art='wochenplan', n.wp={aktiv: Wochen-ID, wochen:[{id,name,
+     tage:[{id,titel,fokus,koerper:[Namen],uebungen:[{id,name}]}]}]}
+   titel = der Tag (z. B. Montag), fokus = was man macht (z. B. Push),
+   koerper = trainierte Körperteile -- daraus leuchtet die Figur.
    Unabhängig vom Kalender: es steht nur drin, was man selbst einträgt.
 ========================================================= */
 const WP_TAGE=['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
@@ -1641,19 +1679,135 @@ const WP_HOCH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 const WP_RUNTER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
 const WP_WEG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
 
+/* Körperteile: Farbe und die Stellen, die auf der Figur aufleuchten */
+const WP_KOERPER=[
+  {n:'Brust',f:'#3E7BFA',r:['brust']},
+  {n:'Rücken',f:'#2DD4BF',r:['nacken','ruecken','unterruecken']},
+  {n:'Schultern',f:'#A78BFA',r:['schulter']},
+  {n:'Bizeps',f:'#F472B6',r:['bizeps']},
+  {n:'Trizeps',f:'#FB923C',r:['trizeps']},
+  {n:'Bauch',f:'#4ADE80',r:['bauch']},
+  {n:'Beine',f:'#FACC15',r:['quads','beinbeuger']},
+  {n:'Po',f:'#E879F9',r:['po']},
+  {n:'Waden',f:'#A3E635',r:['schienbein','waden']},
+  {n:'Ganzkörper',f:'#E2E8F0',r:['*']},
+  {n:'Cardio',f:'#F87171',r:['herz']}
+];
+const WP_MUSKELN=['nacken','schulter','brust','bauch','bizeps','trizeps','unterarm','ruecken','unterruecken',
+  'quads','beinbeuger','po','schienbein','waden'];
+/* Freie Wörter den Körperteilen zuordnen -- für eigene Namen und für Pläne,
+   in denen die Körperteile bisher nur im Text standen */
+const WP_WORTE=[
+  [/brust|chest|pec/i,['Brust']],
+  [/rücken|ruecken|back|\blats?\b|nacken|trapez/i,['Rücken']],
+  [/schulter|shoulder|delt/i,['Schultern']],
+  [/bizeps|bicep/i,['Bizeps']],
+  [/trizeps|tricep/i,['Trizeps']],
+  [/\barme?\b|\barms?\b/i,['Bizeps','Trizeps']],
+  [/bauch|\babs\b|core|rumpf/i,['Bauch']],
+  [/bein|\blegs?\b|quad|oberschenkel|hamstring/i,['Beine']],
+  [/\bpo\b|gesäß|gesaess|glute/i,['Po']],
+  [/wade|\bcalf\b|calves/i,['Waden']],
+  [/ganzkörper|ganzkoerper|full ?body/i,['Ganzkörper']],
+  [/cardio|ausdauer|laufen|joggen|radfahr|schwimm|zone ?2|hiit/i,['Cardio']],
+  [/\bpush\b/i,['Brust','Schultern','Trizeps']],
+  [/\bpull\b/i,['Rücken','Bizeps']],
+  [/oberkörper|oberkoerper|\bupper\b/i,['Brust','Rücken','Schultern','Bizeps','Trizeps']],
+  [/unterkörper|unterkoerper|\blower\b/i,['Beine','Po','Waden']]
+];
+function wpErkenne(txt){
+  const s=new Set();
+  WP_WORTE.forEach(([re,namen])=>{ if(re.test(txt||'')) namen.forEach(x=>s.add(x)); });
+  return WP_KOERPER.map(k=>k.n).filter(n=>s.has(n));
+}
+function wpKoerperInfo(name){
+  const k=WP_KOERPER.find(x=>x.n.toLowerCase()===String(name).trim().toLowerCase());
+  if(k) return k;
+  if(/unterarm|forearm|griffkraft/i.test(name)) return {n:name,f:'#94A3B8',r:['unterarm']};
+  const erk=wpErkenne(name).map(x=>WP_KOERPER.find(y=>y.n===x));
+  return {n:name,f:erk.length?erk[0].f:'#94A3B8',r:erk.flatMap(y=>y.r)};
+}
+/* Doppelte raus, bekannte Körperteile in fester Reihenfolge, eigene dahinter */
+function wpSortiert(namen){
+  const gesehen=new Set(), out=[];
+  (namen||[]).forEach(x=>{ const k=String(x).trim();
+    if(k&&!gesehen.has(k.toLowerCase())){ gesehen.add(k.toLowerCase()); out.push(k); } });
+  const pos=x=>{ const i=WP_KOERPER.findIndex(k=>k.n.toLowerCase()===x.toLowerCase()); return i<0?99:i; };
+  return out.sort((a,b)=>pos(a)-pos(b));
+}
+
+/* ---- Figur: vorne und hinten, die trainierten Muskeln leuchten in ihrer Farbe ---- */
+const WP_FORM={
+  v:[
+    ['kopf','<ellipse cx="25" cy="7" rx="4.8" ry="5.6"/>'],
+    ['hals','<rect x="22.8" y="12.2" width="4.4" height="4" rx="1"/>'],
+    ['nacken','<path d="M22.6 14.4L17.4 16.4H22.6Z"/><path d="M27.4 14.4L32.6 16.4H27.4Z"/>'],
+    ['schulter','<ellipse cx="13.6" cy="20.9" rx="3.6" ry="4.5"/><ellipse cx="36.4" cy="20.9" rx="3.6" ry="4.5"/>'],
+    ['brust','<rect x="17.6" y="16.8" width="7" height="10" rx="2.8"/><rect x="25.4" y="16.8" width="7" height="10" rx="2.8"/>'],
+    ['bauch','<rect x="20.2" y="27.8" width="4.4" height="4.6" rx="1.4"/><rect x="25.4" y="27.8" width="4.4" height="4.6" rx="1.4"/>'+
+      '<rect x="20.2" y="33" width="4.4" height="4.6" rx="1.4"/><rect x="25.4" y="33" width="4.4" height="4.6" rx="1.4"/>'+
+      '<rect x="20.2" y="38.2" width="4.4" height="4.6" rx="1.4"/><rect x="25.4" y="38.2" width="4.4" height="4.6" rx="1.4"/>'+
+      '<rect x="17.4" y="28" width="2.2" height="14.6" rx="1.1"/><rect x="30.4" y="28" width="2.2" height="14.6" rx="1.1"/>'],
+    ['bizeps','<rect x="9.2" y="25.8" width="4.8" height="11.4" rx="2.4"/><rect x="36" y="25.8" width="4.8" height="11.4" rx="2.4"/>'],
+    ['unterarm','<rect x="7.6" y="37.8" width="4.6" height="12.6" rx="2.3"/><rect x="37.8" y="37.8" width="4.6" height="12.6" rx="2.3"/>'],
+    ['hand','<ellipse cx="9.9" cy="52.8" rx="2.2" ry="2.6"/><ellipse cx="40.1" cy="52.8" rx="2.2" ry="2.6"/>'],
+    ['huefte','<path d="M17.4 43.6H32.6L31.6 51.4Q25 54.2 18.4 51.4Z"/>'],
+    ['quads','<rect x="17.6" y="52.4" width="7" height="21.4" rx="3.2"/><rect x="25.4" y="52.4" width="7" height="21.4" rx="3.2"/>'],
+    ['knie','<ellipse cx="21.1" cy="75.6" rx="2.6" ry="1.5"/><ellipse cx="28.9" cy="75.6" rx="2.6" ry="1.5"/>'],
+    ['schienbein','<rect x="18.7" y="77.8" width="4.8" height="16.2" rx="2.4"/><rect x="26.5" y="77.8" width="4.8" height="16.2" rx="2.4"/>'],
+    ['fuss','<ellipse cx="21" cy="96" rx="2.8" ry="1.6"/><ellipse cx="29" cy="96" rx="2.8" ry="1.6"/>']
+  ],
+  h:[
+    ['kopf','<ellipse cx="25" cy="7" rx="4.8" ry="5.6"/>'],
+    ['hals','<rect x="22.8" y="12.2" width="4.4" height="4" rx="1"/>'],
+    ['nacken','<path d="M25 13.2L33 17.6L25 25.2L17 17.6Z"/>'],
+    ['schulter','<ellipse cx="13.6" cy="20.9" rx="3.6" ry="4.5"/><ellipse cx="36.4" cy="20.9" rx="3.6" ry="4.5"/>'],
+    ['ruecken','<path d="M17.6 18.8L24.4 25V37Q20.6 37.2 18.6 33.6Q17 27 17.6 18.8Z"/><path d="M32.4 18.8L25.6 25V37Q29.4 37.2 31.4 33.6Q33 27 32.4 18.8Z"/>'],
+    ['unterruecken','<rect x="20.4" y="37.8" width="9.2" height="5.6" rx="2"/>'],
+    ['trizeps','<rect x="9.2" y="25.8" width="4.8" height="11.4" rx="2.4"/><rect x="36" y="25.8" width="4.8" height="11.4" rx="2.4"/>'],
+    ['unterarm','<rect x="7.6" y="37.8" width="4.6" height="12.6" rx="2.3"/><rect x="37.8" y="37.8" width="4.6" height="12.6" rx="2.3"/>'],
+    ['hand','<ellipse cx="9.9" cy="52.8" rx="2.2" ry="2.6"/><ellipse cx="40.1" cy="52.8" rx="2.2" ry="2.6"/>'],
+    ['po','<rect x="17.6" y="44.2" width="7" height="9.6" rx="3.4"/><rect x="25.4" y="44.2" width="7" height="9.6" rx="3.4"/>'],
+    ['beinbeuger','<rect x="17.6" y="54.6" width="7" height="19.2" rx="3.2"/><rect x="25.4" y="54.6" width="7" height="19.2" rx="3.2"/>'],
+    ['knie','<ellipse cx="21.1" cy="75.6" rx="2.6" ry="1.5"/><ellipse cx="28.9" cy="75.6" rx="2.6" ry="1.5"/>'],
+    ['waden','<rect x="18.2" y="77.4" width="5.8" height="13.2" rx="2.9"/><rect x="26" y="77.4" width="5.8" height="13.2" rx="2.9"/>'],
+    ['ferse','<rect x="19.6" y="90.8" width="3" height="3.6" rx="1.2"/><rect x="27.4" y="90.8" width="3" height="3.6" rx="1.2"/>'],
+    ['fuss','<ellipse cx="21" cy="96" rx="2.8" ry="1.6"/><ellipse cx="29" cy="96" rx="2.8" ry="1.6"/>']
+  ]
+};
+const WP_NEUTRAL=new Set(['kopf','hals','hand','huefte','knie','ferse','fuss']);
+function wpFigur(namen,mitText){
+  const aktiv={}; let herz=false;
+  wpSortiert(namen).forEach(name=>{ const k=wpKoerperInfo(name);
+    (k.r.includes('*')?WP_MUSKELN:k.r).forEach(r=>{ if(r==='herz') herz=true; else if(!aktiv[r]) aktiv[r]=k.f; }); });
+  const teil=([r,svg])=>svg.replace(/<(ellipse|rect|path)/g,
+    `<$1 fill="${aktiv[r]||(WP_NEUTRAL.has(r)?'#1B2230':'#29334A')}"`);
+  return `<svg viewBox="0 0 108 ${mitText?107:100}" role="img" aria-label="Trainierte Körperteile">`+
+    WP_FORM.v.map(teil).join('')+`<g transform="translate(58 0)">`+WP_FORM.h.map(teil).join('')+`</g>`+
+    (herz?'<path fill="#F87171" d="M54 12.6C50.6 10 49 8.2 49 6.3C49 4.7 50.2 3.5 51.7 3.5C52.7 3.5 53.5 4 54 4.8C54.5 4 55.3 3.5 56.3 3.5C57.8 3.5 59 4.7 59 6.3C59 8.2 57.4 10 54 12.6Z"/>':'')+
+    (mitText?'<text x="25" y="105.5" text-anchor="middle" font-size="5" fill="#5C6678">vorne</text>'+
+             '<text x="83" y="105.5" text-anchor="middle" font-size="5" fill="#5C6678">hinten</text>':'')+
+    `</svg>`;
+}
+
+/* ---- Daten ---- */
 function istWochenplan(n){ return !!n&&n.art==='wochenplan'; }
 function wpWocheNeu(name){ return {id:uid(),name,tage:[]}; }
-function wpTagNeu(titel){ return {id:uid(),titel,fokus:'',uebungen:[]}; }
-function wpUebungNeu(){ return {id:uid(),name:'',detail:''}; }
-/* Struktur prüfen und ergänzen -- auch für Pläne aus einem Backup */
+function wpTagNeu(titel){ return {id:uid(),titel,fokus:'',koerper:[],uebungen:[]}; }
+function wpUebungNeu(){ return {id:uid(),name:''}; }
+/* Struktur prüfen und ergänzen -- auch für Pläne aus einem Backup oder der ersten Version */
 function wpDaten(n){
   if(!n.wp||!Array.isArray(n.wp.wochen)) n.wp={aktiv:null,wochen:[]};
   if(!n.wp.wochen.length) n.wp.wochen.push(wpWocheNeu('Woche 1'));
   n.wp.wochen.forEach(w=>{
     if(!Array.isArray(w.tage)) w.tage=[];
-    w.tage.forEach(t=>{ if(!Array.isArray(t.uebungen)) t.uebungen=[];
+    w.tage.forEach(t=>{
       t.titel=t.titel||''; t.fokus=t.fokus||'';
-      t.uebungen.forEach(u=>{ u.name=u.name||''; u.detail=u.detail||''; }); });
+      if(!Array.isArray(t.uebungen)) t.uebungen=[];
+      t.uebungen.forEach(u=>{ u.name=u.name||''; });
+      // Erste Version kannte keine Körperteile -- aus dem Text übernehmen, was erkennbar ist
+      if(!Array.isArray(t.koerper)) t.koerper=wpErkenne(t.fokus+' '+t.titel);
+    });
   });
   if(!n.wp.wochen.some(w=>w.id===n.wp.aktiv)) n.wp.aktiv=n.wp.wochen[0].id;
   return n.wp;
@@ -1661,11 +1815,20 @@ function wpDaten(n){
 function wpWoche(n){ const wp=wpDaten(n); return wp.wochen.find(w=>w.id===wp.aktiv); }
 function wpTagFinden(n,tid){ return wpWoche(n).tage.find(t=>t.id===tid)||null; }
 function wpHatInhalt(n){ return wpDaten(n).wochen.some(w=>w.tage.length); }
-const wpGefuellt=u=>!!(u.name.trim()||u.detail.trim());
+const wpGefuellt=u=>!!(u.name||'').trim();
+/* Ruhetag: nichts geplant und "Ruhe", "Pause" oder "frei" im Text (nicht "Freitag") */
+function wpIstRuhe(t){
+  return !t.uebungen.some(wpGefuellt)&&!t.koerper.length&&/ruhe|pause|\bfrei\b|\brest\b/i.test(t.fokus+' '+t.titel);
+}
 /* Welcher Wochentag steckt in einer Überschrift? -1 = eigener Name */
 function wpWochentag(titel){
   const t=(titel||'').trim().toLowerCase();
   return WP_TAGE.findIndex(d=>t.startsWith(d.toLowerCase()));
+}
+function wpKurz(t,i){
+  const wd=wpWochentag(t.titel); if(wd>=0) return WP_TAGE[wd].slice(0,2);
+  const s=(t.titel||'').trim();
+  return s?(s.length>8?s.slice(0,7)+'…':s):'Tag '+(i+1);
 }
 /* Wochentage landen gleich an der richtigen Stelle (Mittwoch vor Freitag) */
 function wpTagEinfuegen(w,t){
@@ -1685,38 +1848,73 @@ function newWochenplan(){
   notes.unshift(n); save(); openNote(n.id);
 }
 
-/* ---- Anzeige ---- */
+/* ---- Ansicht ---- */
+/* Übersicht: Figur mit allen Muskeln der Woche (oder eines Tages), Körperteile, Tage */
+function wpUebersicht(w){
+  if(!w.tage.length) return '';
+  const tag=wpAuswahl?w.tage.find(t=>t.id===wpAuswahl):null;
+  if(!tag) wpAuswahl=null;
+  const zaehl=new Map();
+  (tag?[tag]:w.tage).forEach(t=>wpSortiert(t.koerper).forEach(x=>zaehl.set(x,(zaehl.get(x)||0)+1)));
+  const namen=wpSortiert([...zaehl.keys()]);
+  const ruhe=w.tage.filter(wpIstRuhe).length, training=w.tage.length-ruhe;
+  const info=tag?esc(tag.fokus.trim()||(wpIstRuhe(tag)?'Ruhetag':'')):
+    `${training===1?'1 Trainingstag':training+' Trainingstage'}${ruhe?' · '+(ruhe===1?'1 Ruhetag':ruhe+' Ruhetage'):''}`;
+  const legende=namen.length?'<ul class="wpLeg">'+namen.map(x=>`<li><i style="background:${wpKoerperInfo(x).f}"></i>`+
+      `<span>${esc(x)}</span>${tag?'':`<b>${zaehl.get(x)}×</b>`}</li>`).join('')+'</ul>'
+    :`<p class="wpUeHinweis">${tag?'Für diesen Tag sind keine Körperteile gewählt.':'Wähle beim Bearbeiten die Körperteile aus – dann leuchten sie hier auf.'}</p>`;
+  const kacheln=`<button class="wpKachel${tag?'':' on'}" data-wpwahl=""><b>Woche</b><span>alle Tage</span></button>`+
+    w.tage.map((t,i)=>{ const r=wpIstRuhe(t), ks=wpSortiert(t.koerper);
+      return `<button class="wpKachel${tag===t?' on':''}${r?' ruhe':''}" data-wpwahl="${t.id}"><b>${esc(wpKurz(t,i))}</b>`+
+        `<span>${esc(t.fokus.trim().split('\n')[0]||(r?'Ruhe':'–'))}</span>`+
+        `<span class="p">${ks.map(x=>`<i style="background:${wpKoerperInfo(x).f}"></i>`).join('')}</span></button>`; }).join('');
+  return `<div class="wpUe"><span class="lbl">${tag?esc(tag.titel||'Tag'):'Deine Woche'}</span>
+    <div class="wpUeOben"><div class="wpUeFig">${wpFigur(namen,true)}</div>
+      <div class="wpUeRechts">${info?`<p class="wpUeInfo">${info}</p>`:''}${legende}</div></div>
+    <div class="wpStreifen">${kacheln}</div></div>`;
+}
 function wpTagAnsicht(t){
-  const ueb=t.uebungen.filter(wpGefuellt);
-  const ruhe=!ueb.length&&/ruhe|pause|frei/i.test(t.fokus+' '+t.titel);
-  return `<div class="wpTag${ruhe?' ruhe':''}">
-    <div class="wpTagKopf"><h3>${esc(t.titel||'Ohne Überschrift')}</h3>${ueb.length?`<span class="n">${ueb.length===1?'1 Übung':ueb.length+' Übungen'}</span>`:''}</div>
-    ${t.fokus.trim()?`<p class="wpFokus">${esc(t.fokus.trim())}</p>`:''}
-    ${ueb.length?'<ol class="wpUeb">'+ueb.map((u,i)=>`<li><span class="wpNr">${i+1}</span>`+
-        `<span class="wpName">${esc(u.name)}</span>${u.detail.trim()?`<span class="wpDetail">${esc(u.detail.trim())}</span>`:''}</li>`).join('')+'</ol>'
-      :(t.fokus.trim()?'':'<p class="wpLeer">Noch nichts eingetragen</p>')}
+  const ueb=t.uebungen.filter(wpGefuellt), ks=wpSortiert(t.koerper), ruhe=wpIstRuhe(t);
+  const farbe=ruhe?'var(--dimmer)':(ks.length?wpKoerperInfo(ks[0]).f:'var(--blue)');
+  return `<div class="wpTag${ruhe?' ruhe':''}" style="--c:${farbe}">
+    <div class="wpTagOben"><div class="wpTagText">
+      <h3>${esc(t.titel||'Ohne Überschrift')}</h3>
+      ${t.fokus.trim()?`<p class="wpAktiv">${esc(t.fokus.trim())}</p>`:''}
+      ${ks.length?'<div class="wpKs">'+ks.map(x=>`<span class="wpK"><i style="background:${wpKoerperInfo(x).f}"></i>${esc(x)}</span>`).join('')+'</div>':''}
+    </div>${ks.length?`<div class="wpMini">${wpFigur(ks,false)}</div>`:''}</div>
+    ${ueb.length?'<ol class="wpUeb">'+ueb.map((u,i)=>`<li><span class="wpNr">${i+1}</span><span class="wpName">${esc(u.name)}</span></li>`).join('')+'</ol>'
+      :((t.fokus.trim()||ks.length)?'':'<p class="wpLeer">Noch nichts eingetragen</p>')}
   </div>`;
 }
+/* ---- Bearbeiten ---- */
 function wpTagEdit(t,i,anzahl){
+  const gewaehlt=new Set(t.koerper.map(x=>x.toLowerCase()));
+  const eigene=wpSortiert(t.koerper).filter(x=>!WP_KOERPER.some(k=>k.n.toLowerCase()===x.toLowerCase()));
+  const chip=(name,farbe,an)=>`<button class="${an?'on':''}" data-wpkoerper="${t.id}|${esc(name)}"`+
+    (an?` style="border-color:${farbe};background:${farbe}24"`:'')+`><i style="background:${farbe}"></i>${esc(name)}</button>`;
   return `<div class="wpTag edit">
-    <div class="wpTagKopf">
-      <input class="wpTitelIn" data-wptitel="${t.id}" value="${esc(t.titel)}" placeholder="Überschrift, z. B. Montag" aria-label="Überschrift des Tages" autocomplete="off">
+    <div class="wpZeile"><span class="wpLbl">Tag</span>
       <button class="wpIcon" data-wptaghoch="${t.id}" aria-label="Tag nach oben"${i===0?' disabled':''}>${WP_HOCH}</button>
       <button class="wpIcon" data-wptagrunter="${t.id}" aria-label="Tag nach unten"${i===anzahl-1?' disabled':''}>${WP_RUNTER}</button>
       <button class="wpIcon weg" data-wptagweg="${t.id}" aria-label="Tag löschen">${WP_WEG}</button>
     </div>
-    <textarea class="wpFokusIn" rows="1" data-wpfokus="${t.id}" placeholder="Was trainierst du? z. B. Push – Brust &amp; Trizeps">${esc(t.fokus)}</textarea>
+    <input class="wpIn wpTitelIn" data-wptitel="${t.id}" value="${esc(t.titel)}" placeholder="z. B. Montag" aria-label="Tag" autocomplete="off">
+    <span class="wpLbl">Was machst du?</span>
+    <input class="wpIn" data-wpfokus="${t.id}" value="${esc(t.fokus)}" placeholder="z. B. Push, Krafttraining, Laufen" aria-label="Was machst du?" autocomplete="off">
+    <span class="wpLbl">Körperteile</span>
+    <div class="wpKWahl">${WP_KOERPER.map(k=>chip(k.n,k.f,gewaehlt.has(k.n.toLowerCase()))).join('')}${
+      eigene.map(x=>chip(x,wpKoerperInfo(x).f,true)).join('')}<button class="neu" data-wpkoerperneu="${t.id}">＋ Eigenes</button></div>
+    <span class="wpLbl">Übungen</span>
     ${t.uebungen.length?'<ol class="wpUeb edit">'+t.uebungen.map((u,k)=>`<li>
         <span class="wpNr">${k+1}</span>
         <textarea class="wpNameIn" rows="1" data-wpname="${t.id}|${u.id}" placeholder="Übung">${esc(u.name)}</textarea>
-        <input class="wpDetailIn" data-wpdetail="${t.id}|${u.id}" value="${esc(u.detail)}" placeholder="3×10" aria-label="Sätze und Wiederholungen" autocomplete="off">
         <button class="wpX" data-wpuebweg="${t.id}|${u.id}" aria-label="Übung löschen">×</button></li>`).join('')+'</ol>':''}
     <button class="wpPlus" data-wpuebneu="${t.id}">＋ Übung</button>
   </div>`;
 }
 function wpTagNeuHtml(w){
   const da=new Set(w.tage.map(t=>wpWochentag(t.titel)));
-  const hilfe=w.tage.length?'':'<p class="wpHilfe">So geht’s: Tag antippen, darunter eintragen, was du trainierst, dann die Übungen mit Sätzen und Gewicht.</p>';
+  const hilfe=w.tage.length?'':'<p class="wpHilfe">So geht’s: Tag antippen, dann eintragen, was du machst, welche Körperteile du trainierst und welche Übungen.</p>';
   return `<div class="wpTagNeu"><span class="lbl">Tag hinzufügen</span>${hilfe}
     <div class="wpChips">${WP_TAGE.map((d,i)=>`<button class="${da.has(i)?'da':''}" data-wptagneu="${d}">${d.slice(0,2)}</button>`).join('')}
       <button data-wptagneu="">＋ Eigene Überschrift</button></div></div>`;
@@ -1725,7 +1923,7 @@ function renderWochenplan(n){
   const wp=wpDaten(n), w=wpWoche(n);
   if(wpBearbeiten===null) wpBearbeiten=!wpHatInhalt(n);   // leerer Plan öffnet gleich zum Eintragen
   const ed=wpBearbeiten, nr=wp.wochen.indexOf(w)+1;
-  const tage=w.tage.length, ueb=w.tage.reduce((a,t)=>a+t.uebungen.filter(u=>u.name.trim()).length,0);
+  const tage=w.tage.length, ueb=w.tage.reduce((a,t)=>a+t.uebungen.filter(wpGefuellt).length,0);
   let h=`<div class="wpWochen" id="wpWochen">`+wp.wochen.map(x=>
       `<button class="wpTab${x.id===w.id?' on':''}" data-wpwoche="${x.id}">${esc(x.name||'Woche')}</button>`).join('')+
     `<button class="wpTab neu" data-wpneuewoche>＋ Woche</button></div>`;
@@ -1738,6 +1936,7 @@ function renderWochenplan(n){
   const akt=(tage?`<button class="chip" data-wpkopie>⧉ Woche kopieren</button>`:'')+
     (wp.wochen.length>1?`<button class="chip wpRot" data-wpwocheweg>Woche löschen</button>`:'');
   if(ed&&akt) h+=`<div class="wpAkt">${akt}</div>`;
+  if(!ed) h+=wpUebersicht(w);
   h+='<div class="wpTage">'+w.tage.map((t,i)=>ed?wpTagEdit(t,i,w.tage.length):wpTagAnsicht(t)).join('')+'</div>';
   if(ed) h+=wpTagNeuHtml(w);
   else if(!w.tage.length) h+='<div class="empty">In dieser Woche steht noch nichts.<br>Tipp oben auf „Bearbeiten".</div>';
@@ -1753,10 +1952,11 @@ $('#wp').addEventListener('click',e=>{
   const n=note(); if(!istWochenplan(n)) return;
   const wp=wpDaten(n), w=wpWoche(n), z=sel=>e.target.closest(sel);
   let b;
-  if((b=z('[data-wpwoche]'))){ wp.aktiv=b.dataset.wpwoche; endTextPhase(); saveNow(); renderWochenplan(n); return; }
+  if((b=z('[data-wpwahl]'))){ wpAuswahl=b.dataset.wpwahl||null; renderWochenplan(n); return; }
+  if((b=z('[data-wpwoche]'))){ wp.aktiv=b.dataset.wpwoche; wpAuswahl=null; endTextPhase(); saveNow(); renderWochenplan(n); return; }
   if(z('[data-wpneuewoche]')){
     snap(); const nw=wpWocheNeu('Woche '+(wp.wochen.length+1));
-    wp.wochen.push(nw); wp.aktiv=nw.id; wpBearbeiten=true; touch(); renderWochenplan(n);
+    wp.wochen.push(nw); wp.aktiv=nw.id; wpAuswahl=null; wpBearbeiten=true; touch(); renderWochenplan(n);
     toast(nw.name+' angelegt'); return; }
   if(z('[data-wpmodus]')){
     if(wpBearbeiten){            // beim Fertigmachen leere Übungszeilen wegräumen
@@ -1778,7 +1978,7 @@ $('#wp').addEventListener('click',e=>{
     wp.aktiv=(wp.wochen[i-1]||wp.wochen[0]).id; touch(); renderWochenplan(n); toast('Woche gelöscht'); return; }
   if((b=z('[data-wptagneu]'))){
     snap(); const t=wpTagNeu(b.dataset.wptagneu); wpTagEinfuegen(w,t); touch(); renderWochenplan(n);
-    // Wochentag gewählt: gleich eintragen, was trainiert wird -- sonst erst die Überschrift
+    // Wochentag gewählt: gleich eintragen, was man macht -- sonst erst den Tag benennen
     wpFokus(t.titel?`[data-wpfokus="${t.id}"]`:`[data-wptitel="${t.id}"]`); return; }
   if((b=z('[data-wptaghoch]'))||(b=z('[data-wptagrunter]'))){
     const hoch=b.hasAttribute('data-wptaghoch'), id=hoch?b.dataset.wptaghoch:b.dataset.wptagrunter;
@@ -1787,9 +1987,21 @@ $('#wp').addEventListener('click',e=>{
     snap(); [w.tage[i],w.tage[j]]=[w.tage[j],w.tage[i]]; touch(); renderWochenplan(n); return; }
   if((b=z('[data-wptagweg]'))){
     const t=wpTagFinden(n,b.dataset.wptagweg); if(!t) return;
-    const voll=t.uebungen.some(wpGefuellt)||t.fokus.trim();
-    if(voll&&!confirm('„'+(t.titel||'Tag')+'" mit allen Übungen löschen?')) return;
+    const voll=t.uebungen.some(wpGefuellt)||t.fokus.trim()||t.koerper.length;
+    if(voll&&!confirm('„'+(t.titel||'Tag')+'" mit allem darin löschen?')) return;
     snap(); w.tage=w.tage.filter(x=>x!==t); touch(); renderWochenplan(n); toast('Tag gelöscht'); return; }
+  if((b=z('[data-wpkoerper]'))){
+    const v=b.dataset.wpkoerper, k=v.indexOf('|'), t=wpTagFinden(n,v.slice(0,k)), name=v.slice(k+1);
+    if(!t) return;
+    snap();
+    const i=t.koerper.findIndex(x=>x.toLowerCase()===name.toLowerCase());
+    if(i>=0) t.koerper.splice(i,1); else t.koerper.push(name);
+    touch(); renderWochenplan(n); return; }
+  if((b=z('[data-wpkoerperneu]'))){
+    const t=wpTagFinden(n,b.dataset.wpkoerperneu); if(!t) return;
+    const name=(prompt('Welcher Körperteil? (z. B. Unterarme, Nacken)')||'').trim(); if(!name) return;
+    if(!t.koerper.some(x=>x.toLowerCase()===name.toLowerCase())){ snap(); t.koerper.push(name); touch(); }
+    renderWochenplan(n); return; }
   if((b=z('[data-wpuebneu]'))){ wpUebungNach(n,b.dataset.wpuebneu,null); return; }
   if((b=z('[data-wpuebweg]'))){
     const [tid,id]=b.dataset.wpuebweg.split('|'), t=wpTagFinden(n,tid); if(!t) return;
@@ -1814,13 +2026,10 @@ $('#wp').addEventListener('input',e=>{
     const tab=document.querySelector(`[data-wpwoche="${w.id}"]`); if(tab) tab.textContent=el.value||'Woche';
     touch(); return; }
   if(d.wptitel){ snapText('wpt:'+d.wptitel); const t=wpTagFinden(n,d.wptitel); if(t){ t.titel=el.value; touch(); } return; }
-  if(d.wpfokus){ snapText('wpf:'+d.wpfokus); const t=wpTagFinden(n,d.wpfokus); if(t){ t.fokus=el.value; grow(el); touch(); } return; }
-  const ref=d.wpname||d.wpdetail;
-  if(ref){
-    const [tid,id]=ref.split('|'), t=wpTagFinden(n,tid), u=t&&t.uebungen.find(x=>x.id===id); if(!u) return;
-    snapText((d.wpname?'wpn:':'wpd:')+id);
-    if(d.wpname){ u.name=el.value; grow(el); } else u.detail=el.value;
-    touch(); }
+  if(d.wpfokus){ snapText('wpf:'+d.wpfokus); const t=wpTagFinden(n,d.wpfokus); if(t){ t.fokus=el.value; touch(); } return; }
+  if(d.wpname){
+    const [tid,id]=d.wpname.split('|'), t=wpTagFinden(n,tid), u=t&&t.uebungen.find(x=>x.id===id); if(!u) return;
+    snapText('wpn:'+id); u.name=el.value; grow(el); touch(); }
 });
 $('#wp').addEventListener('keydown',e=>{
   if(e.key!=='Enter'&&e.key!=='Backspace') return;
@@ -1829,27 +2038,21 @@ $('#wp').addEventListener('keydown',e=>{
   if(e.key==='Enter'){
     if(d.wpwname!==undefined){ e.preventDefault(); e.target.blur(); return; }
     if(d.wptitel){ e.preventDefault(); wpFokus(`[data-wpfokus="${d.wptitel}"]`); return; }
-    if(d.wpfokus){
+    if(d.wpfokus){ e.preventDefault(); e.target.blur(); return; }   // danach kommen die Körperteile zum Antippen
+    if(d.wpname){
       e.preventDefault();
-      const t=wpTagFinden(n,d.wpfokus); if(!t) return;
-      if(t.uebungen.length) wpFokus(`[data-wpname="${t.id}|${t.uebungen[0].id}"]`);
-      else wpUebungNach(n,t.id,null);
-      return; }
-    const ref=d.wpname||d.wpdetail;
-    if(ref){
-      e.preventDefault();
-      const [tid,id]=ref.split('|'), t=wpTagFinden(n,tid), u=t&&t.uebungen.find(x=>x.id===id);
+      const [tid,id]=d.wpname.split('|'), t=wpTagFinden(n,tid), u=t&&t.uebungen.find(x=>x.id===id);
       if(u&&!wpGefuellt(u)){ e.target.blur(); return; }   // Enter in leerer Zeile = fertig
       wpUebungNach(n,tid,id); return; }
   }
   // Löschtaste in leerer Übung: Zeile weg, zurück in die Zeile davor -- wie in Listen
   if(e.key==='Backspace'&&d.wpname&&e.target.value===''){
     const [tid,id]=d.wpname.split('|'), t=wpTagFinden(n,tid), u=t&&t.uebungen.find(x=>x.id===id);
-    if(!u||u.detail.trim()) return;
+    if(!u) return;
     e.preventDefault(); snap();
     const i=t.uebungen.indexOf(u); t.uebungen.splice(i,1); touch(); renderWochenplan(n);
     const vor=t.uebungen[i-1];
-    wpFokus(vor?`[data-wpname="${tid}|${vor.id}"]`:`[data-wpfokus="${tid}"]`);
+    if(vor) wpFokus(`[data-wpname="${tid}|${vor.id}"]`);
   }
 });
 
